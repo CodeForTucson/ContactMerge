@@ -7,7 +7,7 @@ import com.cft.contactmerge.*;
 class CompareContactPartsTest {
 
     @Test
-    void doNamesMatch_NoDifferentLastName() {
+    void doNamesMatch_No_DifferentLastName() {
         assertEquals(AnswerType.no, CompareContactParts.doNamesMatch("Jonh", "Doe", "John", "Adams"));
     }
 
