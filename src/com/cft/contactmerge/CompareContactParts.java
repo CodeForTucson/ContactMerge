@@ -1,42 +1,33 @@
 package com.cft.contactmerge;
 
 public class CompareContactParts {
-    private Contact existingContact;
-    private Contact newContact;
-
-    public CompareContactParts(Contact existingContact, Contact newContact)
+    public static AnswerType doNamesMatch(String firstName1, String lastName1, String firstName2, String lastName2)
     {
-        this.existingContact = existingContact;
-        this.newContact = newContact;
+        return null;
     }
 
-    public AnswerType doNamesMatch()
+    public static AnswerType doAddressesMatch(String address1, String address2)
     {
-        return AnswerType.no;
+        return null;
     }
 
-    public AnswerType doAddressesMatch()
+    public static AnswerType doCitiesMatch(String city1, String city2)
     {
-        return AnswerType.no;
+        return null;
     }
 
-    public AnswerType doCitiesMatch()
+    public static AnswerType doStatesMatch(String state1, String state2)
     {
-        return AnswerType.no;
+        return null;
     }
 
-    public AnswerType doStatesMatch()
+    public static AnswerType doPhoneNumbersMatch(String phoneNumber1, String phoneNumber2)
     {
-        return AnswerType.no;
+        return null;
     }
 
-    public AnswerType doPhoneNumbersMatch()
+    public static AnswerType doEmailsMatch(String email1, String email2)
     {
-        return AnswerType.no;
-    }
-
-    public AnswerType doEmailsMatch()
-    {
-        return AnswerType.no;
+        return null;
     }
 }
