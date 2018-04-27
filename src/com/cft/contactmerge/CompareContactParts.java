@@ -3,7 +3,7 @@ package com.cft.contactmerge;
 public class CompareContactParts {
     public static AnswerType doNamesMatch(String firstName1, String lastName1, String firstName2, String lastName2)
     {
-        return FirstAndLastNamesMatchLogic.doFirstAndLastNamesMatch(firstName1, lastName1, firstName2, lastName2);
+        return FirstAndLastNamesMatchLogic.doFirstAndLastNamesMatchUsingAllComparisonChecks(firstName1, lastName1, firstName2, lastName2);
     }
 
     public static AnswerType doAddressesMatch(String address1, String address2)
