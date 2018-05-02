@@ -1,0 +1,16 @@
+git clone https://github.com/CodeForTucson/ContactMerge.git -> sets up your repository on whatever your local cd is currently on, and synced with the specified project.
+git checkout master -> syncs your local pc repository on the master branch for the project.
+git checkout -b vardahoth/contactCompareParts -> creates a new branch for the project you are working on.
+
+**** upload change(s) made to github from local pc (use commands in order) ****
+git status -> shows the changes that were made between your local pc and the github. (e.g.: modified:   src/com/cft/contactmerge/tests/CompareContactPartsTest.java)
+                  Also shows which branch you are on. Example, for downloading the latest updates made... you may want to be on the master branch. But for upload the latest changes made, you may want to be on your own branch (and then later merge the two branches once the changes are approved by the team).
+(Optional) git checkout vardahoth/contactCompareParts -> use this command if you are not on this branch (where you want to upload your changes made).
+git add <loc\filename.type> -> adds new or overwrites modified files from your local pc repository, to the package to be uploaded to github (example command: git add src/com/cft/contactmerge/tests/CompareContactPartsTest.java)
+git commit -m "Enter message here showing why you are uploading these file(s) change(s)" -> adds a message with the package to upload to github (from your local pc repository), so everyone can see a brief overview from the message you put in on what changes were made and why.
+git push -> uploads the changes made from your local pc repository package to the github project branch you are on.
+
+**** download change(s) made from github to local pc (use commands in order) ****
+git status -> makes sure you are on the branch you want to download changes from (e.g.: master branch).
+(Optional) git checkout master -> use this if you are not currently on the master branch (current decided main branch for approved updates made).
+git pull -> Downloads the latest changes onto your own repository (Note: make sure your current CD is in your repository when using this command, or it won't work).
