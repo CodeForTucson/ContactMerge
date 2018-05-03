@@ -1,6 +1,10 @@
 git clone https://github.com/CodeForTucson/ContactMerge.git -> sets up your repository on whatever your local cd is currently on, and synced with the specified project.
 git checkout master -> syncs your local pc repository on the master branch for the project.
+git branch -a -> shows a list of both local and remote branches
+git branch -r -> shows a list of remote branches
 git checkout -b vardahoth/contactCompareParts -> creates a new branch for the project you are working on.
+git remote update origin --prune -> updates the local repositories to match what is on the remote server
+git branch -D <branchname> -> deletes local branch from local repository
 
 **** upload change(s) made to github from local pc (use commands in order) ****
 git status -> shows the changes that were made between your local pc and the github. (e.g.: modified:   src/com/cft/contactmerge/tests/CompareContactPartsTest.java)
@@ -14,3 +18,13 @@ git push -> uploads the changes made from your local pc repository package to th
 git status -> makes sure you are on the branch you want to download changes from (e.g.: master branch).
 (Optional) git checkout master -> use this if you are not currently on the master branch (current decided main branch for approved updates made).
 git pull -> Downloads the latest changes onto your own repository (Note: make sure your current CD is in your repository when using this command, or it won't work).
+
+**** Fix Can't Merge Error (when trying to do a pull request via website) ****
+Go to command line...
+    git checkout master
+    git pull
+    git checkout <YourBranch>
+    git rebase master
+    git pull
+    git push
+Try again to do a pull request
