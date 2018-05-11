@@ -5,74 +5,70 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.cft.contactmerge.*;
 
 class CompareContactPartsTest {
-
-    /*************************************
-     * Compare First And Last Name Tests *
-     *************************************/
+    /****************************************************************************************************************************************************************************
+     ********************************************************************* Compare First And Last Name Tests ********************************************************************
+     ****************************************************************************************************************************************************************************/
+    /* preconditions...
+     * All test cases must include a check for trailing white spaces and different upper/lower case letters.
+     */
+    private String firstAndLastNameFailedMsg(String fNameOne,String  lNameOne,String  fNameTwo,String  lNameTwo){
+        return "(compareFirstNames: \"" + fNameOne + "\" vs \"" + fNameTwo + "\") and (compareLastNames: \"" + lNameOne + "\" vs \"" + lNameTwo + "\")";
+    }
+    //--------------------------------------------------------------------- Basic Tests --------------------------------------------------------------------
+    @Test
+    void doNamesMatch_Yes() {
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" JoHn", "DOE ", "JOHN ", " Doe  "));
+    }
 
     @Test
     void doNamesMatch_No_DifferentLastName() {
-        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch("John", "Doe", "John", "Adams"));
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" JoHn", "DOE ", "JOHN ", " aDams  "));
     }
 
     @Test
     void doNamesMatch_No_DifferentFirstName() {
-        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch("John", "Doe", "Jane", "Doe"));
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" JoHn", "DOE ", "jAne ", " Doe  "));
     }
+
+    //--------------------------------------------------------------------- Punctuation --------------------------------------------------------------------
+    @Test
+    void doNamesMatch_Yes_IgnoreMultiPunctuationInFirstAndLastName() {
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("aN-De-denIse ", " Sa-LA-Democh ", " An dE Denise ", "sa la democh  "));
+    }
+
+    //--------------------------------------------------------------------- Hyphenated First and Last Names ---------------------------------------------------------------------
+    // If the name is less than 4 characters and is contained inside the match name, return maybe.
+    // If the name is 4 or more characters and is contained inside the match name, return yes.
 
     @Test
-    void doNamesMatch_Yes_CaseDoesNotMatter() {
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("john", "DOE", "JOHN", "Doe"));
+    void doNamesMatch_YesMaybeNo_FirstAndLastNamesContainMultiHyphens() {
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" Josephine-mc-vitty", "Sa-la-democh ", "vittY ", " democH"), firstAndLastNameFailedMsg(" Josephine-mc-vitty", "Sa-la-democh ", "vittY ", " democH"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" joSephine-mc-vitty ", " sa-La-democh ", "  mC  ", "  lA  "), firstAndLastNameFailedMsg(" joSephine-mc-vitty ", " sa-La-democh ", "  mC  ", "  lA  "));
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" JosePh  ", "  leE", " JosEphine-Mc-Vitty", " sa-la-Cathleen "), firstAndLastNameFailedMsg(" JosePh  ", "  leE", " JosEphine-Mc-Vitty", " sa-la-Cathleen "));
     }
 
-    @Test
-    void doNamesMatch_Yes_IgnoreSpaces() {
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" John", "Doe", "John ", " Doe  "));
-    }
-
-    @Test
-    void doNamesMatch_Yes_IgnoreSpacesAndCaseInsensitive() {
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" JoHn", "DOE", "JOHN ", " Doe  "));
-    }
-
-    @Test
-    void doNamesMatch_Yes_IgnorePunctuation() {
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("Jane", "Doe-Adams", "Jane", "Doe Adams"));
-    }
-
-    @Test
-    void doNamesMatch_Maybe_HyphenatedNames() {
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch("Jane", "Doe-Adams", "Jane", "Doe"));
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch("Jane", "Adams", "Jane", "Doe-Adams"));
-    }
-
-    @Test
-    void doNamesMatch_Maybe_NamesContainMultiHyphens() {
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch("Areb", "Sa-la-Democh", "Areb", "Democh"));
-    }
-
+    //----------------------------------------------------------------------- Last and First Names Swapped ----------------------------------------------------------------------
     @Test
     void doNamesMatch_Maybe_FirstLastSwap() {
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch("John", "Doe", "Doe", "John"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" joHn  ", "  Doe ", " doe", "JOhn "));
     }
 
+    //--------------------------------------------------------------------------- First Name Initials ---------------------------------------------------------------------------
+    // Rule: program will not allow last name initials
+    // Only matches with a maybe if it is first name
     @Test
     void doNamesMatch_Maybe_FirstNameInitials() {
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch("John", "Doe", "J", "Doe"));
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch("J.", "Doe", "John", "Doe"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" John  ", "  Doe ", "j ", " dOe"), firstAndLastNameFailedMsg(" John  ", "  Doe ", "j ", " dOe"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch("J. ", " Doe", "  joHn ", " doe  "), firstAndLastNameFailedMsg("J. ", " Doe", "  joHn ", " doe  "));
     }
 
+    //------------------------------------------------------------------------------- Other Tests -------------------------------------------------------------------------------
     @Test
-    void doNamesMatch_no_FirstNameInitialsDifferentLastName() {
-        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch("John", "Adams", "J", "Doe"));
-        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch("J.", "Doe", "John", "Adams"));
+    void doNamesMatch_Yes_Apostrophe() {
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("  adriaNno ", "d'onOfio ", " adriaNno", " d onofiO  "), firstAndLastNameFailedMsg("  adriaNno ", "d'onOfio ", " adriaNno", " d onofiO  "));
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "), firstAndLastNameFailedMsg(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "));
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" mc  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "), firstAndLastNameFailedMsg(" mc vitty  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "));
     }
-
-    // TODO: Add other name tests
-    // 1. Middle initials, Prefix, and Suffix
-    // 2. Common forms like: Robert, Robbie, Bob
-    // 3. Compare household name to individual name
-    // 4. Handle mispellings(??)
 
     /*************************
      * Compare Address Tests *
