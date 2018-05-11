@@ -1,75 +1,50 @@
 /* Modified by James Page on May 8th, 2018
- * Contains the selections of which type of naming properties will be used for matching
+ * Contains the selections(optional matching) of which type of naming properties will be used for matching
  */
 
 package com.cft.contactmerge;
 
 import java.util.ArrayList;
 
-public abstract class NameMatchSelector extends NameMatchLogic {
+public abstract class NameMatchSelector {
     /************************************************************************
      *********** Method(s) used to call specific name comparisons ***********
      ************************************************************************/
-    public static AnswerType doFirstNamesMatchUsingAllComparisonChecks(String contactOneFirstName, String contactTwoFirstName){
+    public static AnswerType getFirstNamesMatchResultDefaultComparison(String contactOneFirstName, String contactTwoFirstName){
         // edit names to go through simple matching algorithms
-        ArrayList<String> editedFirstNameOne = editNameForMatching(contactOneFirstName);
-        ArrayList<String> editedFirstNameTwo = editNameForMatching(contactTwoFirstName);
+        ArrayList<String> normalizedFirstNamesOne = NameMatchLogic.setNormalizeName(contactOneFirstName);
+        ArrayList<String> normalizedFirstNamesTwo = NameMatchLogic.setNormalizeName(contactTwoFirstName);
 
-        return FirstNameMatcher.getFirstNameMatchResult(editedFirstNameOne, editedFirstNameTwo);
+        return FirstNameMatcher.getFirstNameMatchResult(normalizedFirstNamesOne, normalizedFirstNamesTwo);
     }
 
-    public static AnswerType doLastNamesMatchUsingAllComparisonChecks(String contactOneLastName, String contactTwoLastName){
-        ArrayList<String> editedLastNameOne = editNameForMatching(contactOneLastName);
-        ArrayList<String> editedLastNameTwo = editNameForMatching(contactTwoLastName);
+    public static AnswerType getLastNamesMatchResultDefaultComparisons(String contactOneLastName, String contactTwoLastName){
+        ArrayList<String> normalizedLastNamesOne = NameMatchLogic.setNormalizeName(contactOneLastName);
+        ArrayList<String> normalizedLastNamesTwo = NameMatchLogic.setNormalizeName(contactTwoLastName);
 
-        return LastNameMatcher.getLastNameMatchResult(editedLastNameOne, editedLastNameTwo);
+        return LastNameMatcher.getLastNameMatchResult(normalizedLastNamesOne, normalizedLastNamesTwo);
     }
 
-    public static AnswerType doFirstAndLastNamesMatchUsingAllComparisonChecks(String contactOneFirstName, String contactOneLastName, String contactTwoFirstName, String contactTwoLastName){
+    public static AnswerType getFirstLastNamesMatchResultDefaultComparisons(String contactOneFirstName, String contactOneLastName, String contactTwoFirstName, String contactTwoLastName){
 
         // edit names to go through simple matching algorithms
-        ArrayList<String> editedFirstNameOne = editNameForMatching(contactOneFirstName);
-        ArrayList<String> editedLastNameOne = editNameForMatching(contactOneLastName);
-        ArrayList<String> editedFirstNameTwo = editNameForMatching(contactTwoFirstName);
-        ArrayList<String> editedLastNameTwo = editNameForMatching(contactTwoLastName);
+        ArrayList<String> normalizedFirstNamesOne = NameMatchLogic.setNormalizeName(contactOneFirstName);
+        ArrayList<String> normalizedLastNamesOne = NameMatchLogic.setNormalizeName(contactOneLastName);
+        ArrayList<String> normalizedFirstNamesTwo = NameMatchLogic.setNormalizeName(contactTwoFirstName);
+        ArrayList<String> normalizedLastNamesTwo = NameMatchLogic.setNormalizeName(contactTwoLastName);
 
-        // ToDO: Discussion - What if the person got married/divorced and the last name was changed, but first name is still the same?? How to handle this case?
         // Note: Since first names are more common than last names, lets run last names match first.
         //       If they don't match, then we don't need to see if first names match, and can skip the first names completely during the matching calculations completely.
-        AnswerType lNameMatchResults = getLastNameMatchResultWithFirstNameSwap(editedFirstNameOne, editedLastNameOne, editedFirstNameTwo, editedLastNameTwo);
-        if (lNameMatchResults.equals(AnswerType.no)){
-            return AnswerType.no;
+        AnswerType lNameMatchResult = LastNameMatcher.getLastNameMatchResult(normalizedLastNamesOne, normalizedLastNamesTwo);
+        if (!lNameMatchResult.equals(AnswerType.no)){
+            AnswerType fNameMatchResult = FirstNameMatcher.getFirstNameMatchResult(normalizedFirstNamesOne, normalizedFirstNamesTwo);
+            if (lNameMatchResult.equals(AnswerType.yes) && fNameMatchResult.equals(AnswerType.yes)){
+                return AnswerType.yes;
+            } else if (!fNameMatchResult.equals(AnswerType.no)){
+                return AnswerType.maybe;
+            }
         }
 
-        AnswerType fNameMatchResults = getFirstNameMatchResultWithLastNameSwap(editedFirstNameOne, editedLastNameOne, editedFirstNameTwo, editedLastNameTwo);
-        if (fNameMatchResults.equals(AnswerType.no)){
-            return AnswerType.no;
-        }
-
-        if (fNameMatchResults.equals(AnswerType.maybe) || lNameMatchResults.equals(AnswerType.maybe)){
-            return AnswerType.maybe;
-        }
-
-        return AnswerType.yes;
-    }
-    /************************************************************************
-     ********************* Name Comparison Sub Method(s) ********************
-     ************************************************************************/
-    private static AnswerType getFirstNameMatchResultWithLastNameSwap(ArrayList<String> contactOneFirstName, ArrayList<String> contactOneLastName, ArrayList<String> contactTwoFirstName, ArrayList<String> contactTwoLastName){
-        AnswerType firstNameMatchResult = FirstNameMatcher.getFirstNameMatchResult(contactOneFirstName, contactTwoFirstName);
-        if (!firstNameMatchResult.equals(AnswerType.no)){
-            return firstNameMatchResult;
-        }
-
-        return getFirstLastSwapNameMatchResult(contactOneFirstName, contactOneLastName, contactTwoFirstName, contactTwoLastName);
-    }
-
-    private static AnswerType getLastNameMatchResultWithFirstNameSwap(ArrayList<String> contactOneFirstName, ArrayList<String> contactOneLastName, ArrayList<String> contactTwoFirstName, ArrayList<String> contactTwoLastName){
-        AnswerType lastNameMatchResult = LastNameMatcher.getLastNameMatchResult(contactOneLastName, contactTwoLastName);
-        if (!lastNameMatchResult.equals(AnswerType.no)){
-            return lastNameMatchResult;
-        }
-
-        return getFirstLastSwapNameMatchResult(contactOneFirstName, contactOneLastName, contactTwoFirstName, contactTwoLastName);
+        return NameMatchLogic.getFirstLastSwapNameMatchResult(normalizedFirstNamesOne, normalizedLastNamesOne, normalizedFirstNamesTwo, normalizedLastNamesTwo);
     }
 }

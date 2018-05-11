@@ -284,24 +284,27 @@ public class FirstAndLastNameMatchTests {
     @Test
     void doNamesMatch_Yes_Apostrophe() {
         assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("  adriaNno ", "d'onOfio ", " adriaNno", " d onofiO  "), firstAndLastNameFailedMsg("  adriaNno ", "d'onOfio ", " adriaNno", " d onofiO  "));
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "), firstAndLastNameFailedMsg(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "));
     }
 
     @Test
     void doNamesMatch_Yes_Apostrophe_Punctuation() {
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("  josepHine-mc-vitty ", "d'onOfio ", " josephiNe mc vItty", " d onofiO  "), firstAndLastNameFailedMsg("  josepHine-mc-vitty ", "d'onOfio ", " josephiNe mc vItty", " d onofiO  "));
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" josepHine mc vitty  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "), firstAndLastNameFailedMsg(" josepHine mc vitty  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "));
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("  josepHine-mc-vitty ", "d onofiO ", " josephiNe mc vItty", " d'onOfio  "), firstAndLastNameFailedMsg("  josepHine-mc-vitty ", "d'onOfio ", " josephiNe mc vItty", " d onofiO  "));
     }
 
     @Test
     void doNamesMatch_YesMaybe_Apostrophe_Hyphenated() {
         assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("  josepHine-mc-vitty ", "d'onOfio ", " josephiNe vItty", " d onofiO  "), firstAndLastNameFailedMsg("  josepHine-mc-vitty ", "d'onOfio ", " josephiNe vItty", " d onofiO  "));
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" mc  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "), firstAndLastNameFailedMsg(" mc vitty  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "));
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" mc  ", " d oNofio", "Josephine-mc-vitty ", "  d'onoFio "), firstAndLastNameFailedMsg(" mc vitty  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "));
     }
 
     @Test
     void doNamesMatch_No_Apostrophe_DifferentFirstName() {
         assertEquals(AnswerType.no, CompareContactParts.doNamesMatch("  josepHine-mc-vitty ", "d'onOfio ", " josepH", " d onofiO  "), firstAndLastNameFailedMsg("  josepHine-mc-vitty ", "d'onOfio ", " josepH", " d onofiO  "));
         assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" joSeph  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "), firstAndLastNameFailedMsg(" joSeph  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "));
+    }
+
+    @Test
+    void doNamesMatch_No_Apostrophe_NameCombined() { // Note: In the future, we may let this return type be decided by the user as yes or maybe.
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "), firstAndLastNameFailedMsg(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "));
     }
 }

@@ -1,32 +1,25 @@
 /* Created by James Page on May 8th, 2018
- * Contains the order in which the last names will be considered a match or not...
- * Exact Match (and matched with punctuations), matched with hyphenated parts, matched with apostrophe.
+ * Contains the methods deciding the order of comparisons in which the last names will be considered a match or not...
+ * Exact Match (and matched with punctuations), and matched with hyphenated parts.
  */
 
 package com.cft.contactmerge;
 
 import java.util.ArrayList;
 
-public abstract class LastNameMatcher extends NameMatchLogic {
-    public static AnswerType getLastNameMatchResult(ArrayList<String> contactOneLastName, ArrayList<String> contactTwoLastName){
+public abstract class LastNameMatcher {
+    public static AnswerType getLastNameMatchResult(ArrayList<String> contactOneLastNames, ArrayList<String> contactTwoLastNames){
         //Note: if both names contained punctuations and were split into an array of parts of a name...
         //      and both names containing their own parts are exactly the same...
         //      the exactMatch will be confirmed
-        if (isNamesExactMatch(contactOneLastName, contactTwoLastName)){
+        if (NameMatchLogic.isNamesExactMatch(contactOneLastNames, contactTwoLastNames)){
             return AnswerType.yes;
         }
 
-        /* Check if both names are split based on punctuation, and these names parts are in reversing/mixed order
-        if ((contactOneFirstName.size() > 1 && contactTwoFirstName.size() > 1) && contactOneFirstName.size() == contactTwoFirstName.size()){
-            // ToDO: Should I include code to handle this scenario?? ReturnType if Found?
-        }
-        */
-
-        if (doNamesContainMultipleParts(contactOneLastName, contactTwoLastName)){
-            if (isNameMatchWithHyphens(contactOneLastName, contactTwoLastName)) {
-                return getHyphinatedNamesMatchResults(contactOneLastName, contactTwoLastName); // yes or maybe
-            } else if (combineNameParts(contactOneLastName).equals(combineNameParts(contactTwoLastName))){
-                return AnswerType.yes;
+        // Match Hyphenated Names
+        if (NameMatchLogic.isNamesContainMultipleParts(contactOneLastNames, contactTwoLastNames)){
+            if (NameMatchLogic.isNamePartsMatch(contactOneLastNames, contactTwoLastNames)) {
+                return NameMatchLogic.getYesOrMaybeHyphenatedNameMatch(contactOneLastNames, contactTwoLastNames); // yes or maybe
             }
         }
         return AnswerType.no;

@@ -19,7 +19,7 @@ class CompareContactPartsTest {
     void doNamesMatch_Yes() {
         assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" JoHn", "DOE ", "JOHN ", " Doe  "));
     }
-
+    //--------------------------------------------------------------------- Basic Tests --------------------------------------------------------------------
     @Test
     void doNamesMatch_No_DifferentLastName() {
         assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" JoHn", "DOE ", "JOHN ", " aDams  "));
@@ -34,6 +34,12 @@ class CompareContactPartsTest {
     @Test
     void doNamesMatch_Yes_IgnoreMultiPunctuationInFirstAndLastName() {
         assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("aN-De-denIse ", " Sa-LA-Democh ", " An dE Denise ", "sa la democh  "));
+    }
+
+    //--------------------------------------------------------------------- Punctuation --------------------------------------------------------------------
+    @Test
+    void doNamesMatch_Maybe_IgnoreMultiPunctuationInFirstAndLastNameDifferentOrder() {
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("aN-De-denIse ", " Sa-LA-Democh ", " An Denise dE", "sa democh la  "));
     }
 
     //--------------------------------------------------------------------- Hyphenated First and Last Names ---------------------------------------------------------------------
@@ -64,10 +70,14 @@ class CompareContactPartsTest {
 
     //------------------------------------------------------------------------------- Other Tests -------------------------------------------------------------------------------
     @Test
-    void doNamesMatch_Yes_Apostrophe() {
+    void doNamesMatch_YesMaybe_Apostrophe() {
         assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("  adriaNno ", "d'onOfio ", " adriaNno", " d onofiO  "), firstAndLastNameFailedMsg("  adriaNno ", "d'onOfio ", " adriaNno", " d onofiO  "));
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "), firstAndLastNameFailedMsg(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "));
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" mc  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "), firstAndLastNameFailedMsg(" mc vitty  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "));
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" mc  ", " d oNofio", "Josephine-mc-vitty ", "  d'onoFio "), firstAndLastNameFailedMsg(" mc vitty  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "));
+    }
+
+    @Test
+    void doNamesMatch_No_Apostrophe_NameCombined() { // Note: In the future, we may let this return type be decided by the user as yes or maybe.
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "), firstAndLastNameFailedMsg(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "));
     }
 
     /*************************
