@@ -19,7 +19,7 @@ public class XmlImporter implements IImporter, Iterable<Contact> {
     private Map<String, String> columnMap;
     private NodeList dataNodes;
 
-    public void Load(String filename) throws FileNotFoundException
+    public void Load(String filename) throws FileNotFoundException, IOException
     {
         if (filename == null || filename.trim() == "")
         {
@@ -33,9 +33,9 @@ public class XmlImporter implements IImporter, Iterable<Contact> {
             throw new FileNotFoundException(String.format("Unable to find %s", filename));
         }
 
-        InputStream inputStream = new FileInputStream(inputFile);
-
-        Load(inputStream);
+        try (InputStream inputStream = new FileInputStream(inputFile)) {
+            Load(inputStream);
+        }
     }
 
     public void Load(InputStream inputStream)
@@ -134,5 +134,4 @@ public class XmlImporter implements IImporter, Iterable<Contact> {
 
         return it;
     }
-
 }

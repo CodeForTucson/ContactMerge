@@ -52,14 +52,14 @@ class XmlImporterTest {
     }
 
     @Test
-    void XmlImporter_Load_EmptyStream() {
+    void XmlImporter_Load_EmptyStream() throws IOException {
         XmlImporter importer = new XmlImporter();
 
         String testString = "";
 
-        InputStream inputStream = new ByteArrayInputStream(testString.getBytes());
-
-        assertThrows(UnknownFormatConversionException.class, () -> importer.Load(inputStream));
+        try (InputStream inputStream = new ByteArrayInputStream(testString.getBytes())) {
+            assertThrows(UnknownFormatConversionException.class, () -> importer.Load(inputStream));
+        }
     }
 
     /* --------------------------------------------------------------------------------
@@ -93,33 +93,36 @@ class XmlImporterTest {
     }
 
     @Test
-    void XmlImporter_Load_EmptyDataSet() {
+    void XmlImporter_Load_EmptyDataSet() throws IOException {
         XmlImporter importer = new XmlImporter();
 
         String testString = "<Data></Data>";
 
-        InputStream inputStream = new ByteArrayInputStream(testString.getBytes());
-        importer.Load(inputStream);
+        try (InputStream inputStream = new ByteArrayInputStream(testString.getBytes())) {
+            importer.Load(inputStream);
+        }
 
         assertFalse(importer.iterator().hasNext());
     }
 
     @Test
-    void XmlImporter_IteratorHasNext() {
+    void XmlImporter_IteratorHasNext() throws IOException {
         XmlImporter importer = new XmlImporter();
 
-        InputStream inputStream = new ByteArrayInputStream(testXml.getBytes());
-        importer.Load(inputStream);
+        try (InputStream inputStream = new ByteArrayInputStream(testXml.getBytes())) {
+           importer.Load(inputStream);
+        }
 
         assertTrue(importer.iterator().hasNext());
     }
 
     @Test
-    void XmlImporter_IteratorReturnsExpectedData() {
+    void XmlImporter_IteratorReturnsExpectedData() throws IOException {
         XmlImporter importer = new XmlImporter();
 
-        InputStream inputStream = new ByteArrayInputStream(testXml.getBytes());
-        importer.Load(inputStream);
+        try (InputStream inputStream = new ByteArrayInputStream(testXml.getBytes())) {
+            importer.Load(inputStream);
+        }
 
         ArrayList<String> lastNames = new ArrayList<String>(Arrays.asList("Doe", "Smith"));
         ArrayList<String> firstNames = new ArrayList<String>(Arrays.asList("John", "Adam"));
