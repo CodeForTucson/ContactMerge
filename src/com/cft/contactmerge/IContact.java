@@ -25,5 +25,5 @@ public interface IContact {
     public void setEmail(String email);
     public String getEmail();
 
-    public ContactMatchResult CompareTo(Contact compareContact);
+    public ContactMatchResult CompareTo(IContact compareContact);
 }

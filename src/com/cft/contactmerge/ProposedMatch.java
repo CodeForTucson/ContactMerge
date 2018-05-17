@@ -6,32 +6,59 @@
 package com.cft.contactmerge;
 import javax.naming.OperationNotSupportedException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProposedMatch {
-    private Contact contactToMerge;
-    private List<Contact> possibleTargetContacts;
+    private IContact contactToMerge;
+    private List<IContact> possibleTargetContacts;
+    private int proposedTargetIndex;
 
-    public ProposedMatch(Contact contactToMerge, List<Contact> possibleTargetContacts)
-    {
+    public ProposedMatch(IContact contactToMerge, List<IContact> possibleTargetContacts) {
+        if (contactToMerge == null) {
+            throw new IllegalArgumentException("contactToMerge can not be null");
+        }
+
+        if (possibleTargetContacts == null) {
+            throw new IllegalArgumentException("possibleTargetContacts can not be null");
+        }
+
         this.contactToMerge = contactToMerge;
         this.possibleTargetContacts = possibleTargetContacts;
-    }
-    public Contact getContactToMerge()
-    {
-        return null;
+        this.proposedTargetIndex = -1;
     }
 
-    public List<Contact> getPossibleTargetContacts()
+    public IContact getContactToMerge()
     {
-        return null;
+        return this.contactToMerge;
+    }
+
+    public List<IContact> getPossibleTargetContacts() {
+        return this.possibleTargetContacts;
     }
 
     public int getProposedTargetIndex()
     {
-        return -1;
+        return this.proposedTargetIndex;
     }
 
-    public void setProposedTargetIndex(int proposedTargetIndex)
-    {
+    private void verifyIndex(int index) {
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("proposedTargetIndex must be greater than zero");
+        }
+
+        if (index >= possibleTargetContacts.size()) {
+            throw new IndexOutOfBoundsException("proposedTargetIndex must be less than size of the possibleTargetContacts list");
+        }
+    }
+    public void setProposedTargetIndex(int proposedTargetIndex) {
+        verifyIndex(proposedTargetIndex);
+        this.proposedTargetIndex = proposedTargetIndex;
+    }
+
+    public void removeTargetContact(int index) {
+        verifyIndex(index);
+
+        this.possibleTargetContacts.remove(index);
+        this.proposedTargetIndex = -1;
     }
 }

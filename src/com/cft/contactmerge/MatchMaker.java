@@ -8,22 +8,47 @@ package com.cft.contactmerge;
 import java.util.*;
 
 public class MatchMaker {
-    public MatchMaker(Collection<Contact> existingContacts, Collection<Contact> contactsToMerge)
-    {
+    private List<ProposedMatch> proposedMatches;
+    private Collection<IContact> contactsToMerge;
+    private Collection<IContact> existingContacts;
 
+    public MatchMaker(Collection<IContact> existingContacts, Collection<IContact> contactsToMerge) {
+        if (existingContacts == null) {
+            throw new IllegalArgumentException("existingContacts can not be null");
+        }
+
+        if (contactsToMerge == null) {
+            throw new IllegalArgumentException("contactsToMerge can not be null");
+        }
+
+        this.contactsToMerge = contactsToMerge;
+        this.existingContacts = existingContacts;
     }
 
-    public List<ProposedMatch> getProposedMatches()
-    {
-        return null;
+    private void searchForMatches() {
+        this.proposedMatches = new ArrayList<ProposedMatch>();
+
+        for(IContact contactToMerge: contactsToMerge) {
+            List<IContact> possibleMatches = new ArrayList<IContact>();
+
+            for(IContact existingContact: existingContacts) {
+                if (contactToMerge.CompareTo(existingContact).getMatchType() != ContactMatchType.NoMatch) {
+                    possibleMatches.add(existingContact);
+                }
+
+            }
+
+            ProposedMatch proposedMatch = new ProposedMatch(contactToMerge, possibleMatches);
+
+            this.proposedMatches.add(proposedMatch);
+        }
     }
 
-    public void setSelectedMatch(int contactIndex, int selectedMatchIndex)
-    {
-    }
+    public List<ProposedMatch> getProposedMatches() {
+        if (this.proposedMatches == null) {
+            searchForMatches();
+        }
 
-    public void removeMatch(int contactIndex)
-    {
-
+        return this.proposedMatches;
     }
 }
