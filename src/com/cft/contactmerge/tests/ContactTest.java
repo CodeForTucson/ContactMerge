@@ -1,6 +1,10 @@
 package com.cft.contactmerge.tests;
 
 import com.cft.contactmerge.ContactMatchType;
+import com.cft.contactmerge.contact.Address;
+import com.cft.contactmerge.contact.Email;
+import com.cft.contactmerge.contact.Name;
+import com.cft.contactmerge.contact.Phone;
 import org.junit.jupiter.api.Test;
 import com.cft.contactmerge.AnswerType;
 import com.cft.contactmerge.Contact;
@@ -9,52 +13,49 @@ import static org.junit.jupiter.api.Assertions.*;
 class ContactTest {
 
     @Test
-    void setFirstName() {
+    void setName() {
         Contact newContact = new Contact();
-        newContact.setFirstName("abc");
-        assertEquals("abc", newContact.getFirstName());
-    }
+        Name name = new Name("john", "leon", "adams", "dr", "III");
+        newContact.setName(name);
 
-    @Test
-    void setLastName() {
-        Contact newContact = new Contact();
-        newContact.setLastName("def");
-        assertEquals("def", newContact.getLastName());
+        assertEquals("john", newContact.getName().getFirstName());
+        assertEquals("leon", newContact.getName().getMiddleName());
+        assertEquals("adams", newContact.getName().getLastName());
+        assertEquals("dr", newContact.getName().getPrefix());
+        assertEquals("III", newContact.getName().getSuffix());
     }
 
     @Test
     void setAddress() {
         Contact newContact = new Contact();
-        newContact.setAddress("ghi");
-        assertEquals("ghi", newContact.getAddress());
-    }
-
-    @Test
-    void setCity() {
-        Contact newContact = new Contact();
-        newContact.setCity("jkl");
-        assertEquals("jkl", newContact.getCity());
-    }
-
-    @Test
-    void setZip() {
-        Contact newContact = new Contact();
-        newContact.setZip("mno");
-        assertEquals("mno", newContact.getZip());
+        Address address = new Address("ghi", "4", "hts", "az", "usa", "85713", "????");
+        newContact.setAddress(address);
+        assertEquals("ghi", newContact.getAddress().getStreetAddress());
+        assertEquals("4", newContact.getAddress().getApartment());
+        assertEquals("hts", newContact.getAddress().getCity());
+        assertEquals("az", newContact.getAddress().getState());
+        assertEquals("usa", newContact.getAddress().getCountry());
+        assertEquals("85713", newContact.getAddress().getZip());
+        assertEquals("????", newContact.getAddress().getAddressType());
     }
 
     @Test
     void setPhone() {
         Contact newContact = new Contact();
-        newContact.setPhone("pqr");
-        assertEquals("pqr", newContact.getPhone());
+        Phone phone = new Phone("mobile", "520", "7734512");
+        newContact.setPhone(phone);
+        assertEquals("mobile", newContact.getPhone().getPhoneType());
+        assertEquals("520", newContact.getPhone().getAreaCode());
+        assertEquals("7734512", newContact.getPhone().getPhoneNumber());
     }
 
     @Test
     void setEmail() {
         Contact newContact = new Contact();
-        newContact.setEmail("stu");
-        assertEquals("stu", newContact.getEmail());
+        Email email = new Email("yahoo", "jfk@yahoo.com");
+        newContact.setEmail(email);
+        assertEquals("yahoo", newContact.getEmail().getEmailType());
+        assertEquals("jfk@yahoo.com", newContact.getEmail().getEmailAddress());
     }
 
     // TODO: Need to add rest of tests for isMatch()
@@ -62,24 +63,24 @@ class ContactTest {
     @Test
     void isMatch_NoMatchOnAny() {
         Contact c1 = new Contact();
-        c1.setFirstName("John");
-        c1.setLastName("Doe");
-        c1.setAddress("123 Main St");
-        c1.setCity("Tucson");
-        c1.setState("AZ");
-        c1.setZip("85750");
-        c1.setPhone("(520) 123-4567");
-        c1.setEmail("jdoe@gmail.com");
+        Name name1 = new Name("John", "Ray", "Doe", "Dr", "III");
+        Address address1 = new Address("123 Main St", "4", "Tucson", "AZ", "USA", "85750", "????");
+        Phone phone1 = new Phone("mobile", "520", "1234567");
+        Email email1 = new Email("gmail", "jdoe@gmail.com");
+        c1.setName(name1);
+        c1.setAddress(address1);
+        c1.setPhone(phone1);
+        c1.setEmail(email1);
 
         Contact c2 = new Contact();
-        c2.setFirstName("Adam");
-        c2.setLastName("Smith");
-        c2.setAddress("1400 Broadway");
-        c2.setCity("Boston");
-        c2.setState("MA");
-        c2.setZip("02144");
-        c2.setPhone("(617) 123-4567");
-        c2.setEmail("asmith@comcast.net");
+        Name name2 = new Name("Adam", "", "Smith", "", "");
+        Address address2 = new Address("1400 Broadway", "8", "London", "", "England", "N14", "");
+        Phone phone2 = new Phone("home", "617", "7654321");
+        Email email2 = new Email("comcast", "asmith@comcast.net");
+        c2.setName(name2);
+        c2.setAddress(address2);
+        c2.setPhone(phone2);
+        c2.setEmail(email2);
 
         assertEquals(ContactMatchType.NoMatch, c1.CompareTo(c2).getMatchType());
     }

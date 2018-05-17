@@ -5,9 +5,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import com.cft.contactmerge.*;
 
 class CompareContactPartsTest {
-    /****************************************************************************************************************************************************************************
-     ********************************************************************* Compare First And Last Name Tests ********************************************************************
-     ****************************************************************************************************************************************************************************/
+    /*******************************************************************************************************************
+     **************************************** Compare First And Last Name Tests ****************************************
+     *******************************************************************************************************************/
     /* preconditions...
      * All test cases must include a check for trailing white spaces and different upper/lower case letters.
      */
@@ -80,10 +80,9 @@ class CompareContactPartsTest {
         assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "), firstAndLastNameFailedMsg(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "));
     }
 
-    /*************************
-     * Compare Address Tests *
-     *************************/
-
+    /*******************************************************************************************************************
+     ******************************************* Compare Street Address Tests ******************************************
+     *******************************************************************************************************************/
     @Test
     void doAddressesMatch_Yes_IgnoreCase() {
         assertEquals(AnswerType.yes, CompareContactParts.doAddressesMatch("123 main Street", "123 Main street"));
@@ -199,6 +198,9 @@ class CompareContactPartsTest {
         assertEquals(AnswerType.no, CompareContactParts.doAddressesMatch("123 Main St, Unit 10", "123 Main St, Unit 11"));
     }
 
+    /*******************************************************************************************************************
+     ************************************************ Compare City Tests ***********************************************
+     *******************************************************************************************************************/
     @Test
     void doCitiesMatch_Yes_IgnoreCase() {
         assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch("Tucson", "TUCSON"));
@@ -214,6 +216,9 @@ class CompareContactPartsTest {
         assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch("Tucson", "Phoenix"));
     }
 
+    /*******************************************************************************************************************
+     *********************************************** Compare State Tests ***********************************************
+     *******************************************************************************************************************/
     @Test
     void doStatesMatch_Yes_IgnoreCase() {
         assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch("AZ", "az"));
@@ -236,6 +241,9 @@ class CompareContactPartsTest {
         assertEquals(AnswerType.no, CompareContactParts.doStatesMatch("New York", "Arizona"));
     }
 
+    /*******************************************************************************************************************
+     ******************************************** Compare Phone Number Tests *******************************************
+     *******************************************************************************************************************/
     @Test
     void doPhoneNumbersMatch_Yes_IgnoreSpaces() {
         assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch("520 123 4567", "5201234567"));
@@ -252,6 +260,9 @@ class CompareContactPartsTest {
         assertEquals(AnswerType.no, CompareContactParts.doPhoneNumbersMatch("(520) 123-4567", "(520) 123-4667"));
     }
 
+    /*******************************************************************************************************************
+     *********************************************** Compare Email Tests ***********************************************
+     *******************************************************************************************************************/
     @Test
     void doEmailsMatch_Yes_IgnoreSpaces() {
         assertEquals(AnswerType.yes, CompareContactParts.doEmailsMatch("jdoe@yahoo.com", " jdoe@yahoo.com "));

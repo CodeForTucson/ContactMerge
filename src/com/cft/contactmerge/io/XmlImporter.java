@@ -7,6 +7,11 @@ import java.util.*;
 import java.io.*;
 import java.util.stream.*;
 import javax.xml.parsers.*;
+
+import com.cft.contactmerge.contact.Address;
+import com.cft.contactmerge.contact.Email;
+import com.cft.contactmerge.contact.Name;
+import com.cft.contactmerge.contact.Phone;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -116,17 +121,24 @@ public class XmlImporter implements IImporter, Iterable<Contact> {
             @Override
             public Contact next() {
                 Contact contact = new Contact();
+                Name name = new Name();
+                Address address = new Address();
+                Phone phone = new Phone();
+                Email email = new Email();
 
                 Map<String, String> data = getContactValues(dataNodes.item(nodeIndex++));
-
-                contact.setLastName(data.get(columnMap.get("indiv_lastname")));
-                contact.setFirstName(data.get(columnMap.get("indiv_firstname")));
-                contact.setAddress(data.get(columnMap.get("donor_address1")));
-                contact.setCity(data.get(columnMap.get("donor_city")));
-                contact.setState(data.get(columnMap.get("donor_state")));
-                contact.setZip(data.get(columnMap.get("donor_zip")));
-                contact.setPhone(data.get(columnMap.get("donor_phone")));
-                contact.setEmail(data.get(columnMap.get("donor_email")));
+                name.setFirstName(data.get(columnMap.get("indiv_lastname")));
+                name.setLastName(data.get(columnMap.get("indiv_firstname")));
+                address.setStreetAddress(data.get(columnMap.get("donor_address1")));
+                address.setCity(data.get(columnMap.get("donor_city")));
+                address.setState(data.get(columnMap.get("donor_state")));
+                address.setZip(data.get(columnMap.get("donor_zip")));
+                phone.setPhoneNumber(data.get(columnMap.get("donor_phone")));
+                email.setEmailAddress(data.get(columnMap.get("donor_email")));
+                contact.setName(name);
+                contact.setAddress(address);
+                contact.setPhone(phone);
+                contact.setEmail(email);
 
                 return contact;
             }

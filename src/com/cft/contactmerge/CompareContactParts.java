@@ -8,7 +8,7 @@ public class CompareContactParts {
 
     public static AnswerType doAddressesMatch(String address1, String address2)
     {
-        return null;
+        return AddressMatchSelector.getStreetAddressMatchResultDefaultComparisons(address1, address2);
     }
 
     public static AnswerType doCitiesMatch(String city1, String city2)

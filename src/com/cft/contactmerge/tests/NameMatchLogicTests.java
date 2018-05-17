@@ -184,7 +184,7 @@ public class NameMatchLogicTests {
      ***************************** setNormalizeName Method *****************************
      ***********************************************************************************/
     @Test
-    void setNormalizeName_NoAlphaCharactersRemovedUpperAndLower_TrailingWhiteSpaces(){
+    void setNormalizeName_equals_NoAlphaCharactersRemovedUpperAndLower_TrailingWhiteSpaces(){
         ArrayList<String> nameParts = setNormalizeName(" aBcDeFgHiJkLmNoPqRsTuVwXyZ   ");
         ArrayList<String> expectedNameParts = new ArrayList<>(Arrays.asList("abcdefghijklmnopqrstuvwxyz"));
 
@@ -192,7 +192,7 @@ public class NameMatchLogicTests {
     }
 
     @Test
-    void setNormalizeName_WhiteSpacesInBetween(){
+    void setNormalizeName_equals_WhiteSpacesInBetween(){
         ArrayList<String> nameParts = setNormalizeName(" aB cDe  FgHi JkL   mNoPqRs TuVwX   yZ   ");
         ArrayList<String> expectedNameParts = new ArrayList<>(Arrays.asList("ab", "cde", "fghi", "jkl", "mnopqrs", "tuvwx", "yz"));
 
@@ -200,7 +200,7 @@ public class NameMatchLogicTests {
     }
 
     @Test
-    void setNormalizeName_CharactersNumbersWhiteSpacesInBetween(){
+    void setNormalizeName_equals_CharactersNumbersWhiteSpacesInBetween(){
         ArrayList<String> nameParts = setNormalizeName(" a1B c,D.e  F/g;H'i J[k]L   m\\N-o=P`q|R_s T+u{V}w:X   y\"Z   ");
         ArrayList<String> expectedNameParts = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
 
@@ -211,7 +211,7 @@ public class NameMatchLogicTests {
      **************************** getNumOfCharsInName Method ***************************
      ***********************************************************************************/
     @Test
-    void getNumOfCharsInName_true_OnePart(){
+    void getNumOfCharsInName_equals_OnePart(){
         ArrayList<String> nameParts = new ArrayList<>(Arrays.asList("abcdefghijklmnopqrstuvwxyz"));
         int numOfCharactersInName = getNumOfCharsInName(nameParts);
 
@@ -219,7 +219,7 @@ public class NameMatchLogicTests {
     }
 
     @Test
-    void getNumOfCharsInName_true_MultipleParts(){
+    void getNumOfCharsInName_equals_MultipleParts(){
         ArrayList<String> nameParts = new ArrayList<>(Arrays.asList("ab", "cde", "fghi", "jkl", "mnopqrs", "tuvwx", "yz"));
         int numOfCharactersInName = getNumOfCharsInName(nameParts);
 
@@ -227,7 +227,7 @@ public class NameMatchLogicTests {
     }
 
     @Test
-    void getNumOfCharsInName_true_EachLetter(){
+    void getNumOfCharsInName_equals_EachLetter(){
         ArrayList<String> nameParts = new ArrayList<>(Arrays.asList("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"));
         int numOfCharactersInName = getNumOfCharsInName(nameParts);
 
@@ -235,7 +235,7 @@ public class NameMatchLogicTests {
     }
 
     @Test
-    void getNumOfCharsInName_true_OneCharacter(){
+    void getNumOfCharsInName_equals_OneCharacter(){
         ArrayList<String> nameParts = new ArrayList<>(Arrays.asList("a"));
         int numOfCharactersInName = getNumOfCharsInName(nameParts);
 
@@ -243,7 +243,7 @@ public class NameMatchLogicTests {
     }
 
     @Test
-    void getNumOfCharsInName_true_EmptyString(){
+    void getNumOfCharsInName_equals_EmptyString(){
         ArrayList<String> nameParts = new ArrayList<>(Arrays.asList(""));
         int numOfCharactersInName = getNumOfCharsInName(nameParts);
 
@@ -251,7 +251,7 @@ public class NameMatchLogicTests {
     }
 
     @Test
-    void getNumOfCharsInName_true_EmptyArrayList(){
+    void getNumOfCharsInName_equals_EmptyArrayList(){
         ArrayList<String> nameParts = new ArrayList<>();
         int numOfCharactersInName = getNumOfCharsInName(nameParts);
 

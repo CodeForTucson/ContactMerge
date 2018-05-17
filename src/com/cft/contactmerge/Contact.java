@@ -1,46 +1,59 @@
 package com.cft.contactmerge;
 
+import com.cft.contactmerge.contact.Address;
+import com.cft.contactmerge.contact.Email;
+import com.cft.contactmerge.contact.Name;
+import com.cft.contactmerge.contact.Phone;
+
 public class Contact implements IContact {
-    private String firstName;
-    private String lastName;
+    private Name name = new Name();
 
     // TODO: Should support multiple addresses, phones, and emails for each contact
-    private String address;
-    private String city;
-    private String state;
-    private String zip;
-    private String phone;
-    private String email;
+    private Address address = new Address();
+    private Phone phone = new Phone();
+    private Email email = new Email();
 
-    public void setFirstName(String firstName)
-    {
-        this.firstName = firstName;
+    public void setName(Name name) {
+        this.name = name;
     }
-    public String getFirstName() { return this.firstName; }
 
-    public void setLastName(String lastName)
-    {
-        this.lastName = lastName;
+    public Name getName(){
+        return this.name;
     }
-    public String getLastName() { return this.lastName; }
 
-    public void setAddress(String address) { this.address = address; }
-    public String getAddress() { return this.address; };
+    public void setFirstName(String firstName){
+        this.name.setFirstName(firstName);
+    }
 
-    public void setCity(String city) { this.city = city; };
-    public String getCity() { return this.city; };
+    public String getFirstName(){
+        return this.name.getFirstName();
+    }
 
-    public void setState(String state) { this.state = state; };
-    public String getState() { return this.state; };
+    public void setLastName(String lastName){
+        this.name.setLastName(lastName);
+    }
 
-    public void setZip(String zip) { this.zip = zip; };
-    public String getZip() {return this.zip; };
+    public String getLastName(){
+        return this.name.getLastName();
+    }
 
-    public void setPhone(String phone) { this.phone = phone; };
-    public String getPhone() { return this.phone; };
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
-    public void setEmail(String email) { this.email = email; };
-    public String getEmail() { return this.email; };
+    public Address getAddress() { return this.address; }
+
+    public void setPhone(Phone phone) {
+        this.phone = phone;
+    }
+    public Phone getPhone() { return this.phone; }
+
+    public void setEmail(Email email) {
+        this.email = email;
+
+    }
+
+    public Email getEmail() { return this.email; }
 
     public ContactMatchResult CompareTo(IContact compareContact)
     {
