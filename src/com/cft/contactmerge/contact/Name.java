@@ -13,13 +13,7 @@ public class Name implements IContactProperty<Name>
     /*******************************************************************************************************************
      *************************************************** Constructors **************************************************
      *******************************************************************************************************************/
-    public Name(){
-        setFirstName("");
-        setMiddleName("");
-        setLastName("");
-        setPrefix("");
-        setSuffix("");
-    }
+    public Name(){}
 
     public Name(String firstName, String middleName, String lastName, String prefix, String suffix){
         setFirstName(firstName);
@@ -30,7 +24,7 @@ public class Name implements IContactProperty<Name>
     }
 
     /*******************************************************************************************************************
-     *************************************************** Get Methods ***************************************************
+     ************************************************* Get/Set Methods *************************************************
      *******************************************************************************************************************/
     public Name getValue()
     {
@@ -42,8 +36,14 @@ public class Name implements IContactProperty<Name>
         return this.firstName;
     }
 
+    public void setFirstName(String firstName){ this.firstName = firstName; }
+
     public String getMiddleName() {
         return this.middleName;
+    }
+
+    public void setMiddleName(String middleName) {
+        this.middleName = middleName;
     }
 
     public String getLastName()
@@ -51,27 +51,18 @@ public class Name implements IContactProperty<Name>
         return this.lastName;
     }
 
+    public void setLastName(String lastName){ this.lastName = lastName; }
+
     public String getPrefix(){
         return this.prefix;
     }
 
-    public String getSuffix(){
-        return this.suffix;
-    }
-
-    /*******************************************************************************************************************
-     *************************************************** Set Methods ***************************************************
-     *******************************************************************************************************************/
-    public void setFirstName(String firstName){ this.firstName = firstName; }
-
-    public void setMiddleName(String middleName) {
-        this.middleName = middleName;
-    }
-
-    public void setLastName(String lastName){ this.lastName = lastName; }
-
     public void setPrefix(String prefix) {
         this.prefix = prefix;
+    }
+
+    public String getSuffix(){
+        return this.suffix;
     }
 
     public void setSuffix(String suffix) {
@@ -87,6 +78,6 @@ public class Name implements IContactProperty<Name>
     }
 
     public String toString() {
-        return getFirstName() + ", " + getMiddleName() + ", " + getPrefix() + ", " + getLastName() + ", " + getSuffix();
+        return getFirstName() + ", " + getMiddleName() + ", " + getLastName() + ", " + getPrefix() + ", " + getSuffix();
     }
 }

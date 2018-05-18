@@ -13,6 +13,9 @@ public class Contact implements IContact {
     private Phone phone = new Phone();
     private Email email = new Email();
 
+    /*******************************************************************************************************************
+     ************************************************* Get/Set Methods *************************************************
+     *******************************************************************************************************************/
     public void setName(Name name) {
         this.name = name;
     }
@@ -21,6 +24,9 @@ public class Contact implements IContact {
         return this.name;
     }
 
+    /* ToDo: set/get FirstName and LastName methods should be removed once they are no longer used,
+     *       Since these methods are already a part of the Name object
+     */
     public void setFirstName(String firstName){
         this.name.setFirstName(firstName);
     }
@@ -50,11 +56,13 @@ public class Contact implements IContact {
 
     public void setEmail(Email email) {
         this.email = email;
-
     }
 
     public Email getEmail() { return this.email; }
 
+    /*******************************************************************************************************************
+     *************************************************** Sub-Methods ***************************************************
+     *******************************************************************************************************************/
     public ContactMatchResult CompareTo(IContact compareContact)
     {
         // TODO: Need to add logic

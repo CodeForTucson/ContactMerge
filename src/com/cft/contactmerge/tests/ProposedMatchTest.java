@@ -39,8 +39,8 @@ class ProposedMatchTest {
         Contact expectedContactToMerge = new Contact();
         expectedContactToMerge.setFirstName("John");
         expectedContactToMerge.setLastName("Doe");
-        expectedContactToMerge.setAddress("123 Main St");
-        expectedContactToMerge.setPhone("(520) 555-1234");
+        expectedContactToMerge.getAddress().setStreetAddress("123 Main St");
+        expectedContactToMerge.getPhone().setPhoneNumber("(520) 555-1234");
 
         ProposedMatch proposedMatch = new ProposedMatch(expectedContactToMerge, new ArrayList<IContact>());
 
