@@ -74,4 +74,22 @@ public class AddressTests {
         Address address = new Address("ghi", "4", "hts", "az", "usa", "85713");
         assertEquals("ghi, 4, hts, az, usa, 85713",address.toString());
     }
+
+    @Test
+    void Address_toString_OnlyZip(){
+        Address address = new Address("", "", "", "", "", "85713");
+        assertEquals("85713",address.toString());
+    }
+
+    @Test
+    void Address_toString_MissingCountry(){
+        Address address = new Address("ghi", "4", "hts", "az", "", "85713");
+        assertEquals("ghi, 4, hts, az, 85713",address.toString());
+    }
+
+    @Test
+    void Address_toString_OnlyStreetAddress(){
+        Address address = new Address("ghi", "", "", "", "", "");
+        assertEquals("ghi",address.toString());
+    }
 }

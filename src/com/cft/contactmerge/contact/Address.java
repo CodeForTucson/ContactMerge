@@ -1,5 +1,7 @@
 package com.cft.contactmerge.contact;
 
+import com.cft.contactmerge.AnswerType;
+
 public class Address {
     String streetAddress;
     String apartment;
@@ -77,6 +79,40 @@ public class Address {
      *************************************************** Sub-Methods ***************************************************
      *******************************************************************************************************************/
     public String toString() {
-        return getStreetAddress() + ", " + getApartment() + ", " + getCity() + ", " +
-                getState() + ", " + getCountry() + ", " + getZip(); }
+        StringBuilder fullAddress = new StringBuilder();
+        String[] addressParts = {getStreetAddress(), getApartment(), getCity(), getState(), getCountry(), getZip()};
+
+        for (String part: addressParts){
+            if (!part.isEmpty()){
+                fullAddress.append(part).append(", ");
+            }
+        }
+
+        if (!fullAddress.toString().isEmpty()){
+            fullAddress.delete(fullAddress.length() - 2, fullAddress.length());
+        }
+
+        return fullAddress.toString();
+    }
+
+    public AnswerType isAddressMatch(Address otherAddress){
+        /* ToDo: Discuss compare parts combinations for final return type...
+         * (streetAddress = yes | apartment = yes | city = yes | state = yes | country = yes | zip = yes) = Answertype.yes
+         * (streetAddress = no | apartment = no | city = no | state = no | country = no | zip = no) = Answertype.no
+         * (streetAddress = yes | apartment = no | city = yes | state = no | country = yes | zip = no) = Answertype.maybe??
+         * (streetAddress = yes | apartment = maybe | city = yes | state = maybe | country = yes | zip = maybe) = Answertype.maybe??
+         * (streetAddress = maybe | apartment = no | city = yes | state = yes | country = yes | zip = maybe) = Answertype.maybe??
+         * ect...
+         * also discuss what to return if an address part is null (e.g.: this.country == null)
+         */
+        return AnswerType.no;
+    }
+
+    public AnswerType isStreetAddressMatch(String otherStreetAddress){
+        /*
+         * ToDo: Discuss to use compare(this.streetAddress, otherStreetAddress), or...
+         * add a 2nd argument in this method, and compare (streetAddressOne, streetAddressTwo)
+         */
+        return AnswerType.no;
+    }
 }

@@ -44,8 +44,14 @@ public class PhoneTests {
     }
 
     @Test
-    void Phone_toStringUsPhoneNumber(){
+    void Phone_toString_UsaPhoneNumber(){
         Phone phone = new Phone("520", "7734512");
+        assertEquals("(520) 773-4512", phone.toString());
+    }
+
+    @Test
+    void Phone_toString_UsaPhoneNumberAreaCodeCombined(){
+        Phone phone = new Phone("", "5207734512");
         assertEquals("(520) 773-4512", phone.toString());
     }
 }

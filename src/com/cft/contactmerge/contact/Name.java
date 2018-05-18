@@ -78,6 +78,14 @@ public class Name implements IContactProperty<Name>
     }
 
     public String toString() {
-        return getFirstName() + ", " + getMiddleName() + ", " + getLastName() + ", " + getPrefix() + ", " + getSuffix();
+        if (!getFirstName().isEmpty() && !getLastName().isEmpty()){
+            System.out.println("found");
+            return getLastName() + ", " + getFirstName();
+        } else if (!getFirstName().isEmpty()){
+            return getFirstName();
+        } else if (!getLastName().isEmpty()){
+            return getLastName();
+        }
+        return "";
     }
 }

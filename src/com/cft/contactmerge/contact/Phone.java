@@ -40,6 +40,9 @@ public class Phone {
         if (getAreaCode().length() == 3 && getPhoneNumber().length() == 7) {
             return "(" + getAreaCode() + ") " + getPhoneNumber().substring(0, 3) + "-" +
                     getPhoneNumber().substring(3, 7);
+        } else if (getPhoneNumber().length() == 10){
+            return "(" + getPhoneNumber().substring(0, 3) + ") " + getPhoneNumber().substring(3, 6) + "-" +
+                    getPhoneNumber().substring(6, 10);
         }
         return getAreaCode() + getPhoneNumber();
     }
