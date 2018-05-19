@@ -1,6 +1,8 @@
 package com.cft.contactmerge.contact;
 
 import com.cft.contactmerge.AnswerType;
+import com.cft.contactmerge.StreetAddressMatchLogic;
+import java.util.ArrayList;
 
 public class Address {
     String streetAddress;
@@ -78,41 +80,81 @@ public class Address {
     /*******************************************************************************************************************
      *************************************************** Sub-Methods ***************************************************
      *******************************************************************************************************************/
+    @Override
     public String toString() {
         StringBuilder fullAddress = new StringBuilder();
         String[] addressParts = {getStreetAddress(), getApartment(), getCity(), getState(), getCountry(), getZip()};
 
         for (String part: addressParts){
-            if (!part.isEmpty()){
-                fullAddress.append(part).append(", ");
+            if (!part.isEmpty() && fullAddress.toString().isEmpty()){
+                fullAddress.append(part);
+            } else if (!part.isEmpty()){
+                fullAddress.append(", ").append(part);
             }
-        }
-
-        if (!fullAddress.toString().isEmpty()){
-            fullAddress.delete(fullAddress.length() - 2, fullAddress.length());
         }
 
         return fullAddress.toString();
     }
 
     public AnswerType isAddressMatch(Address otherAddress){
-        /* ToDo: Discuss compare parts combinations for final return type...
-         * (streetAddress = yes | apartment = yes | city = yes | state = yes | country = yes | zip = yes) = Answertype.yes
-         * (streetAddress = no | apartment = no | city = no | state = no | country = no | zip = no) = Answertype.no
-         * (streetAddress = yes | apartment = no | city = yes | state = no | country = yes | zip = no) = Answertype.maybe??
-         * (streetAddress = yes | apartment = maybe | city = yes | state = maybe | country = yes | zip = maybe) = Answertype.maybe??
-         * (streetAddress = maybe | apartment = no | city = yes | state = yes | country = yes | zip = maybe) = Answertype.maybe??
-         * ect...
-         * also discuss what to return if an address part is null (e.g.: this.country == null)
-         */
+        // ToDo: Once all parts match methods are done, write tests for this method and fill in the code
+        // Precondition: All address parts except apartment and zip must not be empty.
+        if (getStreetAddress().isEmpty() || getCity().isEmpty() || getState().isEmpty() || getCountry().isEmpty()){
+            return AnswerType.no;
+        }
+        //AnswerType streetAddressMatchResult = isStreetAddressMatch();
+        AnswerType apartmentMatchResult;
+        //AnswerType cityMatchResult = isCityMatch();
+        //AnswerType stateMatchResult = isStateMatch();
+        //AnswerType countryMatchResult = isCountryMatch();
+        AnswerType zipMatchResult;
+
+        //return getAddressPartsMatchResult(streetAddressMatchResult, apartmentMatchResult, cityMatchResult, stateMatchResult, countryMatchResult, zipMatchResult);
+        return AnswerType.no;
+    }
+
+    public AnswerType getAddressPartsMatchResult(AnswerType streetAddressMatchResult, AnswerType apartmentMatchResult,
+                                                 AnswerType cityMatchResult, AnswerType stateMatchResult,
+                                                 AnswerType countryMatchResult, AnswerType zipMatchResult){
+        // ToDo: Once all parts match methods are done, this will be a sub-method for isAddressMatch()
+        AnswerType[] matchResults = {streetAddressMatchResult, apartmentMatchResult, cityMatchResult, stateMatchResult, countryMatchResult, zipMatchResult};
+        boolean isAllMatchResultsYes = true;
+
+        // return yes if all match results (except zip and apartment if they are null) are yes
+        for (int matchResult = 0; matchResult < matchResults.length; matchResult++){
+            if (matchResult == 1 || matchResult == matchResults.length - 1) { // if apartment or zip
+                if (matchResults[matchResult].equals(AnswerType.no)) {
+                    isAllMatchResultsYes = false;
+                    break;
+                }
+            } else {
+                if (!matchResults[matchResult].equals(AnswerType.yes)){
+                    isAllMatchResultsYes = false;
+                    break;
+                }
+            }
+        }
+        if (isAllMatchResultsYes){
+            return AnswerType.yes;
+        }
+
+        // return maybe if streetAddressMatchResult == maybe, and everything else is yes (and apartment/zip can be maybe or null)
+
         return AnswerType.no;
     }
 
     public AnswerType isStreetAddressMatch(String otherStreetAddress){
-        /*
-         * ToDo: Discuss to use compare(this.streetAddress, otherStreetAddress), or...
-         * add a 2nd argument in this method, and compare (streetAddressOne, streetAddressTwo)
-         */
+        if (getStreetAddress().isEmpty() || otherStreetAddress.isEmpty()){
+            return AnswerType.no;
+        }
+
+        ArrayList<String> normalizedStreetAddressOne = StreetAddressMatchLogic.setNormalizeStreetAddress(getStreetAddress());
+        ArrayList<String> normalizedStreetAddressTwo = StreetAddressMatchLogic.setNormalizeStreetAddress(otherStreetAddress);
+
+        if (normalizedStreetAddressOne.equals(normalizedStreetAddressTwo)){
+            return AnswerType.yes;
+        }
+        // ToDO: Fill in code to check for complicated matching
         return AnswerType.no;
     }
 }

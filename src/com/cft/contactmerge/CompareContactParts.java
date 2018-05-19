@@ -6,9 +6,14 @@ public class CompareContactParts {
         return NameMatchSelector.getFirstLastNamesMatchResultDefaultComparisons(firstName1, lastName1, firstName2, lastName2);
     }
 
-    public static AnswerType doAddressesMatch(String address1, String address2)
+    public static AnswerType doStreetAddressesMatch(Contact contact, String otherStreetAddress)
     {
-        return AddressMatchSelector.getStreetAddressMatchResultDefaultComparisons(address1, address2);
+        return contact.getAddress().isStreetAddressMatch(otherStreetAddress);
+    }
+
+    public static AnswerType doApartmentAddressesMatch(Contact contact, String otherApartmentAddress)
+    {
+        return null;
     }
 
     public static AnswerType doCitiesMatch(String city1, String city2)

@@ -77,15 +77,9 @@ public class Name implements IContactProperty<Name>
         return null;
     }
 
+    @Override
     public String toString() {
-        if (!getFirstName().isEmpty() && !getLastName().isEmpty()){
-            System.out.println("found");
-            return getLastName() + ", " + getFirstName();
-        } else if (!getFirstName().isEmpty()){
-            return getFirstName();
-        } else if (!getLastName().isEmpty()){
-            return getLastName();
-        }
-        return "";
+        // Precondition: both first and last names must not be empty
+        return getLastName() + ", " + getFirstName();
     }
 }
