@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<!--
+    Data Dynamics #Grid exported data
+    Generated at 2018-04-20 17:42
+
+    Copyright © 2000-2005 Data Dynamics -->
+<SharpGridExport>
+ <RowDefinition count="21">
+  <Field alias="c1" name="donor_donorid" type="3"/>
+  <Field alias="c2" name="donor_display" type="8"/>
+  <Field alias="c3" name="donor_profile_display" type="8"/>
+  <Field alias="c4" name="indiv_firstname" type="8"/>
+  <Field alias="c5" name="indiv_mname" type="8"/>
+  <Field alias="c6" name="indiv_lastname" type="8"/>
+  <Field alias="c7" name="indiv_nickname" type="8"/>
+  <Field alias="c8" name="org_name" type="8"/>
+  <Field alias="c9" name="donor_phone" type="8"/>
+  <Field alias="c10" name="donor_email" type="8"/>
+  <Field alias="c11" name="donor_address1" type="8"/>
+  <Field alias="c12" name="donor_address2" type="8"/>
+  <Field alias="c13" name="donor_city" type="8"/>
+  <Field alias="c14" name="donor_state" type="8"/>
+  <Field alias="c15" name="donor_zip" type="8"/>
+  <Field alias="c16" name="donor_country" type="8"/>
+  <Field alias="c17" name="donor_phone2" type="8"/>
+  <Field alias="c18" name="donor_email2" type="8"/>
+  <Field alias="c19" name="donor_phone3" type="8"/>
+  <Field alias="c20" name="donor_email3" type="8"/>
+ </RowDefinition>
+ <Data count="8449">
+
+  <row c1="14932" c2="Adams, Bill and Patty" c3="Household Profile" c4="Bill and Patty" c5="" c6="Adams" c7="" c8="" c9="" c10="" c11="6255 W Overlook Dr" c12="" c13="Scottsdale" c14="AZ" c15="85253-5472" c16="United States" c17="" c18="" c19="" c20=""/>
+
+  <row c1="424" c2="Doe, John" c3="No Profile" c4="John" c5="" c6="Doe" c7="" c8="" c9="" c10="" c11="" c12="" c13="" c14="" c15="" c16="" c17="" c18="" c19="" c20=""/>
+
+  <row c1="10897" c2="Adamson, Nicole" c3="No Profile" c4="Nicole" c5="" c6="Adamson" c7="" c8="" c9="6171234567" c10="nicoleadamson@gmail.com" c11="1171 E. Grant Rd." c12="" c13="Tucson" c14="AZ" c15="85719" c16="United States" c17="" c18="" c19="" c20=""/>
+
+  <row c1="14252" c2="Brown, Deborah" c3="No Profile" c4="Deborah" c5="" c6="Brown" c7="" c8="" c9="(520) 567-8901" c10="DBROWN78@aol.com" c11="5402 E 22th St" c12="" c13="Tucson" c14="AZ" c15="85711-5812" c16="United States" c17="" c18="" c19="" c20=""/>
+
+  <row c1="13781" c2="Adams, Lauren" c3="No Profile" c4="Lauren" c5="" c6="Adams" c7="" c8="" c9="" c10="" c11="1000 N Fontana Ave" c12="" c13="Tucson" c14="AZ" c15="85705" c16="United States" c17="" c18="" c19="" c20=""/>
+
+  <row c1="13095" c2="Watts, Michael" c3="No Profile" c4="Michael" c5="" c6="Watts" c7="" c8="" c9="(520) 333-4444" c10="wings1906@gmail.com" c11="8131 E Camino Bacelar" c12="" c13="Tucson" c14="AZ" c15="85715-3434" c16="United States" c17="" c18="" c19="" c20=""/>
+
+  <row c1="11078" c2="Swan, Cheryl" c3="No Profile" c4="Cheryl" c5="" c6="Swan" c7="" c8="" c9="" c10="cherylswan@gmail.com" c11="" c12="" c13="" c14="" c15="" c16="" c17="" c18="" c19="" c20=""/>
+
+  <row c1="11331" c2="Jose's Tortilla &amp; Bakery" c3="Organization Profile" c4="" c5="" c6="" c7="" c8="Jose's Tortillo &amp; Bakery" c9="" c10="" c11="2330 S. 14th Ave." c12="" c13="Tucson" c14="AZ" c15="85706" c16="" c17="" c18="" c19="" c20=""/>
+
+  <row c1="15045" c2="Alfonso, Gerry" c3="No Profile" c4="Gerry" c5="" c6="Alfonso" c7="" c8="" c9="(520) 444-5555" c10="gerryfonso88@gmail.com" c11="" c12="" c13="" c14="" c15="" c16="" c17="" c18="" c19="" c20=""/>
+
+  <row c1="10438" c2="Silverman, Shelly" c3="No Profile" c4="Shelly" c5="" c6="Silverman" c7="" c8="" c9="" c10="ssilverteach@aol.com" c11="3007 W Placita Penasco" c12="" c13="Tucson" c14="AZ" c15="85746-8340" c16="United States" c17="" c18="" c19="" c20=""/>
+
+  <row c1="11191" c2="Allen, Alex" c3="No Profile" c4="Alex" c5="" c6="Allen" c7="" c8="" c9="" c10="" c11="909 45th Ave" c12="" c13="San Francisco" c14="CA" c15="94121" c16="" c17="" c18="" c19="" c20=""/>
+
+  <row c1="6349" c2="White, Tom  and Ginger" c3="Household Profile" c4="Tom  &amp; Ginger" c5="" c6="White" c7="" c8="" c9="(520) 666-7777" c10="tomw@msn.com" c11="" c12="" c13="" c14="" c15="" c16="" c17="" c18="watts2@gmail.com" c19="" c20=""/>
+
+  <row c1="13821" c2="Angel Charity For Children, Inc" c3="Organization Profile" c4="Shane" c5="" c6="Marshall" c7="" c8="Angel Charity For Children, Inc" c9="(520) 771-8882" c10="marshall231@gmail.com" c11="1009 N Swan Rd" c12="" c13="Tucson" c14="AZ" c15="85712-1227" c16="United States" c17="(520) 7772-8882" c18="" c19="" c20=""/>
+
+  <row c1="11800" c2="Arizona Theatre Company" c3="No Profile" c4="Jeff" c5="" c6="Kelley" c7="" c8="Arizona Theatre Company" c9="(520) 773-8882" c10="jkelley@arizonatheatre.org" c11="343 S Scott Ave" c12="" c13="Tucson" c14="AZ" c15="85701" c16="" c17="(520) 773-8883 x7501" c18="" c19="" c20=""/>
+
+</Data>
+</SharpGridExport>
