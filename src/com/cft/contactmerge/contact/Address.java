@@ -144,7 +144,7 @@ public class Address {
     }
 
     public AnswerType isStreetAddressMatch(String otherStreetAddress){
-        if (getStreetAddress().isEmpty() || otherStreetAddress.isEmpty()){
+        if (getStreetAddress() == null || getStreetAddress().isEmpty() || otherStreetAddress.isEmpty()){
             return AnswerType.no;
         }
 
@@ -154,7 +154,6 @@ public class Address {
         if (normalizedStreetAddressOne.equals(normalizedStreetAddressTwo)){
             return AnswerType.yes;
         }
-        // ToDO: Fill in code to check for complicated matching
-        return AnswerType.no;
+        return StreetAddressMatchLogic.getStreetAddressMatchResult(normalizedStreetAddressOne, normalizedStreetAddressTwo);
     }
 }

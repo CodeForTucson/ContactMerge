@@ -84,6 +84,9 @@ class CompareContactPartsTest {
     /*******************************************************************************************************************
      ******************************************* Compare Street Address Tests ******************************************
      *******************************************************************************************************************/
+    private String streetAddressFailedMsg(String streetAddressOne, String streetAddressTwo){
+        return "<" + streetAddressOne + "> -vs- <" + streetAddressTwo + ">";
+    }
     @Test
     void doStreetAddressesMatch_Yes_IgnoreCase() {
         Contact contactOne = new Contact();
@@ -161,13 +164,13 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setStreetAddress("P.O. Box 1234");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "PO Box 1234"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "PO Box 1234"), streetAddressFailedMsg("P.O. Box 1234","PO Box 1234"));
 
         contactOne.getAddress().setStreetAddress("P O Box 1234");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "PO Box 1234"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "PO Box 1234"), streetAddressFailedMsg("P O Box 1234","PO Box 1234"));
 
         contactOne.getAddress().setStreetAddress("PO Box 1234");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "Box 1234"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "Box 1234"), streetAddressFailedMsg("PO Box 1234","Box 1234"));
     }
 
     @Test
@@ -225,6 +228,22 @@ class CompareContactPartsTest {
     }
 
     @Test
+    void doStreetAddressesMatch_Maybe_MissingDirection() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setStreetAddress("123 N Main St");
+        assertEquals(AnswerType.maybe, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main St"));
+    }
+
+    @Test
+    void doStreetAddressesMatch_Maybe_MissingDirectionAndRoadType() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setStreetAddress("123 N Main");
+        assertEquals(AnswerType.maybe, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main St"));
+    }
+
+    @Test
     void doStreetAddressesMatch_No_DifferentStreetAddress() {
         Contact contactOne = new Contact();
 
@@ -236,7 +255,6 @@ class CompareContactPartsTest {
     void doStreetAddressesMatch_No_MissingStreetAddress() {
         Contact contactOne = new Contact();
 
-        contactOne.getAddress().setStreetAddress("123 Main St");
         assertEquals(AnswerType.no, CompareContactParts.doStreetAddressesMatch(contactOne, "1234 Main St"));
     }
 
