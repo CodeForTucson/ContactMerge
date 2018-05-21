@@ -57,27 +57,16 @@ public abstract class StreetAddressMatchLogic {
      *******************************************************************************************************************/
     public static AnswerType getStreetAddressMatchResult(ArrayList<String> stAddressParts1, ArrayList<String> stAddressParts2){
         // Precondition: All addressParts must follow the rules from the setNormalizeStreetAddress()
-        String st1Direction = "";
-        String st2Direction = "";
-        String st1RoadType = "";
-        String st2RoadType = "";
+        String st1Direction;
+        String st2Direction;
+        String st1RoadType;
+        String st2RoadType;
 
         // get return on po box addressses (if either one is a po box)
         if (isAddressPoBox(stAddressParts1) && isAddressPoBox(stAddressParts2)){
-            // Strip all characters out of address1, and only leave numbers
-            for (int part = 0; part < stAddressParts1.size(); part++){
-                if (!isInteger(stAddressParts1.get(part))){
-                    stAddressParts1.remove(part);
-                    part--;
-                }
-            }
-            // Strip all characters out of address2, and only leave numbers
-            for (int part = 0; part < stAddressParts2.size(); part++) {
-                if (!isInteger(stAddressParts2.get(part))) {
-                    stAddressParts2.remove(part);
-                    part--;
-                }
-            }
+            // Strip all characters out of address, and only leave numbers
+            stAddressParts1 = getNormalizedPoBoxAddress(stAddressParts1);
+            stAddressParts2 = getNormalizedPoBoxAddress(stAddressParts2);
             // if both box addresses match, return yes
             if (stAddressParts1.equals(stAddressParts2)){
                 return AnswerType.yes;
@@ -88,51 +77,57 @@ public abstract class StreetAddressMatchLogic {
             return AnswerType.no;
         }
 
-
         // abstract street direction if the address has one
-        int stDirectionElement = 0;
-        for (String stPart: stAddressParts1){
-            if (getCompassDirection().containsKey(stPart)){
-                st1Direction = getCompassDirection().get(stPart);
-                stAddressParts1.remove(stDirectionElement); // remove the direction from the address
-                break;
-            }
-            stDirectionElement++;
-        }
-        stDirectionElement = 0;
+        st1Direction = getDirectionFromAddress(stAddressParts1);
+        st2Direction = getDirectionFromAddress(stAddressParts2);
 
-        for (String stPart: stAddressParts2){
-            if (getCompassDirection().containsKey(stPart)){
-                st2Direction = getCompassDirection().get(stPart);
-                stAddressParts2.remove(stDirectionElement); // remove the direction from the address
-                break;
-            }
-            stDirectionElement++;
-        }
-
-        // get roadType if the address has one
-        int stRoadTypeElement = 0;
-        for (String stPart: stAddressParts1){
-            if (getRoadTypes().containsKey(stPart)){
-                st1RoadType = getRoadTypes().get(stPart);
-                stAddressParts1.remove(stRoadTypeElement); // remove the roadType from the address
-                break;
-            }
-            stRoadTypeElement++;
-        }
-        stRoadTypeElement = 0;
-
-        for (String stPart: stAddressParts2){
-            if (getRoadTypes().containsKey(stPart)){
-                st2RoadType = getRoadTypes().get(stPart);
-                stAddressParts2.remove(stRoadTypeElement); // remove the roadType from the address
-                break;
-            }
-            stRoadTypeElement++;
-        }
+        // abstract roadType if the address has one
+        st1RoadType = getRoadTypeFromAddress(stAddressParts1);
+        st2RoadType = getRoadTypeFromAddress(stAddressParts2);
 
         return getMatchCombinationResults(stAddressParts1, stAddressParts2,
                 st1Direction, st2Direction, st1RoadType, st2RoadType);
+    }
+
+    private static String getRoadTypeFromAddress(ArrayList<String> stAddressParts){
+        String roadType = "";
+
+        int stRoadTypeElement = 0;
+        for (String stPart: stAddressParts){
+            if (getRoadTypes().containsKey(stPart)){
+                roadType = getRoadTypes().get(stPart);
+                stAddressParts.remove(stRoadTypeElement); // remove the roadType from the address
+                break;
+            }
+            stRoadTypeElement++;
+        }
+        return roadType;
+    }
+
+    private static String getDirectionFromAddress(ArrayList<String> stAddressParts){
+        String stDirection = "";
+
+        int stDirectionElement = 0;
+        for (String stPart: stAddressParts){
+            if (getCompassDirection().containsKey(stPart)){
+                stDirection = getCompassDirection().get(stPart);
+                stAddressParts.remove(stDirectionElement); // remove the direction from the address
+                break;
+            }
+            stDirectionElement++;
+        }
+
+        return stDirection;
+    }
+
+    private static ArrayList<String> getNormalizedPoBoxAddress(ArrayList<String> stAddressParts){
+        for (int part = 0; part < stAddressParts.size(); part++){
+            if (!isInteger(stAddressParts.get(part))){
+                stAddressParts.remove(part);
+                part--;
+            }
+        }
+        return stAddressParts;
     }
 
     private static AnswerType getMatchCombinationResults(ArrayList<String> stAddressParts1, ArrayList<String> stAddressParts2,
