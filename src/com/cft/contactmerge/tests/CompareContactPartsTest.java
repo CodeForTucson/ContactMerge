@@ -164,13 +164,16 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setStreetAddress("P.O. Box 1234");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "PO Box 1234"), streetAddressFailedMsg("P.O. Box 1234","PO Box 1234"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "PO Box 1234"),
+                streetAddressFailedMsg("P.O. Box 1234","PO Box 1234"));
 
         contactOne.getAddress().setStreetAddress("P O Box 1234");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "PO Box 1234"), streetAddressFailedMsg("P O Box 1234","PO Box 1234"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "PO Box 1234"),
+                streetAddressFailedMsg("P O Box 1234","PO Box 1234"));
 
         contactOne.getAddress().setStreetAddress("PO Box 1234");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "Box 1234"), streetAddressFailedMsg("PO Box 1234","Box 1234"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "Box 1234"),
+                streetAddressFailedMsg("PO Box 1234","Box 1234"));
     }
 
     @Test
@@ -178,8 +181,41 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setStreetAddress("123 North Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 N Main St"));
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 N. Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 N Main St"),
+                streetAddressFailedMsg("123 North Main St", "123 N Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 N. Main St"),
+                streetAddressFailedMsg("123 North Main St", "123 N. Main St"));
+    }
+
+    @Test
+    void doStreetAddressesMatch_Yes_FormsOfNorthEast() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setStreetAddress("123 NE Main St");
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 North-East Main St"),
+                streetAddressFailedMsg("123 NE Main St","123 North-East Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Northeast Main St"),
+                streetAddressFailedMsg("123 NE Main St","123 Northeast Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 NE. Main St"),
+                streetAddressFailedMsg("123 NE Main St","123 NE. Main St"));
+    }
+
+    @Test
+    void doStreetAddressesMatch_Yes_FormsOfNorthWest() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setStreetAddress("123 NW Main St");
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 North-West Main St"),
+                streetAddressFailedMsg("123 NW Main St","123 North-West Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Northwest Main St"),
+                streetAddressFailedMsg("123 NW Main St","123 Northwest Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 NW. Main St"),
+                streetAddressFailedMsg("123 NW Main St","123 NW. Main St"));
     }
 
     @Test
@@ -187,10 +223,42 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setStreetAddress("123 S Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South Main St"),
+                streetAddressFailedMsg("123 S Main St","123 South Main St"));
 
         contactOne.getAddress().setStreetAddress("123 S. Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South Main St"),
+                streetAddressFailedMsg("123 S. Main St","123 South Main St"));
+    }
+
+    @Test
+    void doStreetAddressesMatch_Yes_FormsOfSouthEast() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setStreetAddress("123 SE Main St");
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South-East Main St"),
+                streetAddressFailedMsg("123 SE Main St","123 South-East Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Southeast Main St"),
+                streetAddressFailedMsg("123 SE Main St","123 Southeast Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 SE. Main St"),
+                streetAddressFailedMsg("123 SE Main St","123 SE. Main St"));
+    }
+
+    @Test
+    void doStreetAddressesMatch_Yes_FormsOfSouthWest() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setStreetAddress("123 SW Main St");
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South-West Main St"),
+                streetAddressFailedMsg("123 SW Main St","123 South-West Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Northwest Main St"),
+                streetAddressFailedMsg("123 SW Main St","123 Southwest Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 SW. Main St"),
+                streetAddressFailedMsg("123 SW Main St","123 SW. Main St"));
     }
 
     @Test
@@ -198,8 +266,11 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setStreetAddress("123 East Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 E Main St"));
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 E. Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 E Main St"),
+                streetAddressFailedMsg("123 East Main St","123 E Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 E. Main St"),
+                streetAddressFailedMsg("123 East Main St","123 E. Main St"));
     }
 
     @Test
@@ -207,8 +278,11 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setStreetAddress("123 West Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 W Main St"));
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 W. Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 W Main St"),
+                streetAddressFailedMsg("123 West Main St","123 W Main St"));
+
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 W. Main St"),
+                streetAddressFailedMsg("123 West Main St","123 W. Main St"));
     }
 
     @Test
