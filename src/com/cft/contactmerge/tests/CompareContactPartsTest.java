@@ -254,7 +254,7 @@ class CompareContactPartsTest {
         assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South-West Main St"),
                 streetAddressFailedMsg("123 SW Main St","123 South-West Main St"));
 
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Northwest Main St"),
+        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Southwest Main St"),
                 streetAddressFailedMsg("123 SW Main St","123 Southwest Main St"));
 
         assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 SW. Main St"),

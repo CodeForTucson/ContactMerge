@@ -29,8 +29,16 @@ public abstract class StreetAddressMatchLogic {
     private static final Hashtable<String,String> compassDirection = new Hashtable<String,String>() {{
         put("n", "north");
         put("north", "north");
+        put("ne", "northeast");
+        put("northeast", "northeast");
+        put("nw", "northwest");
+        put("northwest", "northwest");
         put("s", "south");
         put("south", "south");
+        put("se", "southeast");
+        put("southeast", "southeast");
+        put("sw", "southwest");
+        put("southwest", "southwest");
         put("e", "east");
         put("east", "east");
         put("w", "west");
@@ -105,19 +113,21 @@ public abstract class StreetAddressMatchLogic {
     }
 
     private static String getDirectionFromAddress(ArrayList<String> stAddressParts){
-        String stDirection = "";
+        StringBuilder stDirection = new StringBuilder();
 
-        int stDirectionElement = 0;
-        for (String stPart: stAddressParts){
-            if (getCompassDirection().containsKey(stPart)){
-                stDirection = getCompassDirection().get(stPart);
+        for (int stDirectionElement = 0, numOfDirections = 0; stDirectionElement < stAddressParts.size(); stDirectionElement++){
+            if (getCompassDirection().containsKey(stAddressParts.get(stDirectionElement))){
+                stDirection.append(getCompassDirection().get(stAddressParts.get(stDirectionElement)));
                 stAddressParts.remove(stDirectionElement); // remove the direction from the address
+                numOfDirections++;
+                stDirectionElement--;
+            }
+            if (numOfDirections == 2){
                 break;
             }
-            stDirectionElement++;
         }
 
-        return stDirection;
+        return stDirection.toString();
     }
 
     private static ArrayList<String> getNormalizedPoBoxAddress(ArrayList<String> stAddressParts){
