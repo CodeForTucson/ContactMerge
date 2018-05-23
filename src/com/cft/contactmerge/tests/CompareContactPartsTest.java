@@ -1,6 +1,5 @@
 package com.cft.contactmerge.tests;
 
-import com.cft.contactmerge.contact.Address;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import com.cft.contactmerge.*;
@@ -84,9 +83,36 @@ class CompareContactPartsTest {
     /*******************************************************************************************************************
      ******************************************* Compare Street Address Tests ******************************************
      *******************************************************************************************************************/
+    private String addressFailedMsg(String addressOne, String addressTwo){
+        return "<" + addressOne + "> -vs- <" + addressOne + ">";
+    }
+
+    @Test
+    void doAddressesMatch_Yes_IgnoreCase() {
+        Contact contactOne = new Contact();
+        Contact contactTwo = new Contact();
+
+        contactOne.getAddress().setStreetAddress("123 main Street");
+        contactOne.getAddress().setCity("Tucson");
+        contactOne.getAddress().setState("Arizona");
+        contactOne.getAddress().setCountry("USA");
+
+        contactTwo.getAddress().setStreetAddress("123 Main street");
+        contactTwo.getAddress().setCity("TUCSON");
+        contactTwo.getAddress().setState("ARIZONA");
+        contactTwo.getAddress().setCountry("usa");
+
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressesMatch(contactOne, contactTwo.getAddress()),
+                addressFailedMsg(contactOne.getAddress().toString(), contactTwo.getAddress().toString()));
+    }
+
+    /*******************************************************************************************************************
+     ******************************************* Compare Street Address Tests ******************************************
+     *******************************************************************************************************************/
     private String streetAddressFailedMsg(String streetAddressOne, String streetAddressTwo){
         return "<" + streetAddressOne + "> -vs- <" + streetAddressTwo + ">";
     }
+
     @Test
     void doStreetAddressesMatch_Yes_IgnoreCase() {
         Contact contactOne = new Contact();
@@ -335,13 +361,21 @@ class CompareContactPartsTest {
     /*******************************************************************************************************************
      ***************************************** Compare Apartment Address Tests *****************************************
      *******************************************************************************************************************/
+    private String apartmentFailedMsg(String apartmentOne, String apartmentTwo){
+        return "<" + apartmentOne + "> -vs- <" + apartmentTwo + ">";
+    }
+
     @Test
     void doApartmentAddressesMatch_Yes_FormsOfApartment() {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setApartment("Apt 40");
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "Apartment 40"));
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"));
+        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "Apartment 40"),
+                apartmentFailedMsg("Apt 40","Apartment 40"));
+        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "Ap 40"),
+                apartmentFailedMsg("Apt 40","Ap 40"));
+        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"),
+                apartmentFailedMsg("Apt 40","40"));
     }
 
     @Test
@@ -349,8 +383,10 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setApartment("Suite 40");
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "Ste 40"));
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"));
+        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "Ste 40"),
+                apartmentFailedMsg("Suite 40","Ste 40"));
+        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"),
+                apartmentFailedMsg("Suite 40","40"));
     }
 
     @Test
@@ -358,18 +394,24 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setApartment("Unit 40");
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"));
+        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"),
+                apartmentFailedMsg("Unit 40","40"));
 
         contactOne.getAddress().setApartment("#40");
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"));
+        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"),
+                apartmentFailedMsg("#40","40"));
     }
 
     @Test
-    void doApartmentAddressesMatch_Maybe_MissingApartment() {
+    void doApartmentAddressesMatch_No_MissingApartment() {
         Contact contactOne = new Contact();
 
+        assertEquals(AnswerType.no, CompareContactParts.doApartmentAddressesMatch(contactOne, "Apt 40"),
+                apartmentFailedMsg("null","Apt 40"));
+
         contactOne.getAddress().setApartment("Apt 40");
-        assertEquals(AnswerType.maybe, CompareContactParts.doApartmentAddressesMatch(contactOne, ""));
+        assertEquals(AnswerType.no, CompareContactParts.doApartmentAddressesMatch(contactOne, ""),
+                apartmentFailedMsg("Apt 40","\"\""));
     }
 
     @Test
@@ -377,69 +419,279 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setApartment("Unit 10");
-        assertEquals(AnswerType.no, CompareContactParts.doApartmentAddressesMatch(contactOne, "Unit 11"));
+        assertEquals(AnswerType.no, CompareContactParts.doApartmentAddressesMatch(contactOne, "Unit 11"),
+                apartmentFailedMsg("Unit 10","Unit 11"));
+
+        contactOne.getAddress().setApartment("J10");
+        assertEquals(AnswerType.no, CompareContactParts.doApartmentAddressesMatch(contactOne, "L10"),
+                apartmentFailedMsg("J10","L10"));
     }
 
     /*******************************************************************************************************************
      ************************************************ Compare City Tests ***********************************************
      *******************************************************************************************************************/
+    private String cityFailedMsg(String cityOne, String cityTwo){
+        return "<" + cityOne + "> -vs- <" + cityTwo + ">";
+    }
+
     @Test
     void doCitiesMatch_Yes_IgnoreCase() {
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch("Tucson", "TUCSON"));
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("Tucson");
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "TUCSON"));
     }
 
     @Test
     void doCitiesMatch_Yes_IgnoreSpaces() {
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch("Tucson  ", "Tucson"));
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("Tucson  ");
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "Tucson"));
+    }
+
+    @Test
+    void doCitiesMatch_Yes_FormsOfNorth() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("North Las Vegas");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "N Las Vegas"),
+                cityFailedMsg("North Las Vegas","N Las Vegas"));
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "N. Las Vegas"),
+                cityFailedMsg("North Las Vegas","N. Las Vegas"));
+    }
+
+    @Test
+    void doCitiesMatch_Yes_FormsOfSouth(){
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("South Jordan");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "S Jordan"),
+                cityFailedMsg("South Jordan","S Jordan"));
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "S. Jordan"),
+                cityFailedMsg("South Jordan","S. Jordan"));
+    }
+
+    @Test
+    void doCitiesMatch_Yes_FormsOfEast(){
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("E Hartford");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "East Hartford"),
+                cityFailedMsg("E Hartford","East Hartford"));
+
+        contactOne.getAddress().setCity("E. Hartford");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "East Hartford"),
+                cityFailedMsg("E. Hartford","East Hartford"));
+    }
+
+    @Test
+    void doCitiesMatch_Yes_FormsOfWest(){
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("W Haven");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "West Haven"),
+                cityFailedMsg("W Haven","West Haven"));
+
+        contactOne.getAddress().setCity("W. Haven");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "West Haven"),
+                cityFailedMsg("W. Haven","West Haven"));
+    }
+
+    @Test
+    void doCitiesMatch_Yes_FormsOfNorthEast() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("NE Washington");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "North-East Washington"),
+                cityFailedMsg("NE Washington","North-East Washington"));
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "Northeast Washington"),
+                cityFailedMsg("NE Washington","Northeast Washington"));
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "NE. Washington"),
+                cityFailedMsg("NE Washington","NE. Washington"));
+    }
+
+    @Test
+    void doCitiesMatch_Yes_FormsOfNorthWest() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("NW Washington");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "North-West Washington"),
+                cityFailedMsg("NW Washington","North-West Washington"));
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "Northwest Washington"),
+                cityFailedMsg("NW Washington","Northwest Washington"));
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "NW. Washington"),
+                cityFailedMsg("NW Washington","NW. Washington"));
+    }
+
+    @Test
+    void doCitiesMatch_Yes_FormsOfSouthWest() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("South-West Washington");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
+                cityFailedMsg("South-West Washington","SW Washington"));
+
+        contactOne.getAddress().setCity("Southwest Washington");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
+                cityFailedMsg("Southwest Washington","SW Washington"));
+
+        contactOne.getAddress().setCity("SW. Washington");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
+                cityFailedMsg("SW. Washington","SW Washington"));
+    }
+
+    @Test
+    void doCitiesMatch_Yes_FormsOfSouthEast() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("South-East Washington");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
+                cityFailedMsg("South-East Washington","SE Washington"));
+
+        contactOne.getAddress().setCity("Southeast Washington");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
+                cityFailedMsg("Southeast Washington","SE Washington"));
+
+        contactOne.getAddress().setCity("SE. Washington");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
+                cityFailedMsg("SE. Washington","SE Washington"));
+    }
+
+    @Test
+    void doCitiesMatch_Maybe_MissingDirection() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("North Las Vegas");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "Las Vegas"));
+    }
+
+    @Test
+    void doCitiesMatch_Yes_NumbersInName() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("North 24 Parganas district");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "North 24 Parganas district"));
     }
 
     @Test
     void doCitiesMatch_No() {
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch("Tucson", "Phoenix"));
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCity("Tucson");
+        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "Phoenix"));
     }
 
     /*******************************************************************************************************************
      *********************************************** Compare State Tests ***********************************************
      *******************************************************************************************************************/
+    private String stateFailedMsg(String stateOne, String stateTwo){
+        return "<" + stateOne + "> -vs- <" + stateTwo + ">";
+    }
+
     @Test
     void doStatesMatch_Yes_IgnoreCase() {
-        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch("AZ", "az"));
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setState("AZ");
+        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch(contactOne, "az"));
     }
 
     @Test
     void doStatesMatch_Yes_IgnoreSpaces() {
-        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch("AZ", " AZ    "));
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setState("AZ");
+        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch(contactOne, " AZ    "));
     }
 
     @Test
     void doStatesMatch_Yes_Abbreviations() {
-        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch("AZ", "Arizona"));
-        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch("California", "CA"));
-        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch("New York", "NY"));
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setState("AZ");
+        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch(contactOne, "Arizona"),
+                stateFailedMsg("AZ","Arizona"));
+
+        contactOne.getAddress().setState("California");
+        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch(contactOne, "CA"),
+                stateFailedMsg("California","CA"));
+
+        contactOne.getAddress().setState("New York");
+        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch(contactOne, "NY"),
+                stateFailedMsg("New York","NY"));
     }
 
     @Test
     void doStatesMatch_No() {
-        assertEquals(AnswerType.no, CompareContactParts.doStatesMatch("New York", "Arizona"));
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setState("New York");
+        assertEquals(AnswerType.no, CompareContactParts.doStatesMatch(contactOne, "Arizona"));
+    }
+
+    /*******************************************************************************************************************
+     ********************************************** Compare Country Tests **********************************************
+     *******************************************************************************************************************/
+    private String countryFailedMsg(String countryOne, String countryTwo){
+        return "<" + countryOne + "> -vs- <" + countryTwo + ">";
+    }
+
+    @Test
+    void doCountriesMatch_Yes_IgnoreCase() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCountry("United States of America");
+        assertEquals(AnswerType.no, CompareContactParts.doCountriesMatch(contactOne, "united states of america"));
+    }
+
+    /*******************************************************************************************************************
+     ************************************************ Compare Zip Tests ************************************************
+     *******************************************************************************************************************/
+    private String zipFailedMsg(String zipOne, String zipTwo){
+        return "<" + zipOne + "> -vs- <" + zipTwo + ">";
+    }
+
+    @Test
+    void doZipsMatch_Yes() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setZip("92592");
+        assertEquals(AnswerType.no, CompareContactParts.doZipsMatch(contactOne, "92592"));
     }
 
     /*******************************************************************************************************************
      ******************************************** Compare Phone Number Tests *******************************************
      *******************************************************************************************************************/
+    private String phoneNumberFailedMsg(String phoneNumberOne, String phoneNumberTwo){
+        return "<" + phoneNumberOne + "> -vs- <" + phoneNumberTwo + ">";
+    }
+
     @Test
     void doPhoneNumbersMatch_Yes_IgnoreSpaces() {
-        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch("520 123 4567", "5201234567"));
+        Contact contactOne = new Contact();
+
+        contactOne.getPhone().setPhoneNumber("520 123 4567");
+        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch(contactOne, "5201234567"));
     }
 
     @Test
     void doPhoneNumbersMatch_Yes_IgnorePunctuation() {
-        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch("(520) 123-4567", "5201234567"));
-        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch("(520) 123-4567", "520-123-4567"));
+        Contact contactOne = new Contact();
+
+        contactOne.getPhone().setPhoneNumber("(520) 123-4567");
+        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch(contactOne, "5201234567"),
+                phoneNumberFailedMsg("(520) 123-4567","5201234567"));
+        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch(contactOne, "520-123-4567"),
+                phoneNumberFailedMsg("(520) 123-4567","520-123-4567"));
     }
 
     @Test
     void doPhoneNumbersMatch_No() {
-        assertEquals(AnswerType.no, CompareContactParts.doPhoneNumbersMatch("(520) 123-4567", "(520) 123-4667"));
+        Contact contactOne = new Contact();
+
+        contactOne.getPhone().setPhoneNumber("(520) 123-4567");
+        assertEquals(AnswerType.no, CompareContactParts.doPhoneNumbersMatch(contactOne, "(520) 123-4667"));
     }
 
     /*******************************************************************************************************************
@@ -447,16 +699,25 @@ class CompareContactPartsTest {
      *******************************************************************************************************************/
     @Test
     void doEmailsMatch_Yes_IgnoreSpaces() {
-        assertEquals(AnswerType.yes, CompareContactParts.doEmailsMatch("jdoe@yahoo.com", " jdoe@yahoo.com "));
+        Contact contactOne = new Contact();
+
+        contactOne.getEmail().setEmailAddress("jdoe@yahoo.com");
+        assertEquals(AnswerType.yes, CompareContactParts.doEmailsMatch(contactOne, " jdoe@yahoo.com "));
     }
 
     @Test
     void doEmailsMatch_Yes_IgnoreCase() {
-        assertEquals(AnswerType.yes, CompareContactParts.doEmailsMatch("jdoe@yahoo.com", "JDoe@Yahoo.com"));
+        Contact contactOne = new Contact();
+
+        contactOne.getEmail().setEmailAddress("jdoe@yahoo.com");
+        assertEquals(AnswerType.yes, CompareContactParts.doEmailsMatch(contactOne, "JDoe@Yahoo.com"));
     }
 
     @Test
     void doEmailsMatch_No() {
-        assertEquals(AnswerType.no, CompareContactParts.doEmailsMatch("jdoe@yahoo.com", "jdoe@gmail.com"));
+        Contact contactOne = new Contact();
+
+        contactOne.getEmail().setEmailAddress("jdoe@yahoo.com");
+        assertEquals(AnswerType.no, CompareContactParts.doEmailsMatch(contactOne, "jdoe@gmail.com"));
     }
 }

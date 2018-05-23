@@ -1,9 +1,16 @@
 package com.cft.contactmerge;
 
+import com.cft.contactmerge.contact.Address;
+
 public class CompareContactParts {
     public static AnswerType doNamesMatch(String firstName1, String lastName1, String firstName2, String lastName2)
     {
         return NameMatchSelector.getFirstLastNamesMatchResultDefaultComparisons(firstName1, lastName1, firstName2, lastName2);
+    }
+
+    public static AnswerType doAddressesMatch(Contact contact, Address otherAddress)
+    {
+        return contact.getAddress().isAddressMatch(otherAddress);
     }
 
     public static AnswerType doStreetAddressesMatch(Contact contact, String otherStreetAddress)
@@ -13,25 +20,35 @@ public class CompareContactParts {
 
     public static AnswerType doApartmentAddressesMatch(Contact contact, String otherApartmentAddress)
     {
-        return null;
+        return contact.getAddress().isApartmentMatch(otherApartmentAddress);
     }
 
-    public static AnswerType doCitiesMatch(String city1, String city2)
+    public static AnswerType doCitiesMatch(Contact contact, String otherCity)
+    {
+        return contact.getAddress().isCityMatch(otherCity);
+    }
+
+    public static AnswerType doStatesMatch(Contact contact, String otherState)
+    {
+        return contact.getAddress().isStateMatch(otherState);
+    }
+
+    public static AnswerType doCountriesMatch(Contact contact, String otherCountry)
+    {
+        return contact.getAddress().isCountryMatch(otherCountry);
+    }
+
+    public static AnswerType doZipsMatch(Contact contact, String otherZip)
+    {
+        return contact.getAddress().isZipMatch(otherZip);
+    }
+
+    public static AnswerType doPhoneNumbersMatch(Contact contact, String otherPhoneNumber)
     {
         return null;
     }
 
-    public static AnswerType doStatesMatch(String state1, String state2)
-    {
-        return null;
-    }
-
-    public static AnswerType doPhoneNumbersMatch(String phoneNumber1, String phoneNumber2)
-    {
-        return null;
-    }
-
-    public static AnswerType doEmailsMatch(String email1, String email2)
+    public static AnswerType doEmailsMatch(Contact contact, String otherEmail)
     {
         return null;
     }
