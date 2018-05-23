@@ -2,7 +2,9 @@
  * MergeFileExporter will be responsible for taking the final matching results
  * creating a file with the merged records.
  */
-package com.cft.contactmerge;
+package com.cft.contactmerge.io;
+
+import com.cft.contactmerge.*;
 
 import java.util.*;
 

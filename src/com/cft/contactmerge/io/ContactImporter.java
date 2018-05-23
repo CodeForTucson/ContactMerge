@@ -3,7 +3,9 @@
  * (xml, tsv, csv, etc), extract contact information from the specified file
  * and return the extract list of contacts when requested.
  */
-package com.cft.contactmerge;
+package com.cft.contactmerge.io;
+
+import com.cft.contactmerge.*;
 import java.util.Collection;
 
 public class ContactImporter {
