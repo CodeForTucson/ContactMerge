@@ -455,9 +455,9 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCity("North Las Vegas");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "N Las Vegas"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "N Las Vegas"),
                 cityFailedMsg("North Las Vegas","N Las Vegas"));
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "N. Las Vegas"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "N. Las Vegas"),
                 cityFailedMsg("North Las Vegas","N. Las Vegas"));
     }
 
@@ -466,9 +466,9 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCity("South Jordan");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "S Jordan"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "S Jordan"),
                 cityFailedMsg("South Jordan","S Jordan"));
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "S. Jordan"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "S. Jordan"),
                 cityFailedMsg("South Jordan","S. Jordan"));
     }
 
@@ -477,11 +477,11 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCity("E Hartford");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "East Hartford"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "East Hartford"),
                 cityFailedMsg("E Hartford","East Hartford"));
 
         contactOne.getAddress().setCity("E. Hartford");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "East Hartford"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "East Hartford"),
                 cityFailedMsg("E. Hartford","East Hartford"));
     }
 
@@ -490,11 +490,11 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCity("W Haven");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "West Haven"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "West Haven"),
                 cityFailedMsg("W Haven","West Haven"));
 
         contactOne.getAddress().setCity("W. Haven");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "West Haven"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "West Haven"),
                 cityFailedMsg("W. Haven","West Haven"));
     }
 
@@ -503,11 +503,11 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCity("NE Washington");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "North-East Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "North-East Washington"),
                 cityFailedMsg("NE Washington","North-East Washington"));
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "Northeast Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "Northeast Washington"),
                 cityFailedMsg("NE Washington","Northeast Washington"));
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "NE. Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "NE. Washington"),
                 cityFailedMsg("NE Washington","NE. Washington"));
     }
 
@@ -516,11 +516,11 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCity("NW Washington");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "North-West Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "North-West Washington"),
                 cityFailedMsg("NW Washington","North-West Washington"));
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "Northwest Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "Northwest Washington"),
                 cityFailedMsg("NW Washington","Northwest Washington"));
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "NW. Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "NW. Washington"),
                 cityFailedMsg("NW Washington","NW. Washington"));
     }
 
@@ -529,15 +529,15 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCity("South-West Washington");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
                 cityFailedMsg("South-West Washington","SW Washington"));
 
         contactOne.getAddress().setCity("Southwest Washington");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
                 cityFailedMsg("Southwest Washington","SW Washington"));
 
         contactOne.getAddress().setCity("SW. Washington");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
                 cityFailedMsg("SW. Washington","SW Washington"));
     }
 
@@ -546,15 +546,15 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCity("South-East Washington");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
                 cityFailedMsg("South-East Washington","SE Washington"));
 
         contactOne.getAddress().setCity("Southeast Washington");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
                 cityFailedMsg("Southeast Washington","SE Washington"));
 
         contactOne.getAddress().setCity("SE. Washington");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
                 cityFailedMsg("SE. Washington","SE Washington"));
     }
 
@@ -563,7 +563,7 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCity("North Las Vegas");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "Las Vegas"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doCitiesMatch(contactOne, "Las Vegas"));
     }
 
     @Test
@@ -571,7 +571,7 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCity("North 24 Parganas district");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "North 24 Parganas district"));
+        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "North 24 Parganas district"));
     }
 
     @Test
