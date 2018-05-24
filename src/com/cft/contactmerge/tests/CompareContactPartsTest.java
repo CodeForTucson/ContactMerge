@@ -628,6 +628,9 @@ class CompareContactPartsTest {
 
         contactOne.getAddress().setState("New York");
         assertEquals(AnswerType.no, CompareContactParts.doStatesMatch(contactOne, "Arizona"));
+
+        contactOne.getAddress().setState("Virginia");
+        assertEquals(AnswerType.no, CompareContactParts.doStatesMatch(contactOne, "West Virginia"));
     }
 
     /*******************************************************************************************************************

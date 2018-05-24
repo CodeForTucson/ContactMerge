@@ -200,8 +200,8 @@ public class Address {
             return AnswerType.no;
         }
 
-        ArrayList<String> normalizedStateOne = StateMatchLogic.setNormalizeState(getState());
-        ArrayList<String> normalizedStateTwo = StateMatchLogic.setNormalizeState(otherState);
+        String normalizedStateOne = StateMatchLogic.setNormalizeState(getState());
+        String normalizedStateTwo = StateMatchLogic.setNormalizeState(otherState);
 
         if (normalizedStateOne.equals(normalizedStateTwo)){
             return AnswerType.yes;
