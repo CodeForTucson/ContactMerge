@@ -21,6 +21,7 @@ public class StateMatchLogic {
         put("ark", "arkansas");
         put("arkansas", "arkansas");
         put("ca", "california");
+        put("cali", "california");
         put("calif", "california");
         put("california", "california");
         put("co", "colorado");

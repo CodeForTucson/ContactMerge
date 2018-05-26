@@ -214,8 +214,8 @@ public class Address {
             return AnswerType.no;
         }
 
-        ArrayList<String> normalizedCountryOne = CountryMatchLogic.setNormalizeCountry(getCountry());
-        ArrayList<String> normalizedCountryTwo = CountryMatchLogic.setNormalizeCountry(otherCountry);
+        String normalizedCountryOne = CountryMatchLogic.setNormalizeCountry(getCountry());
+        String normalizedCountryTwo = CountryMatchLogic.setNormalizeCountry(otherCountry);
 
         if (normalizedCountryOne.equals(normalizedCountryTwo)){
             return AnswerType.yes;

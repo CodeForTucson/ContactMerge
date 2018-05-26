@@ -645,7 +645,33 @@ class CompareContactPartsTest {
         Contact contactOne = new Contact();
 
         contactOne.getAddress().setCountry("United States of America");
-        assertEquals(AnswerType.no, CompareContactParts.doCountriesMatch(contactOne, "united states of america"));
+        assertEquals(AnswerType.yes, CompareContactParts.doCountriesMatch(contactOne, "united states of america"));
+    }
+
+    @Test
+    void doCountriesMatch_Yes_IgnoreSpaces() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCountry("   United States   of  America ");
+        assertEquals(AnswerType.yes, CompareContactParts.doCountriesMatch(contactOne, "united states of america"));
+    }
+
+    @Test
+    void doCountriesMatch_Yes_Abbreviations() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCountry("United States of America");
+        assertEquals(AnswerType.yes, CompareContactParts.doCountriesMatch(contactOne, "united states"));
+        assertEquals(AnswerType.yes, CompareContactParts.doCountriesMatch(contactOne, "us"));
+        assertEquals(AnswerType.yes, CompareContactParts.doCountriesMatch(contactOne, "usa"));
+    }
+
+    @Test
+    void doCountriesMatch_no() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setCountry("United States");
+        assertEquals(AnswerType.no, CompareContactParts.doCountriesMatch(contactOne, "United Kingdom"));
     }
 
     /*******************************************************************************************************************
@@ -659,8 +685,30 @@ class CompareContactPartsTest {
     void doZipsMatch_Yes() {
         Contact contactOne = new Contact();
 
-        contactOne.getAddress().setZip("92592");
-        assertEquals(AnswerType.no, CompareContactParts.doZipsMatch(contactOne, "92592"));
+        contactOne.getAddress().setZip("85713-1000");
+        assertEquals(AnswerType.yes, CompareContactParts.doZipsMatch(contactOne, "85713-1000"));
+
+        contactOne.getAddress().setZip("85713");
+        assertEquals(AnswerType.yes, CompareContactParts.doZipsMatch(contactOne, "85713"));
+    }
+
+    @Test
+    void doZipsMatch_Maybe() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setZip("85713");
+        assertEquals(AnswerType.maybe, CompareContactParts.doZipsMatch(contactOne, "85713-1000"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doZipsMatch(contactOne, "85713-1004"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doZipsMatch(contactOne, "85713-1008"));
+    }
+
+    @Test
+    void doZipsMatch_No() {
+        Contact contactOne = new Contact();
+
+        contactOne.getAddress().setZip("85713-1000");
+        assertEquals(AnswerType.no, CompareContactParts.doZipsMatch(contactOne, "85713-1001"));
+        assertEquals(AnswerType.no, CompareContactParts.doZipsMatch(contactOne, "85714-1000"));
     }
 
     /*******************************************************************************************************************
@@ -687,6 +735,15 @@ class CompareContactPartsTest {
                 phoneNumberFailedMsg("(520) 123-4567","5201234567"));
         assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch(contactOne, "520-123-4567"),
                 phoneNumberFailedMsg("(520) 123-4567","520-123-4567"));
+    }
+
+    @Test
+    void doPhoneNumbersMatch_Yes_InternationalDigit() {
+        Contact contactOne = new Contact();
+
+        contactOne.getPhone().setPhoneNumber("1 (520) 123-4567");
+        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch(contactOne, "5201234567"),
+                phoneNumberFailedMsg("1 (520) 123-4567","5201234567"));
     }
 
     @Test
