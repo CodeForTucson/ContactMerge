@@ -1,6 +1,8 @@
 package com.cft.contactmerge.contact;
 
-public class Email {
+import com.cft.contactmerge.AnswerType;
+
+public class Email implements IContactProperty<Email> {
     private String emailAddress;
 
     /*******************************************************************************************************************
@@ -29,5 +31,24 @@ public class Email {
     @Override
     public String toString() {
         return getEmailAddress();
+    }
+
+    @Override
+    public Email getValue() {return this;}
+
+    @Override
+    public AnswerType isMatch(Email otherEmail){
+        if ((getEmailAddress() == null || getEmailAddress().isEmpty()) ||
+                (otherEmail.getEmailAddress() == null || otherEmail.getEmailAddress().isEmpty())
+                ){
+            return AnswerType.no;
+        }
+
+        return isEmailAddressMatch(otherEmail.getEmailAddress());
+    }
+
+    public AnswerType isEmailAddressMatch(String otherEmailAddress){
+        return EmailAddressMatchLogic.getEmailAddressMatchResult(EmailAddressMatchLogic.normalizeEmailAddress(getEmailAddress()),
+                EmailAddressMatchLogic.normalizeEmailAddress(otherEmailAddress));
     }
 }

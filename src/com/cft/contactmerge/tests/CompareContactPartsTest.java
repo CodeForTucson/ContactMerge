@@ -1,6 +1,6 @@
 package com.cft.contactmerge.tests;
 
-import com.cft.contactmerge.contact.Phone;
+import com.cft.contactmerge.contact.*;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import com.cft.contactmerge.*;
@@ -730,6 +730,50 @@ class CompareContactPartsTest {
                 phoneNumberFailedMsg("(520) 123-4567","520-123-4567"));
     }
 
+    @Test
+    void doPhonesMatch_Maybe_MissingAreaCode() {
+        Contact contactOne = new Contact();
+        Phone otherPhone = new Phone();
+
+        contactOne.getPhone().setFullNumber("(520) 123-4567");
+        otherPhone.setFullNumber("1234567");
+        assertEquals(AnswerType.maybe, CompareContactParts.doPhonesMatch(contactOne, otherPhone),
+                phoneNumberFailedMsg("(520) 123-4567","1234567"));
+
+        otherPhone.setFullNumber("123-4567");
+        assertEquals(AnswerType.maybe, CompareContactParts.doPhonesMatch(contactOne, otherPhone),
+                phoneNumberFailedMsg("(520) 123-4567","123-4567"));
+    }
+
+    @Test
+    void doPhonesMatch_No() {
+        Contact contactOne = new Contact();
+        Phone otherPhone = new Phone();
+
+        contactOne.getPhone().setFullNumber("(520) 123-4567");
+        otherPhone.setFullNumber("1234567");
+        assertEquals(AnswerType.no, CompareContactParts.doPhonesMatch(contactOne, otherPhone));
+    }
+
+    @Test
+    void doPhonesMatch_No_DifferentAreaCode() {
+        Contact contactOne = new Contact();
+        Phone otherPhone = new Phone();
+
+        contactOne.getPhone().setFullNumber("(520) 123-4567");
+        otherPhone.setFullNumber("6191234567");
+        assertEquals(AnswerType.no, CompareContactParts.doPhonesMatch(contactOne, otherPhone));
+    }
+
+    @Test
+    void doPhonesMatch_No_Missing() {
+        Contact contactOne = new Contact();
+        Phone otherPhone = new Phone();
+
+        contactOne.getPhone().setFullNumber("(520) 123-4567");
+        assertEquals(AnswerType.no, CompareContactParts.doPhonesMatch(contactOne, otherPhone));
+    }
+
     /*******************************************************************************************************************
      ******************************************** Compare Phone Number Tests *******************************************
      *******************************************************************************************************************/
@@ -786,30 +830,75 @@ class CompareContactPartsTest {
         assertEquals(AnswerType.no, CompareContactParts.doPhoneNumbersMatch(contactOne, "(520) 123-4667"));
     }
 
+    @Test
+    void doPhoneNumbersMatch_No_Missing() {
+        Contact contactOne = new Contact();
+
+        contactOne.getPhone().setPhoneNumber("(520) 123-4567");
+        assertEquals(AnswerType.no, CompareContactParts.doPhoneNumbersMatch(contactOne, ""));
+    }
+
     /*******************************************************************************************************************
      *********************************************** Compare Email Tests ***********************************************
      *******************************************************************************************************************/
     @Test
     void doEmailsMatch_Yes_IgnoreSpaces() {
-        Contact contactOne = new Contact();
+        Email firstEmail = new Email();
+        Email secondEmail = new Email("jdoe@yahoo.com");
 
-        contactOne.getEmail().setEmailAddress("jdoe@yahoo.com");
-        assertEquals(AnswerType.yes, CompareContactParts.doEmailsMatch(contactOne, " jdoe@yahoo.com "));
-    }
-
-    @Test
-    void doEmailsMatch_Yes_IgnoreCase() {
-        Contact contactOne = new Contact();
-
-        contactOne.getEmail().setEmailAddress("jdoe@yahoo.com");
-        assertEquals(AnswerType.yes, CompareContactParts.doEmailsMatch(contactOne, "JDoe@Yahoo.com"));
+        firstEmail.setEmailAddress(" jdoe@yahoo.com ");
+        assertEquals(AnswerType.yes, CompareContactParts.doEmailsMatch(firstEmail, secondEmail));
     }
 
     @Test
     void doEmailsMatch_No() {
-        Contact contactOne = new Contact();
+        Email firstEmail = new Email();
+        Email secondEmail = new Email("jdoe@gmail.com");
 
-        contactOne.getEmail().setEmailAddress("jdoe@yahoo.com");
-        assertEquals(AnswerType.no, CompareContactParts.doEmailsMatch(contactOne, "jdoe@gmail.com"));
+        firstEmail.setEmailAddress("jdoe@yahoo.com");
+        assertEquals(AnswerType.no, CompareContactParts.doEmailsMatch(firstEmail, secondEmail));
+    }
+
+    @Test
+    void doEmailsMatch_No_Missing() {
+        Email firstEmail = new Email();
+        Email secondEmail = new Email("jdoe@yahoo.com");
+
+        assertEquals(AnswerType.no, CompareContactParts.doEmailsMatch(firstEmail, secondEmail));
+    }
+
+    /*******************************************************************************************************************
+     ******************************************* Compare Email Address Tests *******************************************
+     *******************************************************************************************************************/
+    @Test
+    void doEmailAddressesMatch_Yes_IgnoreSpaces() {
+        Email originalEmail = new Email();
+
+        originalEmail.setEmailAddress("jdoe@yahoo.com");
+        assertEquals(AnswerType.yes, CompareContactParts.doEmailAddressesMatch(originalEmail, " jdoe @yahoo.com "));
+    }
+
+    @Test
+    void doEmailAddressesMatch_Maybe_IgnoreCase() {
+        Email originalEmail = new Email();
+
+        originalEmail.setEmailAddress("jdoe@yahoo.com");
+        assertEquals(AnswerType.maybe, CompareContactParts.doEmailAddressesMatch(originalEmail, "JDoe@Yahoo.com"));
+    }
+
+    @Test
+    void doEmailAddressesMatch_No() {
+        Email originalEmail = new Email();
+
+        originalEmail.setEmailAddress("jdoe@yahoo.com");
+        assertEquals(AnswerType.no, CompareContactParts.doEmailAddressesMatch(originalEmail, "jdoe@gmail.com"));
+    }
+
+    @Test
+    void doEmailAddressesMatch_No_Missing() {
+        Email originalEmail = new Email();
+
+        originalEmail.setEmailAddress("jdoe@yahoo.com");
+        assertEquals(AnswerType.no, CompareContactParts.doEmailAddressesMatch(originalEmail, ""));
     }
 }
