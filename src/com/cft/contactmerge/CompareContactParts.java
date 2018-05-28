@@ -1,6 +1,7 @@
 package com.cft.contactmerge;
 
 import com.cft.contactmerge.contact.Address;
+import com.cft.contactmerge.contact.Phone;
 
 public class CompareContactParts {
     public static AnswerType doNamesMatch(String firstName1, String lastName1, String firstName2, String lastName2)
@@ -43,9 +44,14 @@ public class CompareContactParts {
         return contact.getAddress().isZipMatch(otherZip);
     }
 
+    public static AnswerType doPhonesMatch(Contact contact, Phone otherPhone)
+    {
+        return contact.getPhone().isMatch(otherPhone);
+    }
+
     public static AnswerType doPhoneNumbersMatch(Contact contact, String otherPhoneNumber)
     {
-        return null;
+        return contact.getPhone().isPhoneNumberMatch(otherPhoneNumber);
     }
 
     public static AnswerType doEmailsMatch(Contact contact, String otherEmail)

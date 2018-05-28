@@ -1,5 +1,6 @@
 package com.cft.contactmerge.tests;
 
+import com.cft.contactmerge.contact.Phone;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import com.cft.contactmerge.*;
@@ -712,6 +713,24 @@ class CompareContactPartsTest {
     }
 
     /*******************************************************************************************************************
+     *********************************************** Compare Phone Tests ***********************************************
+     *******************************************************************************************************************/
+    @Test
+    void doPhonesMatch_Yes_IgnorePunctuation() {
+        Contact contactOne = new Contact();
+        Phone otherPhone = new Phone();
+
+        contactOne.getPhone().setFullNumber("(520) 123-4567");
+        otherPhone.setFullNumber("5201234567");
+        assertEquals(AnswerType.yes, CompareContactParts.doPhonesMatch(contactOne, otherPhone),
+                phoneNumberFailedMsg("(520) 123-4567","5201234567"));
+
+        otherPhone.setFullNumber("520-123-4567");
+        assertEquals(AnswerType.yes, CompareContactParts.doPhonesMatch(contactOne, otherPhone),
+                phoneNumberFailedMsg("(520) 123-4567","520-123-4567"));
+    }
+
+    /*******************************************************************************************************************
      ******************************************** Compare Phone Number Tests *******************************************
      *******************************************************************************************************************/
     private String phoneNumberFailedMsg(String phoneNumberOne, String phoneNumberTwo){
@@ -744,6 +763,19 @@ class CompareContactPartsTest {
         contactOne.getPhone().setPhoneNumber("1 (520) 123-4567");
         assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch(contactOne, "5201234567"),
                 phoneNumberFailedMsg("1 (520) 123-4567","5201234567"));
+    }
+
+    @Test
+    void doPhoneNumbersMatch_Maybe_MissingAreaCode() {
+        Contact contactOne = new Contact();
+
+        contactOne.getPhone().setPhoneNumber("1 (520) 123-4567");
+        assertEquals(AnswerType.maybe, CompareContactParts.doPhoneNumbersMatch(contactOne, "1234567"),
+                phoneNumberFailedMsg("1 (520) 123-4567","1234567"));
+
+        contactOne.getPhone().setPhoneNumber("(520) 123-4567");
+        assertEquals(AnswerType.maybe, CompareContactParts.doPhoneNumbersMatch(contactOne, "1234567"),
+                phoneNumberFailedMsg("(520) 123-4567","1234567"));
     }
 
     @Test
