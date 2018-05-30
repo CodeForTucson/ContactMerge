@@ -45,23 +45,13 @@ public class CompareContactParts {
         return contact.getAddress().isZipMatch(otherZip);
     }
 
-    public static AnswerType doPhonesMatch(Contact contact, Phone otherPhone)
+    public static AnswerType doPhonesMatch(Phone firstPhone, Phone secondPhone)
     {
-        return contact.getPhone().isMatch(otherPhone);
-    }
-
-    public static AnswerType doPhoneNumbersMatch(Contact contact, String otherPhoneNumber)
-    {
-        return contact.getPhone().isPhoneNumberMatch(otherPhoneNumber);
+        return firstPhone.isMatch(secondPhone);
     }
 
     public static AnswerType doEmailsMatch(Email firstEmail, Email secondEmail)
     {
         return firstEmail.isMatch(secondEmail);
-    }
-
-    public static AnswerType doEmailAddressesMatch(Email originalEmail, String otherEmailAddress)
-    {
-        return originalEmail.isEmailAddressMatch(otherEmailAddress);
     }
 }

@@ -715,127 +715,76 @@ class CompareContactPartsTest {
     /*******************************************************************************************************************
      *********************************************** Compare Phone Tests ***********************************************
      *******************************************************************************************************************/
-    @Test
-    void doPhonesMatch_Yes_IgnorePunctuation() {
-        Contact contactOne = new Contact();
-        Phone otherPhone = new Phone();
-
-        contactOne.getPhone().setFullNumber("(520) 123-4567");
-        otherPhone.setFullNumber("5201234567");
-        assertEquals(AnswerType.yes, CompareContactParts.doPhonesMatch(contactOne, otherPhone),
-                phoneNumberFailedMsg("(520) 123-4567","5201234567"));
-
-        otherPhone.setFullNumber("520-123-4567");
-        assertEquals(AnswerType.yes, CompareContactParts.doPhonesMatch(contactOne, otherPhone),
-                phoneNumberFailedMsg("(520) 123-4567","520-123-4567"));
-    }
-
-    @Test
-    void doPhonesMatch_Maybe_MissingAreaCode() {
-        Contact contactOne = new Contact();
-        Phone otherPhone = new Phone();
-
-        contactOne.getPhone().setFullNumber("(520) 123-4567");
-        otherPhone.setFullNumber("1234567");
-        assertEquals(AnswerType.maybe, CompareContactParts.doPhonesMatch(contactOne, otherPhone),
-                phoneNumberFailedMsg("(520) 123-4567","1234567"));
-
-        otherPhone.setFullNumber("123-4567");
-        assertEquals(AnswerType.maybe, CompareContactParts.doPhonesMatch(contactOne, otherPhone),
-                phoneNumberFailedMsg("(520) 123-4567","123-4567"));
-    }
-
-    @Test
-    void doPhonesMatch_No() {
-        Contact contactOne = new Contact();
-        Phone otherPhone = new Phone();
-
-        contactOne.getPhone().setFullNumber("(520) 123-4567");
-        otherPhone.setFullNumber("1234567");
-        assertEquals(AnswerType.no, CompareContactParts.doPhonesMatch(contactOne, otherPhone));
-    }
-
-    @Test
-    void doPhonesMatch_No_DifferentAreaCode() {
-        Contact contactOne = new Contact();
-        Phone otherPhone = new Phone();
-
-        contactOne.getPhone().setFullNumber("(520) 123-4567");
-        otherPhone.setFullNumber("6191234567");
-        assertEquals(AnswerType.no, CompareContactParts.doPhonesMatch(contactOne, otherPhone));
-    }
-
-    @Test
-    void doPhonesMatch_No_Missing() {
-        Contact contactOne = new Contact();
-        Phone otherPhone = new Phone();
-
-        contactOne.getPhone().setFullNumber("(520) 123-4567");
-        assertEquals(AnswerType.no, CompareContactParts.doPhonesMatch(contactOne, otherPhone));
-    }
-
-    /*******************************************************************************************************************
-     ******************************************** Compare Phone Number Tests *******************************************
-     *******************************************************************************************************************/
-    private String phoneNumberFailedMsg(String phoneNumberOne, String phoneNumberTwo){
+    private String phoneFailedMsg(String phoneNumberOne, String phoneNumberTwo){
         return "<" + phoneNumberOne + "> -vs- <" + phoneNumberTwo + ">";
     }
 
     @Test
-    void doPhoneNumbersMatch_Yes_IgnoreSpaces() {
-        Contact contactOne = new Contact();
+    void doPhonesMatch_Yes_IgnoreSpaces() {
+        Phone phone1 = new Phone("520 123 4567");
+        Phone phone2 = new Phone("5201234567");
 
-        contactOne.getPhone().setPhoneNumber("520 123 4567");
-        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch(contactOne, "5201234567"));
+        assertEquals(AnswerType.yes, CompareContactParts.doPhonesMatch(phone1, phone2));
     }
 
     @Test
-    void doPhoneNumbersMatch_Yes_IgnorePunctuation() {
-        Contact contactOne = new Contact();
+    void doPhonesMatch_Yes_IgnorePunctuation() {
+        Phone phone1 = new Phone();
+        Phone phone2 = new Phone();
 
-        contactOne.getPhone().setPhoneNumber("(520) 123-4567");
-        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch(contactOne, "5201234567"),
-                phoneNumberFailedMsg("(520) 123-4567","5201234567"));
-        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch(contactOne, "520-123-4567"),
-                phoneNumberFailedMsg("(520) 123-4567","520-123-4567"));
+        phone1.setFullNumber("(619) 123-4567");
+        phone2.setFullNumber("6191234567");
+        assertEquals(AnswerType.yes, CompareContactParts.doPhonesMatch(phone1, phone2),
+                phoneFailedMsg("(619) 123-4567","6191234567"));
+
+        phone2.setFullNumber("619-123-4567");
+        assertEquals(AnswerType.yes, CompareContactParts.doPhonesMatch(phone1, phone2),
+                phoneFailedMsg("(619) 123-4567","619-123-4567"));
     }
 
     @Test
-    void doPhoneNumbersMatch_Yes_InternationalDigit() {
-        Contact contactOne = new Contact();
+    void doPhonesMatch_Maybe_MissingCountryCallingCode() {
+        Phone phone1 = new Phone("1 (520) 123-4567");
+        Phone phone2 = new Phone("5201234567");
 
-        contactOne.getPhone().setPhoneNumber("1 (520) 123-4567");
-        assertEquals(AnswerType.yes, CompareContactParts.doPhoneNumbersMatch(contactOne, "5201234567"),
-                phoneNumberFailedMsg("1 (520) 123-4567","5201234567"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doPhonesMatch(phone1, phone2));
     }
 
     @Test
-    void doPhoneNumbersMatch_Maybe_MissingAreaCode() {
-        Contact contactOne = new Contact();
+    void doPhonesMatch_Maybe_MissingAreaCode() {
+        Phone phone1 = new Phone("(520) 123-4567");
+        Phone phone2 = new Phone("1234567");
 
-        contactOne.getPhone().setPhoneNumber("1 (520) 123-4567");
-        assertEquals(AnswerType.maybe, CompareContactParts.doPhoneNumbersMatch(contactOne, "1234567"),
-                phoneNumberFailedMsg("1 (520) 123-4567","1234567"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doPhonesMatch(phone1, phone2),
+                phoneFailedMsg("(520) 123-4567","1234567"));
 
-        contactOne.getPhone().setPhoneNumber("(520) 123-4567");
-        assertEquals(AnswerType.maybe, CompareContactParts.doPhoneNumbersMatch(contactOne, "1234567"),
-                phoneNumberFailedMsg("(520) 123-4567","1234567"));
+        phone2.setFullNumber("123-4567");
+        assertEquals(AnswerType.maybe, CompareContactParts.doPhonesMatch(phone1, phone2),
+                phoneFailedMsg("(520) 123-4567","123-4567"));
     }
 
     @Test
-    void doPhoneNumbersMatch_No() {
-        Contact contactOne = new Contact();
+    void doPhonesMatch_No() {
+        Phone phone1 = new Phone("(520) 123-4567");
+        Phone phone2 = new Phone("(520) 123-8567");
 
-        contactOne.getPhone().setPhoneNumber("(520) 123-4567");
-        assertEquals(AnswerType.no, CompareContactParts.doPhoneNumbersMatch(contactOne, "(520) 123-4667"));
+        assertEquals(AnswerType.no, CompareContactParts.doPhonesMatch(phone1, phone2));
     }
 
     @Test
-    void doPhoneNumbersMatch_No_Missing() {
-        Contact contactOne = new Contact();
+    void doPhonesMatch_No_DifferentAreaCode() {
+        Phone phone1 = new Phone("(520) 123-4567");
+        Phone phone2 = new Phone("(619) 123-4567");
 
-        contactOne.getPhone().setPhoneNumber("(520) 123-4567");
-        assertEquals(AnswerType.no, CompareContactParts.doPhoneNumbersMatch(contactOne, ""));
+        assertEquals(AnswerType.no, CompareContactParts.doPhonesMatch(phone1, phone2));
+    }
+
+    @Test
+    void doPhonesMatch_No_Missing() {
+        Phone phone1 = new Phone("(520) 123-4567");
+        Phone phone2 = new Phone();
+
+        assertEquals(AnswerType.no, CompareContactParts.doPhonesMatch(phone1, phone2));
     }
 
     /*******************************************************************************************************************
@@ -843,19 +792,25 @@ class CompareContactPartsTest {
      *******************************************************************************************************************/
     @Test
     void doEmailsMatch_Yes_IgnoreSpaces() {
-        Email firstEmail = new Email();
+        Email firstEmail = new Email(" jdoe@yahoo.com ");
         Email secondEmail = new Email("jdoe@yahoo.com");
 
-        firstEmail.setEmailAddress(" jdoe@yahoo.com ");
         assertEquals(AnswerType.yes, CompareContactParts.doEmailsMatch(firstEmail, secondEmail));
     }
 
     @Test
+    void isEmailAddressMatch_Maybe_IgnoreCase() {
+        Email firstEmail = new Email("jdoe@yahoo.com");
+        Email secondEmail = new Email("JDoe@Yahoo.com");
+
+        assertEquals(AnswerType.maybe, CompareContactParts.doEmailsMatch(firstEmail, secondEmail));
+    }
+
+    @Test
     void doEmailsMatch_No() {
-        Email firstEmail = new Email();
+        Email firstEmail = new Email("jdoe@yahoo.com");
         Email secondEmail = new Email("jdoe@gmail.com");
 
-        firstEmail.setEmailAddress("jdoe@yahoo.com");
         assertEquals(AnswerType.no, CompareContactParts.doEmailsMatch(firstEmail, secondEmail));
     }
 
@@ -865,40 +820,5 @@ class CompareContactPartsTest {
         Email secondEmail = new Email("jdoe@yahoo.com");
 
         assertEquals(AnswerType.no, CompareContactParts.doEmailsMatch(firstEmail, secondEmail));
-    }
-
-    /*******************************************************************************************************************
-     ******************************************* Compare Email Address Tests *******************************************
-     *******************************************************************************************************************/
-    @Test
-    void doEmailAddressesMatch_Yes_IgnoreSpaces() {
-        Email originalEmail = new Email();
-
-        originalEmail.setEmailAddress("jdoe@yahoo.com");
-        assertEquals(AnswerType.yes, CompareContactParts.doEmailAddressesMatch(originalEmail, " jdoe @yahoo.com "));
-    }
-
-    @Test
-    void doEmailAddressesMatch_Maybe_IgnoreCase() {
-        Email originalEmail = new Email();
-
-        originalEmail.setEmailAddress("jdoe@yahoo.com");
-        assertEquals(AnswerType.maybe, CompareContactParts.doEmailAddressesMatch(originalEmail, "JDoe@Yahoo.com"));
-    }
-
-    @Test
-    void doEmailAddressesMatch_No() {
-        Email originalEmail = new Email();
-
-        originalEmail.setEmailAddress("jdoe@yahoo.com");
-        assertEquals(AnswerType.no, CompareContactParts.doEmailAddressesMatch(originalEmail, "jdoe@gmail.com"));
-    }
-
-    @Test
-    void doEmailAddressesMatch_No_Missing() {
-        Email originalEmail = new Email();
-
-        originalEmail.setEmailAddress("jdoe@yahoo.com");
-        assertEquals(AnswerType.no, CompareContactParts.doEmailAddressesMatch(originalEmail, ""));
     }
 }

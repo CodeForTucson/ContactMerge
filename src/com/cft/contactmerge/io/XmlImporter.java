@@ -133,7 +133,7 @@ public class XmlImporter implements IImporter, Iterable<Contact> {
                 address.setCity(data.get(columnMap.get("donor_city")));
                 address.setState(data.get(columnMap.get("donor_state")));
                 address.setZip(data.get(columnMap.get("donor_zip")));
-                phone.setPhoneNumber(data.get(columnMap.get("donor_phone")));
+                phone.setFullNumber(data.get(columnMap.get("donor_phone")));
                 email.setEmailAddress(data.get(columnMap.get("donor_email")));
                 contact.setName(name);
                 contact.setAddress(address);

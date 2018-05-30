@@ -41,7 +41,7 @@ class ContactTest {
     @Test
     void setPhone() {
         Contact newContact = new Contact();
-        Phone phone = new Phone("520", "7734512");
+        Phone phone = new Phone("5207734512");
         newContact.setPhone(phone);
         assertEquals("520", newContact.getPhone().getAreaCode());
         assertEquals("7734512", newContact.getPhone().getPhoneNumber());
@@ -62,7 +62,7 @@ class ContactTest {
         Contact c1 = new Contact();
         Name name1 = new Name("John", "Ray", "Doe", "Dr", "III");
         Address address1 = new Address("123 Main St", "4", "Tucson", "AZ", "USA", "85750");
-        Phone phone1 = new Phone("520", "1234567");
+        Phone phone1 = new Phone("5201234567");
         Email email1 = new Email("jdoe@gmail.com");
         c1.setName(name1);
         c1.setAddress(address1);
@@ -72,7 +72,7 @@ class ContactTest {
         Contact c2 = new Contact();
         Name name2 = new Name("Adam", "", "Smith", "", "");
         Address address2 = new Address("1400 Broadway", "8", "London", "", "England", "N14");
-        Phone phone2 = new Phone("617", "7654321");
+        Phone phone2 = new Phone("5207654321");
         Email email2 = new Email("asmith@comcast.net");
         c2.setName(name2);
         c2.setAddress(address2);
