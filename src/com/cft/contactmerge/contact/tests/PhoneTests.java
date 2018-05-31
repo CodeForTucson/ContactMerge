@@ -91,6 +91,36 @@ public class PhoneTests {
         assertEquals("15207734512", phone4.getFullNumber(), testFailedMessage("15207734512", phone4.getFullNumber()));
     }
 
+    @Test
+    void Phone_setFullNumber_MultiNumbersSameObject(){
+        Phone phone = new Phone();
+
+        phone.setFullNumber("15207734512");
+        assertEquals("1", phone.getCountryCallingCode(), testFailedMessage("1", phone.getCountryCallingCode()));
+        assertEquals("520", phone.getAreaCode(), testFailedMessage("520", phone.getAreaCode()));
+        assertEquals("7734512", phone.getPhoneNumber(), testFailedMessage("7734512", phone.getPhoneNumber()));
+
+        phone.setFullNumber("8146382");
+        assertNull(phone.getCountryCallingCode(), testFailedMessage("null", phone.getCountryCallingCode()));
+        assertNull(phone.getAreaCode(), testFailedMessage("null", phone.getAreaCode()));
+        assertEquals("8146382", phone.getPhoneNumber(), testFailedMessage("null", phone.getPhoneNumber()));
+    }
+
+    @Test
+    void Phone_setVariablesNull(){
+        Phone phone = new Phone();
+
+        phone.setFullNumber("15207734512");
+        assertEquals("1", phone.getCountryCallingCode(), testFailedMessage("1", phone.getCountryCallingCode()));
+        assertEquals("520", phone.getAreaCode(), testFailedMessage("520", phone.getAreaCode()));
+        assertEquals("7734512", phone.getPhoneNumber(), testFailedMessage("7734512", phone.getPhoneNumber()));
+
+        phone.setVariablesNull();
+        assertNull(phone.getCountryCallingCode(), testFailedMessage("null", phone.getCountryCallingCode()));
+        assertNull(phone.getAreaCode(), testFailedMessage("null", phone.getAreaCode()));
+        assertNull(phone.getPhoneNumber(), testFailedMessage("null", phone.getPhoneNumber()));
+    }
+
     /*******************************************************************************************************************
      ************************************************** toString Tests *************************************************
      *******************************************************************************************************************/

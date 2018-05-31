@@ -66,6 +66,7 @@ public class Phone implements IContactProperty<Phone> {
     }
 
     public void setFullNumber(String fullNumber){
+        setVariablesNull();
         if (fullNumber == null ||fullNumber.isEmpty()){
             throw new IllegalArgumentException("given number missing");
         }
@@ -119,6 +120,12 @@ public class Phone implements IContactProperty<Phone> {
         }
         return getPhoneNumber().substring(0, PhoneNumberMatchLogic.getUsaAreaCodeSize()) +
                     "-" + getPhoneNumber().substring(PhoneNumberMatchLogic.getUsaAreaCodeSize(), PhoneNumberMatchLogic.getUsaNumberSize_NoAreaCode());
+    }
+
+    public void setVariablesNull(){
+        setPhoneNumber(null);
+        setAreaCode(null);
+        setCountryCallingCode(null);
     }
 
     /*******************************************************************************************************************
