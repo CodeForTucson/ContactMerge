@@ -1,11 +1,13 @@
-package com.cft.contactmerge;
+package com.cft.contactmerge.contact;
+
+import com.cft.contactmerge.AnswerType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
 public abstract class CityMatchLogic {
-    private static final Hashtable<String,String> compassDirection = StreetAddressMatchLogic.getCompassDirection();
+    private static final Hashtable<String,String> compassDirection = StreetMatchLogic.getCompassDirection();
 
     /*******************************************************************************************************************
      *************************************************** Get Methods ***************************************************

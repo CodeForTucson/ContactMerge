@@ -6,10 +6,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AddressTests {
+    // Note: matching methods tests are implemented in CompareContactPartsTest.class
     public String testFailedMessage(String valueOne, String valueTwo){
         return "<Expected Value: " + valueOne + ">" + " -vs- " + "<Actual Value: " + valueTwo + ">";
     }
 
+    /*******************************************************************************************************************
+     ************************************************ Constructor Tests ************************************************
+     *******************************************************************************************************************/
     @Test
     void Address_Constructor() {
         Address address = new Address();
@@ -17,9 +21,9 @@ public class AddressTests {
     }
 
     @Test
-    void Address_ConstructorValuesFilled() {
+    void Address_Constructor_AllAddressPartsFilled() {
         Address address = new Address("ghi", "4", "hts", "az", "usa", "85713");
-        assertEquals("ghi", address.getStreetAddress(), testFailedMessage("ghi", address.getStreetAddress()));
+        assertEquals("ghi", address.getStreet(), testFailedMessage("ghi", address.getStreet()));
         assertEquals("4", address.getApartment(), testFailedMessage("4", address.getApartment()));
         assertEquals("hts", address.getCity(), testFailedMessage("hts", address.getCity()));
         assertEquals("az", address.getState(), testFailedMessage("az", address.getState()));
@@ -28,10 +32,74 @@ public class AddressTests {
     }
 
     @Test
+    void Address_Constructor_StreetAddressOnly() {
+        Address address = new Address("ghi", null, null, null, null, null);
+        assertEquals("ghi", address.getStreet(), testFailedMessage("ghi", address.getStreet()));
+        assertNull(address.getApartment(), testFailedMessage("null", address.getApartment()));
+        assertNull(address.getCity(), testFailedMessage("null", address.getCity()));
+        assertNull(address.getState(), testFailedMessage("null", address.getState()));
+        assertNull(address.getCountry(), testFailedMessage("null", address.getCountry()));
+        assertNull(address.getZip(), testFailedMessage("null", address.getZip()));
+    }
+
+    @Test
+    void Address_Constructor_CityOnly() {
+        Address address = new Address(null, null, "Tucson", null, null, null);
+        assertNull(address.getStreet(), testFailedMessage("null", address.getStreet()));
+        assertNull(address.getApartment(), testFailedMessage("null", address.getApartment()));
+        assertEquals("Tucson", address.getCity(), testFailedMessage("Tucson", address.getCity()));
+        assertNull(address.getState(), testFailedMessage("null", address.getState()));
+        assertNull(address.getCountry(), testFailedMessage("null", address.getCountry()));
+        assertNull(address.getZip(), testFailedMessage("null", address.getZip()));
+    }
+
+    /*******************************************************************************************************************
+     ************************************************** Get/Set Tests **************************************************
+     *******************************************************************************************************************/
+    @Test
+    void Address_setFullAddress_AllAddressPartsFilled(){
+        Address address = new Address();
+        address.setFullAddress("123 main st", "apt 5", "Tucson", "AZ", "USA", "85713");
+
+        assertEquals("123 main st", address.getStreet(), testFailedMessage("123 main st", address.getStreet()));
+        assertEquals("apt 5", address.getApartment(), testFailedMessage("apt 5", address.getApartment()));
+        assertEquals("Tucson", address.getCity(), testFailedMessage("Tucson", address.getCity()));
+        assertEquals("AZ", address.getState(), testFailedMessage("AZ", address.getState()));
+        assertEquals("USA", address.getCountry(), testFailedMessage("USA", address.getCountry()));
+        assertEquals("85713", address.getZip(), testFailedMessage("85713", address.getZip()));
+    }
+
+    @Test
+    void Address_setFullAddress_StreetAddressOnly() {
+        Address address = new Address();
+        address.setFullAddress("123 main st", null, null, null, null, null);
+
+        assertEquals("123 main st", address.getStreet(), testFailedMessage("123 main st", address.getStreet()));
+        assertNull(address.getApartment(), testFailedMessage("null", address.getApartment()));
+        assertNull(address.getCity(), testFailedMessage("null", address.getCity()));
+        assertNull(address.getState(), testFailedMessage("null", address.getState()));
+        assertNull(address.getCountry(), testFailedMessage("null", address.getCountry()));
+        assertNull(address.getZip(), testFailedMessage("null", address.getZip()));
+    }
+
+    @Test
+    void Address_setFullAddress_StreetAddressAndApartmentOnly() {
+        Address address = new Address();
+        address.setFullAddress("123 main st", "apt 5", null, null, null, null);
+
+        assertEquals("123 main st", address.getStreet(), testFailedMessage("123 main st", address.getStreet()));
+        assertEquals("apt 5", address.getApartment(), testFailedMessage("apt 5", address.getApartment()));
+        assertNull(address.getCity(), testFailedMessage("null", address.getCity()));
+        assertNull(address.getState(), testFailedMessage("null", address.getState()));
+        assertNull(address.getCountry(), testFailedMessage("null", address.getCountry()));
+        assertNull(address.getZip(), testFailedMessage("null", address.getZip()));
+    }
+
+    @Test
     void Address_getSetStreetAddress(){
         Address address = new Address();
-        address.setStreetAddress("ghi");
-        assertEquals("ghi", address.getStreetAddress());
+        address.setStreet("ghi");
+        assertEquals("ghi", address.getStreet());
     }
 
     @Test
@@ -69,6 +137,36 @@ public class AddressTests {
         assertEquals("85713", address.getZip());
     }
 
+    @Test
+    void Address_setAddressPartsNull(){
+        Address address = new Address();
+        assertNull(address.getStreet(), testFailedMessage("null", address.getStreet()));
+        assertNull(address.getApartment(), testFailedMessage("null", address.getApartment()));
+        assertNull(address.getCity(), testFailedMessage("null", address.getCity()));
+        assertNull(address.getState(), testFailedMessage("null", address.getState()));
+        assertNull(address.getCountry(), testFailedMessage("null", address.getCountry()));
+        assertNull(address.getZip(), testFailedMessage("null", address.getZip()));
+
+        Address address2 = new Address("123 main st", "apt 5", "Tucson", "AZ", "USA", "85713");
+        assertEquals("123 main st", address2.getStreet(), testFailedMessage("123 main st", address2.getStreet()));
+        assertEquals("apt 5", address2.getApartment(), testFailedMessage("apt 5", address2.getApartment()));
+        assertEquals("Tucson", address2.getCity(), testFailedMessage("Tucson", address2.getCity()));
+        assertEquals("AZ", address2.getState(), testFailedMessage("AZ", address2.getState()));
+        assertEquals("USA", address2.getCountry(), testFailedMessage("USA", address2.getCountry()));
+        assertEquals("85713", address2.getZip(), testFailedMessage("85713", address2.getZip()));
+
+        address2.setAddressPartsNull();
+        assertNull(address2.getStreet(), testFailedMessage("null", address2.getStreet()));
+        assertNull(address2.getApartment(), testFailedMessage("null", address2.getApartment()));
+        assertNull(address2.getCity(), testFailedMessage("null", address2.getCity()));
+        assertNull(address2.getState(), testFailedMessage("null", address2.getState()));
+        assertNull(address2.getCountry(), testFailedMessage("null", address2.getCountry()));
+        assertNull(address2.getZip(), testFailedMessage("null", address2.getZip()));
+    }
+
+    /*******************************************************************************************************************
+     ************************************************ Sub-Methods Tests ************************************************
+     *******************************************************************************************************************/
     @Test
     void Address_toString(){
         Address address = new Address("ghi", "4", "hts", "az", "usa", "85713");

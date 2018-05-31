@@ -2,6 +2,7 @@ package com.cft.contactmerge;
 
 import com.cft.contactmerge.contact.Address;
 import com.cft.contactmerge.contact.Email;
+import com.cft.contactmerge.contact.NameMatchSelector;
 import com.cft.contactmerge.contact.Phone;
 
 public class CompareContactParts {
@@ -10,39 +11,39 @@ public class CompareContactParts {
         return NameMatchSelector.getFirstLastNamesMatchResultDefaultComparisons(firstName1, lastName1, firstName2, lastName2);
     }
 
-    public static AnswerType doAddressesMatch(Contact contact, Address otherAddress)
+    public static AnswerType doAddressesMatch(Address addressOne, Address addressTwo)
     {
-        return contact.getAddress().isAddressMatch(otherAddress);
+        return addressOne.isMatch(addressTwo);
     }
 
-    public static AnswerType doStreetAddressesMatch(Contact contact, String otherStreetAddress)
+    public static AnswerType doAddressStreetPartsMatch(String firstStreet, String secondStreet)
     {
-        return contact.getAddress().isStreetAddressMatch(otherStreetAddress);
+        return Address.isStreetMatch(firstStreet, secondStreet);
     }
 
-    public static AnswerType doApartmentAddressesMatch(Contact contact, String otherApartmentAddress)
+    public static AnswerType doAddressApartmentPartsMatch(String firstApartment, String secondApartment)
     {
-        return contact.getAddress().isApartmentMatch(otherApartmentAddress);
+        return Address.isApartmentMatch(firstApartment, secondApartment);
     }
 
-    public static AnswerType doCitiesMatch(Contact contact, String otherCity)
+    public static AnswerType doAddressCityPartsMatch(String firstCity, String secondCity)
     {
-        return contact.getAddress().isCityMatch(otherCity);
+        return Address.isCityMatch(firstCity, secondCity);
     }
 
-    public static AnswerType doStatesMatch(Contact contact, String otherState)
+    public static AnswerType doAddressStatePartsMatch(String firstState, String secondState)
     {
-        return contact.getAddress().isStateMatch(otherState);
+        return Address.isStateMatch(firstState, secondState);
     }
 
-    public static AnswerType doCountriesMatch(Contact contact, String otherCountry)
+    public static AnswerType doAddressCountryPartsMatch(String firstCountry, String secondCountry)
     {
-        return contact.getAddress().isCountryMatch(otherCountry);
+        return Address.isCountryMatch(firstCountry, secondCountry);
     }
 
-    public static AnswerType doZipsMatch(Contact contact, String otherZip)
+    public static AnswerType doAddressZipPartsMatch(String firstZip, String secondZip)
     {
-        return contact.getAddress().isZipMatch(otherZip);
+        return Address.isZipMatch(firstZip, secondZip);
     }
 
     public static AnswerType doPhonesMatch(Phone firstPhone, Phone secondPhone)

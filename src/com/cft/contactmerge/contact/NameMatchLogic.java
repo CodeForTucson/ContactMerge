@@ -2,7 +2,9 @@
  * Contains the low level business logic for matching naming properties
  */
 
-package com.cft.contactmerge;
+package com.cft.contactmerge.contact;
+
+import com.cft.contactmerge.AnswerType;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.cft.contactmerge.tests;
+package com.cft.contactmerge.contact.tests;
 
 import com.cft.contactmerge.AnswerType;
 import org.junit.jupiter.api.Test;
@@ -8,7 +8,7 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static com.cft.contactmerge.NameMatchLogic.*;
+import static com.cft.contactmerge.contact.NameMatchLogic.*;
 
 
 public class NameMatchLogicTests {

@@ -6,7 +6,6 @@ import com.cft.contactmerge.contact.Email;
 import com.cft.contactmerge.contact.Name;
 import com.cft.contactmerge.contact.Phone;
 import org.junit.jupiter.api.Test;
-import com.cft.contactmerge.AnswerType;
 import com.cft.contactmerge.Contact;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,7 +29,7 @@ class ContactTest {
         Contact newContact = new Contact();
         Address address = new Address("ghi", "4", "hts", "az", "usa", "85713");
         newContact.setAddress(address);
-        assertEquals("ghi", newContact.getAddress().getStreetAddress());
+        assertEquals("ghi", newContact.getAddress().getStreet());
         assertEquals("4", newContact.getAddress().getApartment());
         assertEquals("hts", newContact.getAddress().getCity());
         assertEquals("az", newContact.getAddress().getState());

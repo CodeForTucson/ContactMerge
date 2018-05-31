@@ -1,13 +1,13 @@
-package com.cft.contactmerge.tests;
+package com.cft.contactmerge.contact.tests;
 
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static com.cft.contactmerge.StreetAddressMatchLogic.*;
+import static com.cft.contactmerge.contact.StreetMatchLogic.*;
 
-public class StreetAddressMatchLogicTests {
+public class StreetMatchLogicTests {
     /*******************************************************************************************************************
      **************************************** getStreetAddressMatchResult Method ***************************************
      *******************************************************************************************************************/

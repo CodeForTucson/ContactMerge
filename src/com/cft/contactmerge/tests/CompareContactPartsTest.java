@@ -82,634 +82,478 @@ class CompareContactPartsTest {
     }
 
     /*******************************************************************************************************************
-     ******************************************* Compare Street Address Tests ******************************************
+     ********************************************** Compare Address Tests **********************************************
      *******************************************************************************************************************/
     private String addressFailedMsg(String addressOne, String addressTwo){
-        return "<" + addressOne + "> -vs- <" + addressOne + ">";
+        return "<" + addressOne + "> -vs- <" + addressTwo + ">";
     }
 
     @Test
     void doAddressesMatch_Yes_IgnoreCase() {
-        Contact contactOne = new Contact();
-        Contact contactTwo = new Contact();
+        Address addressOne = new Address();
+        addressOne.setFullAddress("123 main Street", null, "Tucson", "Arizona", "USA", null);
+        Address addressTwo = new Address("123 Main street", null, "TUCSON", "ARIZONA", "usa", null);
 
-        contactOne.getAddress().setStreetAddress("123 main Street");
-        contactOne.getAddress().setCity("Tucson");
-        contactOne.getAddress().setState("Arizona");
-        contactOne.getAddress().setCountry("USA");
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressesMatch(addressOne, addressTwo),
+                addressFailedMsg(addressOne.toString(), addressTwo.toString()));
+    }
 
-        contactTwo.getAddress().setStreetAddress("123 Main street");
-        contactTwo.getAddress().setCity("TUCSON");
-        contactTwo.getAddress().setState("ARIZONA");
-        contactTwo.getAddress().setCountry("usa");
+    @Test
+    void doAddressesMatch_Maybe_PartsMatch_HasMissingParts() {
+        Address addressOne = new Address();
+        Address addressTwo = new Address();
 
-        assertEquals(AnswerType.yes, CompareContactParts.doAddressesMatch(contactOne, contactTwo.getAddress()),
-                addressFailedMsg(contactOne.getAddress().toString(), contactTwo.getAddress().toString()));
+        addressOne.setStreet("123 main Street");
+        addressOne.setCity("Tucson");
+        addressOne.setState("Arizona");
+        addressOne.setZip("85713");
+
+        addressTwo.setStreet("123 Main street");
+        addressTwo.setState("ARIZONA");
+
+        assertEquals(AnswerType.maybe, CompareContactParts.doAddressesMatch(addressOne, addressTwo),
+                addressFailedMsg(addressOne.toString(), addressTwo.toString()));
+    }
+
+    @Test
+    void doAddressesMatch_No() {
+        Address addressOne = new Address();
+        Address addressTwo = new Address();
+
+        addressOne.setStreet("123 Valencia street");
+        addressOne.setCity("Tucson");
+        addressOne.setState("Arizona");
+        addressOne.setCountry("USA");
+
+        addressTwo.setStreet("123 Main street");
+        addressTwo.setCity("TUCSON");
+        addressTwo.setState("ARIZONA");
+        addressTwo.setCountry("usa");
+
+        assertEquals(AnswerType.no, CompareContactParts.doAddressesMatch(addressOne, addressTwo),
+                addressFailedMsg(addressOne.toString(), addressTwo.toString()));
     }
 
     /*******************************************************************************************************************
-     ******************************************* Compare Street Address Tests ******************************************
+     **************************************** Compare Address Street Parts Tests ***************************************
      *******************************************************************************************************************/
-    private String streetAddressFailedMsg(String streetAddressOne, String streetAddressTwo){
-        return "<" + streetAddressOne + "> -vs- <" + streetAddressTwo + ">";
+    private String streetFailedMsg(String streetOne, String streetTwo){
+        return "<firstApartment = " + streetOne + "> -vs- <secondApartment = " + streetTwo + ">";
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_IgnoreCase() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 main Street");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main street"));
+    void doAddressStreetPartsMatch_Yes_IgnoreCase() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 main Street", "123 Main street"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfStreet() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 Main Street");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main St"));
+    void doAddressStreetPartsMatch_Yes_FormsOfStreet() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 Main Street", "123 Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfAvenue() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 Main Avenue");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main Ave"));
+    void doAddressStreetPartsMatch_Yes_FormsOfAvenue() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 Main Avenue", "123 Main Ave"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfDrive() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 Main Dr");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main Drive"));
+    void doAddressStreetPartsMatch_Yes_FormsOfDrive() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 Main Dr", "123 Main Drive"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfLane() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 Main Lane");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main Ln"));
+    void doAddressStreetPartsMatch_Yes_FormsOfLane() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 Main Lane", "123 Main Ln"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfTrail() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 Main Trail");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main trl."));
+    void doAddressStreetPartsMatch_Yes_FormsOfTrail() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 Main Trail", "123 Main trl."));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfCircle() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 Main Circle");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main Cir"));
+    void doAddressStreetPartsMatch_Yes_FormsOfCircle() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 Main Circle", "123 Main Cir"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfBoulevard() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 Main Blvd");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main Boulevard"));
+    void doAddressStreetPartsMatch_Yes_FormsOfBoulevard() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 Main Blvd", "123 Main Boulevard"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfRoad() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 Main Road");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main Rd"));
+    void doAddressStreetPartsMatch_Yes_FormsOfRoad() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 Main Road", "123 Main Rd"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfPOBox() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("P.O. Box 1234");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "PO Box 1234"),
-                streetAddressFailedMsg("P.O. Box 1234","PO Box 1234"));
-
-        contactOne.getAddress().setStreetAddress("P O Box 1234");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "PO Box 1234"),
-                streetAddressFailedMsg("P O Box 1234","PO Box 1234"));
-
-        contactOne.getAddress().setStreetAddress("PO Box 1234");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "Box 1234"),
-                streetAddressFailedMsg("PO Box 1234","Box 1234"));
+    void doAddressStreetPartsMatch_Yes_FormsOfPOBox() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("P.O. Box 1234", "PO Box 1234"),
+                streetFailedMsg("P.O. Box 1234","PO Box 1234"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("P O Box 1234", "PO Box 1234"),
+                streetFailedMsg("P O Box 1234","PO Box 1234"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("PO Box 1234", "Box 1234"),
+                streetFailedMsg("PO Box 1234","Box 1234"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfNorth() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 North Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 N Main St"),
-                streetAddressFailedMsg("123 North Main St", "123 N Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 N. Main St"),
-                streetAddressFailedMsg("123 North Main St", "123 N. Main St"));
+    void doAddressStreetPartsMatch_Yes_FormsOfNorth() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 North Main St", "123 N Main St"),
+                streetFailedMsg("123 North Main St", "123 N Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 North Main St", "123 N. Main St"),
+                streetFailedMsg("123 North Main St", "123 N. Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfNorthEast() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 NE Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 North-East Main St"),
-                streetAddressFailedMsg("123 NE Main St","123 North-East Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Northeast Main St"),
-                streetAddressFailedMsg("123 NE Main St","123 Northeast Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 NE. Main St"),
-                streetAddressFailedMsg("123 NE Main St","123 NE. Main St"));
+    void doAddressStreetPartsMatch_Yes_FormsOfNorthEast() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 NE Main St", "123 North-East Main St"),
+                streetFailedMsg("123 NE Main St","123 North-East Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 NE Main St", "123 Northeast Main St"),
+                streetFailedMsg("123 NE Main St","123 Northeast Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 NE Main St", "123 NE. Main St"),
+                streetFailedMsg("123 NE Main St","123 NE. Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfNorthWest() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 NW Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 North-West Main St"),
-                streetAddressFailedMsg("123 NW Main St","123 North-West Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Northwest Main St"),
-                streetAddressFailedMsg("123 NW Main St","123 Northwest Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 NW. Main St"),
-                streetAddressFailedMsg("123 NW Main St","123 NW. Main St"));
+    void doAddressStreetPartsMatch_Yes_FormsOfNorthWest() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 NW Main St", "123 North-West Main St"),
+                streetFailedMsg("123 NW Main St","123 North-West Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 NW Main St", "123 Northwest Main St"),
+                streetFailedMsg("123 NW Main St","123 Northwest Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 NW Main St", "123 NW. Main St"),
+                streetFailedMsg("123 NW Main St","123 NW. Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfSouth() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 S Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South Main St"),
-                streetAddressFailedMsg("123 S Main St","123 South Main St"));
-
-        contactOne.getAddress().setStreetAddress("123 S. Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South Main St"),
-                streetAddressFailedMsg("123 S. Main St","123 South Main St"));
+    void doAddressStreetPartsMatch_Yes_FormsOfSouth() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 S Main St", "123 South Main St"),
+                streetFailedMsg("123 S Main St","123 South Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 S. Main St", "123 South Main St"),
+                streetFailedMsg("123 S. Main St","123 South Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfSouthEast() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 SE Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South-East Main St"),
-                streetAddressFailedMsg("123 SE Main St","123 South-East Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Southeast Main St"),
-                streetAddressFailedMsg("123 SE Main St","123 Southeast Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 SE. Main St"),
-                streetAddressFailedMsg("123 SE Main St","123 SE. Main St"));
+    void doAddressStreetPartsMatch_Yes_FormsOfSouthEast() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 SE Main St", "123 South-East Main St"),
+                streetFailedMsg("123 SE Main St","123 South-East Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 SE Main St", "123 Southeast Main St"),
+                streetFailedMsg("123 SE Main St","123 Southeast Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 SE Main St", "123 SE. Main St"),
+                streetFailedMsg("123 SE Main St","123 SE. Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfSouthWest() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 SW Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 South-West Main St"),
-                streetAddressFailedMsg("123 SW Main St","123 South-West Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Southwest Main St"),
-                streetAddressFailedMsg("123 SW Main St","123 Southwest Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 SW. Main St"),
-                streetAddressFailedMsg("123 SW Main St","123 SW. Main St"));
+    void doAddressStreetPartsMatch_Yes_FormsOfSouthWest() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 SW Main St", "123 South-West Main St"),
+                streetFailedMsg("123 SW Main St","123 South-West Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 SW Main St", "123 Southwest Main St"),
+                streetFailedMsg("123 SW Main St","123 Southwest Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 SW Main St", "123 SW. Main St"),
+                streetFailedMsg("123 SW Main St","123 SW. Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfEast() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 East Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 E Main St"),
-                streetAddressFailedMsg("123 East Main St","123 E Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 E. Main St"),
-                streetAddressFailedMsg("123 East Main St","123 E. Main St"));
+    void doAddressStreetPartsMatch_Yes_FormsOfEast() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 East Main St", "123 E Main St"),
+                streetFailedMsg("123 East Main St","123 E Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 East Main St", "123 E. Main St"),
+                streetFailedMsg("123 East Main St","123 E. Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_FormsOfWest() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 West Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 W Main St"),
-                streetAddressFailedMsg("123 West Main St","123 W Main St"));
-
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123 W. Main St"),
-                streetAddressFailedMsg("123 West Main St","123 W. Main St"));
+    void doAddressStreetPartsMatch_Yes_FormsOfWest() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 West Main St", "123 W Main St"),
+                streetFailedMsg("123 West Main St","123 W Main St"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("123 West Main St", "123 W. Main St"),
+                streetFailedMsg("123 West Main St","123 W. Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Yes_IgnoreSpaces() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("  123 Main St");
-        assertEquals(AnswerType.yes, CompareContactParts.doStreetAddressesMatch(contactOne, "123  Main St  "));
+    void doAddressStreetPartsMatch_Yes_IgnoreSpaces() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStreetPartsMatch("  123 Main St", "123  Main St  "));
     }
 
     @Test
-    void doStreetAddressesMatch_Maybe_MissingRoadType() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 Main");
-        assertEquals(AnswerType.maybe, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main St"));
+    void doAddressStreetPartsMatch_Maybe_MissingRoadType() {
+        assertEquals(AnswerType.maybe, CompareContactParts.doAddressStreetPartsMatch("123 Main", "123 Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Maybe_MissingDirection() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 N Main St");
-        assertEquals(AnswerType.maybe, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main St"));
+    void doAddressStreetPartsMatch_Maybe_MissingDirection() {
+        assertEquals(AnswerType.maybe, CompareContactParts.doAddressStreetPartsMatch("123 N Main St", "123 Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_Maybe_MissingDirectionAndRoadType() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 N Main");
-        assertEquals(AnswerType.maybe, CompareContactParts.doStreetAddressesMatch(contactOne, "123 Main St"));
+    void doAddressStreetPartsMatch_Maybe_MissingDirectionAndRoadType() {
+        assertEquals(AnswerType.maybe, CompareContactParts.doAddressStreetPartsMatch("123 N Main", "123 Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_No_DifferentStreetAddress() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setStreetAddress("123 Main St");
-        assertEquals(AnswerType.no, CompareContactParts.doStreetAddressesMatch(contactOne, "1234 Main St"));
+    void doAddressStreetPartsMatch_No_DifferentStreetAddress() {
+        assertEquals(AnswerType.no, CompareContactParts.doAddressStreetPartsMatch("123 Main St", "1234 Main St"));
     }
 
     @Test
-    void doStreetAddressesMatch_No_MissingStreetAddress() {
-        Contact contactOne = new Contact();
-
-        assertEquals(AnswerType.no, CompareContactParts.doStreetAddressesMatch(contactOne, "1234 Main St"));
+    void doAddressStreetPartsMatch_No_MissingStreetAddress() {
+        assertEquals(AnswerType.no, CompareContactParts.doAddressStreetPartsMatch(null, "1234 Main St"),
+                streetFailedMsg(null,"1234 Main St"));
+        assertEquals(AnswerType.no, CompareContactParts.doAddressStreetPartsMatch("1234 Main St", ""),
+                streetFailedMsg("1234 Main St",""));
     }
 
     /*******************************************************************************************************************
-     ***************************************** Compare Apartment Address Tests *****************************************
+     ************************************** Compare Address Apartment Parts Tests **************************************
      *******************************************************************************************************************/
     private String apartmentFailedMsg(String apartmentOne, String apartmentTwo){
-        return "<" + apartmentOne + "> -vs- <" + apartmentTwo + ">";
+        return "<firstApartment = " + apartmentOne + "> -vs- <secondApartment = " + apartmentTwo + ">";
     }
 
     @Test
-    void doApartmentAddressesMatch_Yes_FormsOfApartment() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setApartment("Apt 40");
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "Apartment 40"),
+    void doAddressApartmentPartsMatch_Yes_FormsOfApartment() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressApartmentPartsMatch("Apt 40", "Apartment 40"),
                 apartmentFailedMsg("Apt 40","Apartment 40"));
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "Ap 40"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressApartmentPartsMatch("Apt 40", "Ap 40"),
                 apartmentFailedMsg("Apt 40","Ap 40"));
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressApartmentPartsMatch("Apt 40", "40"),
                 apartmentFailedMsg("Apt 40","40"));
     }
 
     @Test
-    void doApartmentAddressesMatch_Yes_FormsOfSuite() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setApartment("Suite 40");
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "Ste 40"),
+    void doAddressApartmentPartsMatch_Yes_FormsOfSuite() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressApartmentPartsMatch("Suite 40", "Ste 40"),
                 apartmentFailedMsg("Suite 40","Ste 40"));
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressApartmentPartsMatch("Suite 40", "40"),
                 apartmentFailedMsg("Suite 40","40"));
     }
 
     @Test
-    void doApartmentAddressesMatch_Yes_FormsOfUnit() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setApartment("Unit 40");
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"),
+    void doAddressApartmentPartsMatch_Yes_FormsOfUnit() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressApartmentPartsMatch("Unit 40", "40"),
                 apartmentFailedMsg("Unit 40","40"));
 
-        contactOne.getAddress().setApartment("#40");
-        assertEquals(AnswerType.yes, CompareContactParts.doApartmentAddressesMatch(contactOne, "40"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressApartmentPartsMatch("#40", "40"),
                 apartmentFailedMsg("#40","40"));
     }
 
     @Test
-    void doApartmentAddressesMatch_No_MissingApartment() {
-        Contact contactOne = new Contact();
-
-        assertEquals(AnswerType.no, CompareContactParts.doApartmentAddressesMatch(contactOne, "Apt 40"),
+    void doAddressApartmentPartsMatch_No_MissingApartment() {
+        assertEquals(AnswerType.no, CompareContactParts.doAddressApartmentPartsMatch(null, "Apt 40"),
                 apartmentFailedMsg("null","Apt 40"));
 
-        contactOne.getAddress().setApartment("Apt 40");
-        assertEquals(AnswerType.no, CompareContactParts.doApartmentAddressesMatch(contactOne, ""),
+        assertEquals(AnswerType.no, CompareContactParts.doAddressApartmentPartsMatch("Apt 40", ""),
                 apartmentFailedMsg("Apt 40","\"\""));
     }
 
     @Test
-    void doApartmentAddressesMatch_No_DifferentApartment() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setApartment("Unit 10");
-        assertEquals(AnswerType.no, CompareContactParts.doApartmentAddressesMatch(contactOne, "Unit 11"),
+    void doAddressApartmentPartsMatch_No_DifferentApartment() {
+        assertEquals(AnswerType.no, CompareContactParts.doAddressApartmentPartsMatch("Unit 10", "Unit 11"),
                 apartmentFailedMsg("Unit 10","Unit 11"));
 
-        contactOne.getAddress().setApartment("J10");
-        assertEquals(AnswerType.no, CompareContactParts.doApartmentAddressesMatch(contactOne, "L10"),
+        assertEquals(AnswerType.no, CompareContactParts.doAddressApartmentPartsMatch("J10", "L10"),
                 apartmentFailedMsg("J10","L10"));
     }
 
     /*******************************************************************************************************************
-     ************************************************ Compare City Tests ***********************************************
+     ***************************************** Compare Address City Parts Tests ****************************************
      *******************************************************************************************************************/
     private String cityFailedMsg(String cityOne, String cityTwo){
-        return "<" + cityOne + "> -vs- <" + cityTwo + ">";
+        return "<firstCity = " + cityOne + "> -vs- <secondCity = " + cityTwo + ">";
     }
 
     @Test
-    void doCitiesMatch_Yes_IgnoreCase() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("Tucson");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "TUCSON"));
+    void doAddressCityPartsMatch_Yes_IgnoreCase() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("Tucson", "TUCSON"));
     }
 
     @Test
-    void doCitiesMatch_Yes_IgnoreSpaces() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("Tucson  ");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "Tucson"));
+    void doAddressCityPartsMatch_Yes_IgnoreSpaces() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("Tucson  ", "Tucson"));
     }
 
     @Test
-    void doCitiesMatch_Yes_FormsOfNorth() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("North Las Vegas");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "N Las Vegas"),
+    void doAddressCityPartsMatch_Yes_FormsOfNorth() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("North Las Vegas", "N Las Vegas"),
                 cityFailedMsg("North Las Vegas","N Las Vegas"));
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "N. Las Vegas"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("North Las Vegas", "N. Las Vegas"),
                 cityFailedMsg("North Las Vegas","N. Las Vegas"));
     }
 
     @Test
-    void doCitiesMatch_Yes_FormsOfSouth(){
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("South Jordan");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "S Jordan"),
+    void doAddressCityPartsMatch_Yes_FormsOfSouth(){
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("South Jordan", "S Jordan"),
                 cityFailedMsg("South Jordan","S Jordan"));
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "S. Jordan"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("South Jordan", "S. Jordan"),
                 cityFailedMsg("South Jordan","S. Jordan"));
     }
 
     @Test
-    void doCitiesMatch_Yes_FormsOfEast(){
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("E Hartford");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "East Hartford"),
+    void doAddressCityPartsMatch_Yes_FormsOfEast(){
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("E Hartford", "East Hartford"),
                 cityFailedMsg("E Hartford","East Hartford"));
 
-        contactOne.getAddress().setCity("E. Hartford");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "East Hartford"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("E. Hartford", "East Hartford"),
                 cityFailedMsg("E. Hartford","East Hartford"));
     }
 
     @Test
-    void doCitiesMatch_Yes_FormsOfWest(){
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("W Haven");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "West Haven"),
+    void doAddressCityPartsMatch_Yes_FormsOfWest(){
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("W Haven", "West Haven"),
                 cityFailedMsg("W Haven","West Haven"));
 
-        contactOne.getAddress().setCity("W. Haven");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "West Haven"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("W. Haven", "West Haven"),
                 cityFailedMsg("W. Haven","West Haven"));
     }
 
     @Test
-    void doCitiesMatch_Yes_FormsOfNorthEast() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("NE Washington");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "North-East Washington"),
+    void doAddressCityPartsMatch_Yes_FormsOfNorthEast() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("NE Washington", "North-East Washington"),
                 cityFailedMsg("NE Washington","North-East Washington"));
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "Northeast Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("NE Washington", "Northeast Washington"),
                 cityFailedMsg("NE Washington","Northeast Washington"));
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "NE. Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("NE Washington", "NE. Washington"),
                 cityFailedMsg("NE Washington","NE. Washington"));
     }
 
     @Test
-    void doCitiesMatch_Yes_FormsOfNorthWest() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("NW Washington");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "North-West Washington"),
+    void doAddressCityPartsMatch_Yes_FormsOfNorthWest() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("NW Washington", "North-West Washington"),
                 cityFailedMsg("NW Washington","North-West Washington"));
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "Northwest Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("NW Washington", "Northwest Washington"),
                 cityFailedMsg("NW Washington","Northwest Washington"));
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "NW. Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("NW Washington", "NW. Washington"),
                 cityFailedMsg("NW Washington","NW. Washington"));
     }
 
     @Test
-    void doCitiesMatch_Yes_FormsOfSouthWest() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("South-West Washington");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
+    void doAddressCityPartsMatch_Yes_FormsOfSouthWest() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("South-West Washington", "SW Washington"),
                 cityFailedMsg("South-West Washington","SW Washington"));
 
-        contactOne.getAddress().setCity("Southwest Washington");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("Southwest Washington", "SW Washington"),
                 cityFailedMsg("Southwest Washington","SW Washington"));
 
-        contactOne.getAddress().setCity("SW. Washington");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SW Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("SW. Washington", "SW Washington"),
                 cityFailedMsg("SW. Washington","SW Washington"));
     }
 
     @Test
-    void doCitiesMatch_Yes_FormsOfSouthEast() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("South-East Washington");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
+    void doAddressCityPartsMatch_Yes_FormsOfSouthEast() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("South-East Washington", "SE Washington"),
                 cityFailedMsg("South-East Washington","SE Washington"));
 
-        contactOne.getAddress().setCity("Southeast Washington");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("Southeast Washington", "SE Washington"),
                 cityFailedMsg("Southeast Washington","SE Washington"));
 
-        contactOne.getAddress().setCity("SE. Washington");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "SE Washington"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("SE. Washington", "SE Washington"),
                 cityFailedMsg("SE. Washington","SE Washington"));
     }
 
     @Test
-    void doCitiesMatch_Maybe_MissingDirection() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("North Las Vegas");
-        assertEquals(AnswerType.maybe, CompareContactParts.doCitiesMatch(contactOne, "Las Vegas"));
+    void doAddressCityPartsMatch_Maybe_MissingDirection() {
+        assertEquals(AnswerType.maybe, CompareContactParts.doAddressCityPartsMatch("North Las Vegas", "Las Vegas"));
     }
 
     @Test
-    void doCitiesMatch_Yes_NumbersInName() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("North 24 Parganas district");
-        assertEquals(AnswerType.yes, CompareContactParts.doCitiesMatch(contactOne, "North 24 Parganas district"));
+    void doAddressCityPartsMatch_Yes_NumbersInName() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCityPartsMatch("North 24 Parganas district", "North 24 Parganas district"));
     }
 
     @Test
-    void doCitiesMatch_No() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCity("Tucson");
-        assertEquals(AnswerType.no, CompareContactParts.doCitiesMatch(contactOne, "Phoenix"));
+    void doAddressCityPartsMatch_No() {
+        assertEquals(AnswerType.no, CompareContactParts.doAddressCityPartsMatch("Tucson", "Phoenix"));
     }
 
     /*******************************************************************************************************************
-     *********************************************** Compare State Tests ***********************************************
+     **************************************** Compare Address State Parts Tests ****************************************
      *******************************************************************************************************************/
     private String stateFailedMsg(String stateOne, String stateTwo){
-        return "<" + stateOne + "> -vs- <" + stateTwo + ">";
+        return "<firstState = " + stateOne + "> -vs- <secondState = " + stateTwo + ">";
     }
 
     @Test
-    void doStatesMatch_Yes_IgnoreCase() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setState("AZ");
-        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch(contactOne, "az"));
+    void doAddressStatePartsMatch_Yes_IgnoreCase() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStatePartsMatch("AZ", "az"));
     }
 
     @Test
-    void doStatesMatch_Yes_IgnoreSpaces() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setState("AZ");
-        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch(contactOne, " AZ    "));
+    void doAddressStatePartsMatch_Yes_IgnoreSpaces() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStatePartsMatch("az", " AZ    "));
     }
 
     @Test
-    void doStatesMatch_Yes_Abbreviations() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setState("AZ");
-        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch(contactOne, "Arizona"),
+    void doAddressStatePartsMatch_Yes_Abbreviations() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStatePartsMatch("AZ", "Arizona"),
                 stateFailedMsg("AZ","Arizona"));
-
-        contactOne.getAddress().setState("California");
-        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch(contactOne, "CA"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStatePartsMatch("California", "CA"),
                 stateFailedMsg("California","CA"));
-
-        contactOne.getAddress().setState("New York");
-        assertEquals(AnswerType.yes, CompareContactParts.doStatesMatch(contactOne, "NY"),
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressStatePartsMatch("New York", "NY"),
                 stateFailedMsg("New York","NY"));
     }
 
     @Test
-    void doStatesMatch_No() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setState("New York");
-        assertEquals(AnswerType.no, CompareContactParts.doStatesMatch(contactOne, "Arizona"));
-
-        contactOne.getAddress().setState("Virginia");
-        assertEquals(AnswerType.no, CompareContactParts.doStatesMatch(contactOne, "West Virginia"));
+    void doAddressStatePartsMatch_No() {
+        assertEquals(AnswerType.no, CompareContactParts.doAddressStatePartsMatch("New York", "Arizona"),
+                stateFailedMsg("New York","Arizona"));
+        assertEquals(AnswerType.no, CompareContactParts.doAddressStatePartsMatch("Virginia", "West Virginia"),
+                stateFailedMsg("Virginia","West Virginia"));
     }
 
     /*******************************************************************************************************************
-     ********************************************** Compare Country Tests **********************************************
+     *************************************** Compare Address Country Parts Tests ***************************************
      *******************************************************************************************************************/
     private String countryFailedMsg(String countryOne, String countryTwo){
-        return "<" + countryOne + "> -vs- <" + countryTwo + ">";
+        return "<firstCountry = " + countryOne + "> -vs- <secondCountry = " + countryTwo + ">";
     }
 
     @Test
-    void doCountriesMatch_Yes_IgnoreCase() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCountry("United States of America");
-        assertEquals(AnswerType.yes, CompareContactParts.doCountriesMatch(contactOne, "united states of america"));
+    void doAddressCountryPartsMatch_Yes_IgnoreCase() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCountryPartsMatch("United States of America", "united states of america"));
     }
 
     @Test
-    void doCountriesMatch_Yes_IgnoreSpaces() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCountry("   United States   of  America ");
-        assertEquals(AnswerType.yes, CompareContactParts.doCountriesMatch(contactOne, "united states of america"));
+    void doAddressCountryPartsMatch_Yes_IgnoreSpaces() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCountryPartsMatch("   United States   of  America ", "united states of america"));
     }
 
     @Test
-    void doCountriesMatch_Yes_Abbreviations() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCountry("United States of America");
-        assertEquals(AnswerType.yes, CompareContactParts.doCountriesMatch(contactOne, "united states"));
-        assertEquals(AnswerType.yes, CompareContactParts.doCountriesMatch(contactOne, "us"));
-        assertEquals(AnswerType.yes, CompareContactParts.doCountriesMatch(contactOne, "usa"));
+    void doAddressCountryPartsMatch_Yes_Abbreviations() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCountryPartsMatch("United States of America", "united states"),
+                countryFailedMsg("United States of America", "united states"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCountryPartsMatch("us", "United States of America"),
+                countryFailedMsg("us", "United States of America"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressCountryPartsMatch("United States of America", "usa"),
+                countryFailedMsg("United States of America", "usa"));
     }
 
     @Test
-    void doCountriesMatch_no() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setCountry("United States");
-        assertEquals(AnswerType.no, CompareContactParts.doCountriesMatch(contactOne, "United Kingdom"));
+    void doAddressCountryPartsMatch_no() {
+        assertEquals(AnswerType.no, CompareContactParts.doAddressCountryPartsMatch("United States", "United Kingdom"));
     }
 
     /*******************************************************************************************************************
-     ************************************************ Compare Zip Tests ************************************************
+     ***************************************** Compare Address Zip Parts Tests *****************************************
      *******************************************************************************************************************/
     private String zipFailedMsg(String zipOne, String zipTwo){
-        return "<" + zipOne + "> -vs- <" + zipTwo + ">";
+        return "<firstZip = " + zipOne + "> -vs- <secondZip = " + zipTwo + ">";
     }
 
     @Test
-    void doZipsMatch_Yes() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setZip("85713-1000");
-        assertEquals(AnswerType.yes, CompareContactParts.doZipsMatch(contactOne, "85713-1000"));
-
-        contactOne.getAddress().setZip("85713");
-        assertEquals(AnswerType.yes, CompareContactParts.doZipsMatch(contactOne, "85713"));
+    void doAddressZipPartsMatch_Yes() {
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressZipPartsMatch("85713-1000", "85713-1000"), zipFailedMsg("85713-1000", "85713-1000"));
+        assertEquals(AnswerType.yes, CompareContactParts.doAddressZipPartsMatch("85713", "85713"), zipFailedMsg("85713", "85713"));
     }
 
     @Test
-    void doZipsMatch_Maybe() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setZip("85713");
-        assertEquals(AnswerType.maybe, CompareContactParts.doZipsMatch(contactOne, "85713-1000"));
-        assertEquals(AnswerType.maybe, CompareContactParts.doZipsMatch(contactOne, "85713-1004"));
-        assertEquals(AnswerType.maybe, CompareContactParts.doZipsMatch(contactOne, "85713-1008"));
+    void doAddressZipPartsMatch_Maybe() {
+        assertEquals(AnswerType.maybe, CompareContactParts.doAddressZipPartsMatch("85713", "85713-1000"), zipFailedMsg("85713", "85713-1000"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doAddressZipPartsMatch("85713", "85713-1004"), zipFailedMsg("85713", "85713-1004"));
+        assertEquals(AnswerType.maybe, CompareContactParts.doAddressZipPartsMatch("85713", "85713-1008"), zipFailedMsg("85713", "85713-1008"));
     }
 
     @Test
-    void doZipsMatch_No() {
-        Contact contactOne = new Contact();
-
-        contactOne.getAddress().setZip("85713-1000");
-        assertEquals(AnswerType.no, CompareContactParts.doZipsMatch(contactOne, "85713-1001"));
-        assertEquals(AnswerType.no, CompareContactParts.doZipsMatch(contactOne, "85714-1000"));
+    void doAddressZipPartsMatch_No() {
+        assertEquals(AnswerType.no, CompareContactParts.doAddressZipPartsMatch("85713-1000", "85713-1001"), zipFailedMsg("85713-1000", "85713-1001"));
+        assertEquals(AnswerType.no, CompareContactParts.doAddressZipPartsMatch("85713-1000", "85714-1000"), zipFailedMsg("85713-1000", "85714-1000"));
     }
 
     /*******************************************************************************************************************

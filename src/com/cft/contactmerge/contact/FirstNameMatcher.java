@@ -4,7 +4,9 @@
 
  */
 
-package com.cft.contactmerge;
+package com.cft.contactmerge.contact;
+
+import com.cft.contactmerge.AnswerType;
 
 import java.util.ArrayList;
 

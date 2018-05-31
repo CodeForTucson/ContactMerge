@@ -69,19 +69,19 @@ public class NameTests {
 
     @Test
     void Name_toString_FirstNameOnly(){
-        Name name = new Name("John", "Ray", "", "Dr", "III");
+        Name name = new Name("John", "", "", "", "");
         assertEquals("John", name.toString());
     }
 
     @Test
     void Name_toString_LastNameOnly(){
-        Name name = new Name("", "Ray", "Doe", "Dr", "III");
+        Name name = new Name("", "Doe", "Doe", "Dr", "III");
         assertEquals("Doe", name.toString());
     }
 
     @Test
     void Name_toString_NoName(){
-        Name name = new Name("", "Ray", "", "Dr", "III");
+        Name name = new Name();
         assertEquals("", name.toString());
     }
 }

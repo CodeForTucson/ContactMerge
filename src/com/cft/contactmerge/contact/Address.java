@@ -1,29 +1,39 @@
 package com.cft.contactmerge.contact;
 
 import com.cft.contactmerge.AnswerType;
-import com.cft.contactmerge.StreetAddressMatchLogic;
-import com.cft.contactmerge.ApartmentMatchLogic;
-import com.cft.contactmerge.CityMatchLogic;
-import com.cft.contactmerge.StateMatchLogic;
-import com.cft.contactmerge.CountryMatchLogic;
-import com.cft.contactmerge.ZipMatchLogic;
-import java.util.ArrayList;
 
-public class Address {
-    String streetAddress;
-    String apartment;
-    String city;
-    String state;
-    String country;
-    String zip;
+import java.util.ArrayList;
+import java.util.Hashtable;
+
+public class Address implements IContactProperty<Address> {
+    private String street;
+    private String apartment;
+    private String city;
+    private String state;
+    private String country;
+    private String zip;
+    private final String streetMatchHashKey = "isStreetMatch";
+    private final String apartmentMatchHashKey = "isApartmentMatch";
+    private final String cityMatchHashKey = "isCityMatch";
+    private final String stateMatchHashKey = "isStateMatch";
+    private final String countryMatchHashKey = "isCountryMatch";
+    private final String zipMatchHashKey = "isZipMatch";
 
     /*******************************************************************************************************************
      *************************************************** Constructors **************************************************
      *******************************************************************************************************************/
-    public Address(){}
+    public Address() {
+    }
 
-    public Address(String streetAddress, String apartment, String city, String state, String country, String zip){
-        setStreetAddress(streetAddress);
+    public Address(String street, String apartment, String city, String state, String country, String zip) {
+        setFullAddress(street, apartment, city, state, country, zip);
+    }
+
+    /*******************************************************************************************************************
+     ************************************************* Get/Set Methods *************************************************
+     *******************************************************************************************************************/
+    public void setFullAddress(String street, String apartment, String city, String state, String country, String zip){
+        setStreet(street);
         setApartment(apartment);
         setCity(city);
         setState(state);
@@ -31,15 +41,12 @@ public class Address {
         setZip(zip);
     }
 
-    /*******************************************************************************************************************
-     ************************************************* Get/Set Methods *************************************************
-     *******************************************************************************************************************/
-    public String getStreetAddress() {
-        return this.streetAddress;
+    public String getStreet() {
+        return this.street;
     }
 
-    public void setStreetAddress(String streetAddress) {
-        this.streetAddress = streetAddress;
+    public void setStreet(String street) {
+        this.street = street;
     }
 
     public String getApartment() {
@@ -66,7 +73,7 @@ public class Address {
         this.state = state;
     }
 
-    public String getCountry(){
+    public String getCountry() {
         return this.country;
     }
 
@@ -74,12 +81,203 @@ public class Address {
         this.country = country;
     }
 
-    public String getZip(){
+    public String getZip() {
         return this.zip;
     }
 
     public void setZip(String zip) {
         this.zip = zip;
+    }
+
+    public Address getValue() {
+        return this;
+    }
+
+    private String getStreetMatchHashKey() {
+        return this.streetMatchHashKey;
+    }
+
+    private String getApartmentMatchHashKey() {
+        return this.apartmentMatchHashKey;
+    }
+
+    private String getCityMatchHashKey() {
+        return this.cityMatchHashKey;
+    }
+
+    private String getStateMatchHashKey() {
+        return this.stateMatchHashKey;
+    }
+
+    private String getCountryMatchHashKey() {
+        return this.countryMatchHashKey;
+    }
+
+    private String getZipMatchHashKey() {
+        return this.zipMatchHashKey;
+    }
+
+    public void setAddressPartsNull(){
+        setFullAddress(null, null, null, null, null, null);
+    }
+
+    /*******************************************************************************************************************
+     ************************************************** Match Methods **************************************************
+     *******************************************************************************************************************/
+    public AnswerType isMatch(Address otherAddress) {
+        if (isNoMatchingAvailable(otherAddress)) {
+            return AnswerType.no;
+        }
+
+        Hashtable<String, AnswerType> addressPartsMatchResults = getAddressPartsMatchResults(otherAddress);
+        if (addressPartsMatchResults.containsValue(AnswerType.no)) {
+            return AnswerType.no;
+        } else if (addressPartsMatchResults.containsValue(AnswerType.maybe)) {
+            return AnswerType.maybe;
+        } else if (addressPartsMatchResults.containsValue(AnswerType.yes)) {
+            return AnswerType.yes;
+        }
+
+        // Default answer
+        return AnswerType.no;
+    }
+
+    private Hashtable<String, AnswerType> getAddressPartsMatchResults(Address otherAddress) {
+        Hashtable<String, AnswerType> addressPartsMatchResults = new Hashtable<>();
+
+        if (!(getStreet() == null || getStreet().isEmpty()) &&
+                !(otherAddress.getStreet() == null || otherAddress.getStreet().isEmpty())) {
+            addressPartsMatchResults.put(getStreetMatchHashKey(), isStreetMatch(getStreet(), otherAddress.getStreet()));
+        } else if (!(getStreet() == null || getStreet().isEmpty()) ^
+                !(otherAddress.getStreet() == null || otherAddress.getStreet().isEmpty())) {
+            addressPartsMatchResults.put(getStreetMatchHashKey(), AnswerType.maybe);
+        }
+
+        if (!(getApartment() == null || getApartment().isEmpty()) &&
+                !(otherAddress.getApartment() == null || otherAddress.getApartment().isEmpty())) {
+            addressPartsMatchResults.put(getApartmentMatchHashKey(), isApartmentMatch(getApartment(), otherAddress.getApartment()));
+        } else if (!(getApartment() == null || getApartment().isEmpty()) ^
+                !(otherAddress.getApartment() == null || otherAddress.getApartment().isEmpty())) {
+            addressPartsMatchResults.put(getApartmentMatchHashKey(), AnswerType.maybe);
+        }
+
+        if (!(getCity() == null || getCity().isEmpty()) &&
+                !(otherAddress.getCity() == null || otherAddress.getCity().isEmpty())) {
+            addressPartsMatchResults.put(getCityMatchHashKey(), isCityMatch(getCity(), otherAddress.getCity()));
+        } else if (!(getCity() == null || getCity().isEmpty()) ^
+                !(otherAddress.getCity() == null || otherAddress.getCity().isEmpty())) {
+            addressPartsMatchResults.put(getCityMatchHashKey(), AnswerType.maybe);
+        }
+
+        if (!(getState() == null || getState().isEmpty()) &&
+                !(otherAddress.getState() == null || otherAddress.getState().isEmpty())) {
+            addressPartsMatchResults.put(getStateMatchHashKey(), isStateMatch(getState(), otherAddress.getState()));
+        } else if (!(getState() == null || getState().isEmpty()) ^
+                !(otherAddress.getState() == null || otherAddress.getState().isEmpty())) {
+            addressPartsMatchResults.put(getStateMatchHashKey(), AnswerType.maybe);
+        }
+
+        if (!(getCountry() == null || getCountry().isEmpty()) &&
+                !(otherAddress.getCountry() == null || otherAddress.getCountry().isEmpty())) {
+            addressPartsMatchResults.put(getCountryMatchHashKey(), isCountryMatch(getCountry(), otherAddress.getCountry()));
+        } else if (!(getCountry() == null || getCountry().isEmpty()) ^
+                !(otherAddress.getCountry() == null || otherAddress.getCountry().isEmpty())) {
+            addressPartsMatchResults.put(getCountryMatchHashKey(), AnswerType.maybe);
+        }
+
+        if (!(getZip() == null || getZip().isEmpty()) &&
+                !(otherAddress.getZip() == null || otherAddress.getZip().isEmpty())) {
+            addressPartsMatchResults.put(getZipMatchHashKey(), isZipMatch(getZip(), otherAddress.getZip()));
+        } else if (!(getZip() == null || getZip().isEmpty()) ^
+                !(otherAddress.getZip() == null || otherAddress.getZip().isEmpty())) {
+            addressPartsMatchResults.put(getZipMatchHashKey(), AnswerType.maybe);
+        }
+
+        return addressPartsMatchResults;
+    }
+
+    public static AnswerType isStreetMatch(String firstStreet, String secondStreet) {
+        if (firstStreet == null || firstStreet.isEmpty() || secondStreet == null || secondStreet.isEmpty()) {
+            return AnswerType.no;
+        }
+
+        ArrayList<String> normalizedStreetAddressOne = StreetMatchLogic.setNormalizeStreetAddress(firstStreet);
+        ArrayList<String> normalizedStreetAddressTwo = StreetMatchLogic.setNormalizeStreetAddress(secondStreet);
+
+        if (normalizedStreetAddressOne.equals(normalizedStreetAddressTwo)) {
+            return AnswerType.yes;
+        }
+        return StreetMatchLogic.getStreetAddressMatchResult(normalizedStreetAddressOne, normalizedStreetAddressTwo);
+    }
+
+    public static AnswerType isApartmentMatch(String firstApartment, String secondApartment) { // Done
+        if (firstApartment == null || firstApartment.isEmpty() || secondApartment == null || secondApartment.isEmpty()) {
+            return AnswerType.no;
+        }
+
+        ArrayList<String> normalizedApartmentOne = ApartmentMatchLogic.setNormalizeApartment(firstApartment);
+        ArrayList<String> normalizedApartmentTwo = ApartmentMatchLogic.setNormalizeApartment(secondApartment);
+
+        if (normalizedApartmentOne.equals(normalizedApartmentTwo)) {
+            return AnswerType.yes;
+        }
+        return ApartmentMatchLogic.getApartmentMatchResult(normalizedApartmentOne, normalizedApartmentTwo);
+    }
+
+    public static AnswerType isCityMatch(String firstCity, String secondCity) {
+        if (firstCity == null || firstCity.isEmpty() || secondCity == null || secondCity.isEmpty()) {
+            return AnswerType.no;
+        }
+
+        ArrayList<String> normalizedCityOne = CityMatchLogic.setNormalizeCity(firstCity);
+        ArrayList<String> normalizedCityTwo = CityMatchLogic.setNormalizeCity(secondCity);
+
+        if (normalizedCityOne.equals(normalizedCityTwo)) {
+            return AnswerType.yes;
+        }
+        return CityMatchLogic.getCityMatchResult(normalizedCityOne, normalizedCityTwo);
+    }
+
+    public static AnswerType isStateMatch(String firstState, String secondState) {
+        if (firstState == null || firstState.isEmpty() || secondState == null || secondState.isEmpty()) {
+            return AnswerType.no;
+        }
+
+        String normalizedStateOne = StateMatchLogic.setNormalizeState(firstState);
+        String normalizedStateTwo = StateMatchLogic.setNormalizeState(secondState);
+
+        if (normalizedStateOne.equals(normalizedStateTwo)) {
+            return AnswerType.yes;
+        }
+        return StateMatchLogic.getStateMatchResult(normalizedStateOne, normalizedStateTwo);
+    }
+
+    public static AnswerType isCountryMatch(String firstCountry, String secondCountry) {
+        if (firstCountry == null || firstCountry.isEmpty() || secondCountry == null || secondCountry.isEmpty()) {
+            return AnswerType.no;
+        }
+
+        String normalizedCountryOne = CountryMatchLogic.setNormalizeCountry(firstCountry);
+        String normalizedCountryTwo = CountryMatchLogic.setNormalizeCountry(secondCountry);
+
+        if (normalizedCountryOne.equals(normalizedCountryTwo)) {
+            return AnswerType.yes;
+        }
+        return CountryMatchLogic.getCountryMatchResult(normalizedCountryOne, normalizedCountryTwo);
+    }
+
+    public static AnswerType isZipMatch(String firstZip, String secondZip){
+        if (firstZip == null || firstZip.isEmpty() || secondZip == null || secondZip.isEmpty()) {
+            return AnswerType.no;
+        }
+
+        ArrayList<String> normalizedZipOne = ZipMatchLogic.setNormalizeZip(firstZip);
+        ArrayList<String> normalizedZipTwo = ZipMatchLogic.setNormalizeZip(secondZip);
+
+        if (normalizedZipOne.equals(normalizedZipTwo)) {
+            return AnswerType.yes;
+        }
+        return ZipMatchLogic.getZipMatchResult(normalizedZipOne, normalizedZipTwo);
     }
 
     /*******************************************************************************************************************
@@ -88,12 +286,12 @@ public class Address {
     @Override
     public String toString() {
         StringBuilder fullAddress = new StringBuilder();
-        String[] addressParts = {getStreetAddress(), getApartment(), getCity(), getState(), getCountry(), getZip()};
+        String[] addressParts = {getStreet(), getApartment(), getCity(), getState(), getCountry(), getZip()};
 
-        for (String part: addressParts){
-            if (!part.isEmpty() && fullAddress.toString().isEmpty()){
+        for (String part : addressParts) {
+            if (!(part == null || part.isEmpty()) && fullAddress.toString().isEmpty()) {
                 fullAddress.append(part);
-            } else if (!part.isEmpty()){
+            } else if (!(part == null || part.isEmpty())) {
                 fullAddress.append(", ").append(part);
             }
         }
@@ -101,139 +299,25 @@ public class Address {
         return fullAddress.toString();
     }
 
-    public AnswerType isAddressMatch(Address otherAddress){
-        // ToDo: Once all parts match methods are done, write tests for this method and fill in the code
-        // Precondition: All address parts except apartment and zip must not be empty.
-        if (getStreetAddress() == null || getStreetAddress().isEmpty() || getCity() == null || getCity().isEmpty() ||
-                getState() == null || getState().isEmpty() || getCountry() == null || getCountry().isEmpty() ||
-                otherAddress.getStreetAddress() == null || otherAddress.getStreetAddress().isEmpty() ||
-                otherAddress.getCity() == null || otherAddress.getCity().isEmpty() ||
-                otherAddress.getState() == null || otherAddress.getState().isEmpty() ||
-                otherAddress.getCountry() == null || otherAddress.getCountry().isEmpty()){
-            return AnswerType.no;
-        }
-        //AnswerType streetAddressMatchResult = isStreetAddressMatch();
-        AnswerType apartmentMatchResult;
-        //AnswerType cityMatchResult = isCityMatch();
-        //AnswerType stateMatchResult = isStateMatch();
-        //AnswerType countryMatchResult = isCountryMatch();
-        AnswerType zipMatchResult;
-
-        //return getAddressPartsMatchResult(streetAddressMatchResult, apartmentMatchResult, cityMatchResult, stateMatchResult, countryMatchResult, zipMatchResult);
-        return AnswerType.no;
+    private boolean isNoMatchingAvailable(Address otherAddress) {
+        /* Used to detect if not any matches cannot be checked. For example:
+         * (this.street equals null or is empty and otherAddress.street has a value) and...
+         * (this.city has a value and otherAddress.city equals null or is empty)...
+         * no matches can be made, therefor, return True
+         */
+        return ((getStreet() == null || getStreet().isEmpty() ||
+                    otherAddress.getStreet() == null || otherAddress.getStreet().isEmpty()) &&
+                (getApartment() == null || getApartment().isEmpty() ||
+                        otherAddress.getApartment() == null || otherAddress.getApartment().isEmpty()) &&
+                (getCity() == null || getCity().isEmpty() ||
+                        otherAddress.getCity() == null || otherAddress.getCity().isEmpty()) &&
+                (getState() == null || getState().isEmpty() ||
+                        otherAddress.getState() == null || otherAddress.getState().isEmpty()) &&
+                (getCountry() == null || getCountry().isEmpty() ||
+                        otherAddress.getCountry() == null || otherAddress.getCountry().isEmpty()) &&
+                (getZip() == null || getZip().isEmpty() ||
+                        otherAddress.getZip() == null || otherAddress.getZip().isEmpty()));
     }
 
-    public AnswerType getAddressPartsMatchResult(AnswerType streetAddressMatchResult, AnswerType apartmentMatchResult,
-                                                 AnswerType cityMatchResult, AnswerType stateMatchResult,
-                                                 AnswerType countryMatchResult, AnswerType zipMatchResult){
-        // ToDo: Once all parts match methods are done, this will be a sub-method for isAddressMatch()
-        AnswerType[] matchResults = {streetAddressMatchResult, apartmentMatchResult, cityMatchResult, stateMatchResult, countryMatchResult, zipMatchResult};
-        boolean isAllMatchResultsYes = true;
-
-        // return yes if all match results (except zip and apartment if they are null) are yes
-        for (int matchResult = 0; matchResult < matchResults.length; matchResult++){
-            if (matchResult == 1 || matchResult == matchResults.length - 1) { // if apartment or zip
-                if (matchResults[matchResult].equals(AnswerType.no)) {
-                    isAllMatchResultsYes = false;
-                    break;
-                }
-            } else {
-                if (!matchResults[matchResult].equals(AnswerType.yes)){
-                    isAllMatchResultsYes = false;
-                    break;
-                }
-            }
-        }
-        if (isAllMatchResultsYes){
-            return AnswerType.yes;
-        }
-
-        // return maybe if streetAddressMatchResult == maybe, and everything else is yes (and apartment/zip can be maybe or null)
-
-        return AnswerType.no;
-    }
-
-    public AnswerType isStreetAddressMatch(String otherStreetAddress){
-        if (getStreetAddress() == null || getStreetAddress().isEmpty() || otherStreetAddress.isEmpty()){
-            return AnswerType.no;
-        }
-
-        ArrayList<String> normalizedStreetAddressOne = StreetAddressMatchLogic.setNormalizeStreetAddress(getStreetAddress());
-        ArrayList<String> normalizedStreetAddressTwo = StreetAddressMatchLogic.setNormalizeStreetAddress(otherStreetAddress);
-
-        if (normalizedStreetAddressOne.equals(normalizedStreetAddressTwo)){
-            return AnswerType.yes;
-        }
-        return StreetAddressMatchLogic.getStreetAddressMatchResult(normalizedStreetAddressOne, normalizedStreetAddressTwo);
-    }
-
-    public AnswerType isApartmentMatch(String otherApartment){ // Done
-        if (getApartment() == null || getApartment().isEmpty() || otherApartment.isEmpty()){
-            return AnswerType.no;
-        }
-
-        ArrayList<String> normalizedApartmentOne = ApartmentMatchLogic.setNormalizeApartment(getApartment());
-        ArrayList<String> normalizedApartmentTwo = ApartmentMatchLogic.setNormalizeApartment(otherApartment);
-
-        if (normalizedApartmentOne.equals(normalizedApartmentTwo)){
-            return AnswerType.yes;
-        }
-        return ApartmentMatchLogic.getApartmentMatchResult(normalizedApartmentOne, normalizedApartmentTwo);
-    }
-
-    public AnswerType isCityMatch(String otherCity){
-        if (getCity() == null || getCity().isEmpty() || otherCity.isEmpty()){
-            return AnswerType.no;
-        }
-
-        ArrayList<String> normalizedCityOne = CityMatchLogic.setNormalizeCity(getCity());
-        ArrayList<String> normalizedCityTwo = CityMatchLogic.setNormalizeCity(otherCity);
-
-        if (normalizedCityOne.equals(normalizedCityTwo)){
-            return AnswerType.yes;
-        }
-        return CityMatchLogic.getCityMatchResult(normalizedCityOne, normalizedCityTwo);
-    }
-
-    public AnswerType isStateMatch(String otherState){
-        if (getState() == null || getState().isEmpty() || otherState.isEmpty()){
-            return AnswerType.no;
-        }
-
-        String normalizedStateOne = StateMatchLogic.setNormalizeState(getState());
-        String normalizedStateTwo = StateMatchLogic.setNormalizeState(otherState);
-
-        if (normalizedStateOne.equals(normalizedStateTwo)){
-            return AnswerType.yes;
-        }
-        return StateMatchLogic.getStateMatchResult(normalizedStateOne, normalizedStateTwo);
-    }
-
-    public AnswerType isCountryMatch(String otherCountry){
-        if (getCountry() == null || getCountry().isEmpty() || otherCountry.isEmpty()){
-            return AnswerType.no;
-        }
-
-        String normalizedCountryOne = CountryMatchLogic.setNormalizeCountry(getCountry());
-        String normalizedCountryTwo = CountryMatchLogic.setNormalizeCountry(otherCountry);
-
-        if (normalizedCountryOne.equals(normalizedCountryTwo)){
-            return AnswerType.yes;
-        }
-        return CountryMatchLogic.getCountryMatchResult(normalizedCountryOne, normalizedCountryTwo);
-    }
-
-    public AnswerType isZipMatch(String otherZip){
-        if (getZip() == null || getZip().isEmpty() || otherZip.isEmpty()){
-            return AnswerType.no;
-        }
-
-        ArrayList<String> normalizedZipOne = ZipMatchLogic.setNormalizeZip(getZip());
-        ArrayList<String> normalizedZipTwo = ZipMatchLogic.setNormalizeZip(otherZip);
-
-        if (normalizedZipOne.equals(normalizedZipTwo)){
-            return AnswerType.yes;
-        }
-        return ZipMatchLogic.getZipMatchResult(normalizedZipOne, normalizedZipTwo);
-    }
+    // ToDO: create a parseAddress_Street_Apartment()
 }

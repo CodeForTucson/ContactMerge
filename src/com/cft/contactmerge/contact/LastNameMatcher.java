@@ -3,7 +3,10 @@
  * Exact Match (and matched with punctuations), and matched with hyphenated parts.
  */
 
-package com.cft.contactmerge;
+package com.cft.contactmerge.contact;
+
+import com.cft.contactmerge.AnswerType;
+import com.cft.contactmerge.contact.NameMatchLogic;
 
 import java.util.ArrayList;
 

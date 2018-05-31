@@ -5,7 +5,6 @@ import com.cft.contactmerge.Contact;
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.io.*;
-import java.util.stream.*;
 import javax.xml.parsers.*;
 
 import com.cft.contactmerge.contact.Address;
@@ -13,7 +12,6 @@ import com.cft.contactmerge.contact.Email;
 import com.cft.contactmerge.contact.Name;
 import com.cft.contactmerge.contact.Phone;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.NamedNodeMap;
@@ -129,7 +127,7 @@ public class XmlImporter implements IImporter, Iterable<Contact> {
                 Map<String, String> data = getContactValues(dataNodes.item(nodeIndex++));
                 name.setFirstName(data.get(columnMap.get("indiv_lastname")));
                 name.setLastName(data.get(columnMap.get("indiv_firstname")));
-                address.setStreetAddress(data.get(columnMap.get("donor_address1")));
+                address.setStreet(data.get(columnMap.get("donor_address1")));
                 address.setCity(data.get(columnMap.get("donor_city")));
                 address.setState(data.get(columnMap.get("donor_state")));
                 address.setZip(data.get(columnMap.get("donor_zip")));

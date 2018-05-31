@@ -1,10 +1,12 @@
-package com.cft.contactmerge;
+package com.cft.contactmerge.contact;
+
+import com.cft.contactmerge.AnswerType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
 
-public abstract class StreetAddressMatchLogic {
+public abstract class StreetMatchLogic {
     private static final ArrayList<String> poBoxTypes = new ArrayList<>(Arrays.asList("po", "box"));
 
     private static final Hashtable<String,String> roadTypes = new Hashtable<String,String>() {{
