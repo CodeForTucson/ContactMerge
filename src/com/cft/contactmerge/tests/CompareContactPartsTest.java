@@ -7,10 +7,11 @@ import com.cft.contactmerge.*;
 
 class CompareContactPartsTest {
     /*******************************************************************************************************************
-     **************************************** Compare First And Last Name Tests ****************************************
+     ************************************************ Compare Name Tests ***********************************************
      *******************************************************************************************************************/
     /* preconditions...
      * All test cases must include a check for trailing white spaces and different upper/lower case letters.
+     * All prefixes will not be included in any matching, since prefix is just a title that can change randomly while the person remains the same.
      */
     private String firstAndLastNameFailedMsg(String fNameOne,String  lNameOne,String  fNameTwo,String  lNameTwo){
         return "(compareFirstNames: \"" + fNameOne + "\" vs \"" + fNameTwo + "\") and (compareLastNames: \"" + lNameOne + "\" vs \"" + lNameTwo + "\")";
@@ -18,29 +19,83 @@ class CompareContactPartsTest {
     //--------------------------------------------------------------------- Basic Tests --------------------------------------------------------------------
     @Test
     void doNamesMatch_Yes() {
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" JoHn", "DOE ", "JOHN ", " Doe  "));
+        Name firstAndLastNameOne = new Name(" DaVe", " dave ", "AUSHERMAN ", "Dr.", "2nd");
+        Name firstAndLastNameTwo = new Name("DAVE ", "  Dave ", " Ausherman  ", "dr", "II");
+
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
     }
-    //--------------------------------------------------------------------- Basic Tests --------------------------------------------------------------------
+
+    @Test
+    void doNamesMatch_Yes_FirstAndLastNameOnly() {
+        Name firstAndLastNameOne = new Name(" JoHn", null, "DOE ", null, null);
+        Name firstAndLastNameTwo = new Name("JOHN ", null, " Doe  ", null, null);
+
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
+    }
+
+    @Test
+    void doNamesMatch_Yes_MissingPrefix() {
+        Name firstAndLastNameOne = new Name(" JoHn", null, "DOE ", "Dr.", null);
+        Name firstAndLastNameTwo = new Name("JOHN ", null, " Doe  ", null, null);
+
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
+    }
+
+    @Test
+    void doNamesMatch_Yes_DifferentPrefix() {
+        Name firstAndLastNameOne = new Name(" JoHn", null, "DOE ", "Dr.", null);
+        Name firstAndLastNameTwo = new Name("JOHN ", null, " Doe  ", "Mr", null);
+
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
+    }
+
     @Test
     void doNamesMatch_No_DifferentLastName() {
-        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" JoHn", "DOE ", "JOHN ", " aDams  "));
+        Name firstAndLastNameOne = new Name(" JoHn", null, "DOE ", null, null);
+        Name firstAndLastNameTwo = new Name("JOHN ", null, " aDams  ", null, null);
+
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
+    }
+
+    @Test
+    void doNamesMatch_No_DifferentMiddleName() {
+        Name firstAndLastNameOne = new Name(" JoHn", " allen ", "DOE ", null, null);
+        Name firstAndLastNameTwo = new Name("JOHN ", "  Ray ", " Doe  ", null, null);
+
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
     }
 
     @Test
     void doNamesMatch_No_DifferentFirstName() {
-        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" JoHn", "DOE ", "jAne ", " Doe  "));
+        Name firstAndLastNameOne = new Name(" JoHn", null, "DOE ", null, null);
+        Name firstAndLastNameTwo = new Name("jAne ", null, " Doe  ", null, null);
+
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
+    }
+
+    @Test
+    void doNamesMatch_No_DifferentSuffixName() {
+        Name firstAndLastNameOne = new Name(" DaVe", " dave ", "AUSHERMAN ", "Dr.", "2nd");
+        Name firstAndLastNameTwo = new Name("DAVE ", "  Dave ", " Ausherman  ", "dr", "3rd");
+
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
     }
 
     //--------------------------------------------------------------------- Punctuation --------------------------------------------------------------------
     @Test
     void doNamesMatch_Yes_IgnoreMultiPunctuationInFirstAndLastName() {
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("aN-De-denIse ", " Sa-LA-Democh ", " An dE Denise ", "sa la democh  "));
+        Name firstAndLastNameOne = new Name("aN-De-denIse ", null, " Sa-LA-Democh ", null, null);
+        Name firstAndLastNameTwo = new Name(" An dE Denise ", null, "sa la democh  ", null, null);
+
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
     }
 
-    //--------------------------------------------------------------------- Punctuation --------------------------------------------------------------------
     @Test
-    void doNamesMatch_Maybe_IgnoreMultiPunctuationInFirstAndLastNameDifferentOrder() {
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("aN-De-denIse ", " Sa-LA-Democh ", " An Denise dE", "sa democh la  "));
+    void doNamesMatch_Yes_IgnoreMultiPunctuationInFirstAndLastNameDifferentOrder() {
+        Name firstAndLastNameOne = new Name("aN-De-denIse ", null, " Sa-LA-Democh ", null, null);
+        Name firstAndLastNameTwo = new Name(" An Denise dE", null, "sa democh la  ", null, null);
+
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
     }
 
     //--------------------------------------------------------------------- Hyphenated First and Last Names ---------------------------------------------------------------------
@@ -49,15 +104,30 @@ class CompareContactPartsTest {
 
     @Test
     void doNamesMatch_YesMaybeNo_FirstAndLastNamesContainMultiHyphens() {
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(" Josephine-mc-vitty", "Sa-la-democh ", "vittY ", " democH"), firstAndLastNameFailedMsg(" Josephine-mc-vitty", "Sa-la-democh ", "vittY ", " democH"));
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" joSephine-mc-vitty ", " sa-La-democh ", "  mC  ", "  lA  "), firstAndLastNameFailedMsg(" joSephine-mc-vitty ", " sa-La-democh ", "  mC  ", "  lA  "));
-        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" JosePh  ", "  leE", " JosEphine-Mc-Vitty", " sa-la-Cathleen "), firstAndLastNameFailedMsg(" JosePh  ", "  leE", " JosEphine-Mc-Vitty", " sa-la-Cathleen "));
+        Name firstAndLastNameOne = new Name(" Josephine-mc-vitty", null, "Sa-la-democh ", null, null);
+        Name firstAndLastNameTwo = new Name("vittY ", null, " democH", null, null);
+
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo),
+                firstAndLastNameFailedMsg(" Josephine-mc-vitty", "Sa-la-democh ", "vittY ", " democH"));
+
+        firstAndLastNameOne.setFullName(" joSephine-mc-vitty ", null, " sa-La-democh ", null, null);
+        firstAndLastNameTwo.setFullName("  mC  ", null, "  lA  ", null, null);
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo),
+                firstAndLastNameFailedMsg(" joSephine-mc-vitty ", " sa-La-democh ", "  mC  ", "  lA  "));
+
+        firstAndLastNameOne.setFullName(" JosePh  ", null, "  leE", null, null);
+        firstAndLastNameTwo.setFullName(" JosEphine-Mc-Vitty", null, " sa-la-Cathleen ", null, null);
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo),
+                firstAndLastNameFailedMsg(" JosePh  ", "  leE", " JosEphine-Mc-Vitty", " sa-la-Cathleen "));
     }
 
     //----------------------------------------------------------------------- Last and First Names Swapped ----------------------------------------------------------------------
     @Test
     void doNamesMatch_Maybe_FirstLastSwap() {
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" joHn  ", "  Doe ", " doe", "JOhn "));
+        Name firstAndLastNameOne = new Name(" joHn  ", null, "  Doe ", null, null);
+        Name firstAndLastNameTwo = new Name(" doe", null, "JOhn ", null, null);
+
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
     }
 
     //--------------------------------------------------------------------------- First Name Initials ---------------------------------------------------------------------------
@@ -65,20 +135,39 @@ class CompareContactPartsTest {
     // Only matches with a maybe if it is first name
     @Test
     void doNamesMatch_Maybe_FirstNameInitials() {
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" John  ", "  Doe ", "j ", " dOe"), firstAndLastNameFailedMsg(" John  ", "  Doe ", "j ", " dOe"));
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch("J. ", " Doe", "  joHn ", " doe  "), firstAndLastNameFailedMsg("J. ", " Doe", "  joHn ", " doe  "));
+        Name firstAndLastNameOne = new Name(" John  ", null, "  Doe ", null, null);
+        Name firstAndLastNameTwo = new Name("j ", null, " dOe", null, null);
+
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo),
+                firstAndLastNameFailedMsg(" John  ", "  Doe ", "j ", " dOe"));
+
+        firstAndLastNameOne.setFullName("J. ", null, " Doe", null, null);
+        firstAndLastNameTwo.setFullName("  joHn ", null, " doe  ", null, null);
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo),
+                firstAndLastNameFailedMsg("J. ", " Doe", "  joHn ", " doe  "));
     }
 
     //------------------------------------------------------------------------------- Other Tests -------------------------------------------------------------------------------
     @Test
     void doNamesMatch_YesMaybe_Apostrophe() {
-        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch("  adriaNno ", "d'onOfio ", " adriaNno", " d onofiO  "), firstAndLastNameFailedMsg("  adriaNno ", "d'onOfio ", " adriaNno", " d onofiO  "));
-        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(" mc  ", " d oNofio", "Josephine-mc-vitty ", "  d'onoFio "), firstAndLastNameFailedMsg(" mc vitty  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "));
+        Name firstAndLastNameOne = new Name("  adriaNno ", null, "d'onOfio ", null, null);
+        Name firstAndLastNameTwo = new Name(" adriaNno", null, " d onofiO  ", null, null);
+
+        assertEquals(AnswerType.yes, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo),
+                firstAndLastNameFailedMsg("  adriaNno ", "d'onOfio ", " adriaNno", " d onofiO  "));
+
+        firstAndLastNameOne.setFullName(" mc  ", null, " d oNofio", null, null);
+        firstAndLastNameTwo.setFullName("Josephine-mc-vitty ", null, "  d'onoFio ", null, null);
+        assertEquals(AnswerType.maybe, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo),
+                firstAndLastNameFailedMsg(" mc vitty  ", " doNofio", "Josephine-mc-vitty ", "  d'onoFio "));
     }
 
     @Test
     void doNamesMatch_No_Apostrophe_NameCombined() { // Note: In the future, we may let this return type be decided by the user as yes or maybe.
-        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "), firstAndLastNameFailedMsg(" adriaNno  ", " doNofio", "adriaNno ", "  d'onoFio "));
+        Name firstAndLastNameOne = new Name(" adriaNno  ", null, " doNofio", null, null);
+        Name firstAndLastNameTwo = new Name("adriaNno ", null, "  d'onoFio ", null, null);
+
+        assertEquals(AnswerType.no, CompareContactParts.doNamesMatch(firstAndLastNameOne, firstAndLastNameTwo));
     }
 
     /*******************************************************************************************************************

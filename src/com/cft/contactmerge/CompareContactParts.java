@@ -2,13 +2,13 @@ package com.cft.contactmerge;
 
 import com.cft.contactmerge.contact.Address;
 import com.cft.contactmerge.contact.Email;
-import com.cft.contactmerge.contact.NameMatchSelector;
+import com.cft.contactmerge.contact.Name;
 import com.cft.contactmerge.contact.Phone;
 
 public class CompareContactParts {
-    public static AnswerType doNamesMatch(String firstName1, String lastName1, String firstName2, String lastName2)
+    public static AnswerType doNamesMatch(Name nameOne, Name nameTwo)
     {
-        return NameMatchSelector.getFirstLastNamesMatchResultDefaultComparisons(firstName1, lastName1, firstName2, lastName2);
+        return nameOne.isMatch(nameTwo);
     }
 
     public static AnswerType doAddressesMatch(Address addressOne, Address addressTwo)
