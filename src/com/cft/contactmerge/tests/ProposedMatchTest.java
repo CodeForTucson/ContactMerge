@@ -48,8 +48,8 @@ class ProposedMatchTest {
 
         // TODO: Replace the following tests with a call to check if Contact.CompareTo() is
         // ContactMatchType.Identical once CompareTo() is implemented.
-        assertEquals(expectedContactToMerge.getFirstName(), actualContactToMerge.getFirstName(), getVerificationMessage("FirstName"));
-        assertEquals(expectedContactToMerge.getLastName(), actualContactToMerge.getLastName(), getVerificationMessage("LastName"));
+        assertEquals(expectedContactToMerge.getFirstName(), actualContactToMerge.getName().getFirstName(), getVerificationMessage("FirstName"));
+        assertEquals(expectedContactToMerge.getLastName(), actualContactToMerge.getName().getLastName(), getVerificationMessage("LastName"));
         assertEquals(expectedContactToMerge.getAddress(), actualContactToMerge.getAddress(), getVerificationMessage("Address"));
         assertEquals(expectedContactToMerge.getPhone(), actualContactToMerge.getPhone(), getVerificationMessage("Phone"));
     }
@@ -75,7 +75,7 @@ class ProposedMatchTest {
 
     private boolean listContainsContact(String searchFirstName, Collection<IContact> contactList) {
         for(IContact contact: contactList) {
-            if (contact.getFirstName() == searchFirstName) {
+            if (contact.getName().getFirstName() == searchFirstName) {
                 return true;
             }
         }

@@ -126,7 +126,7 @@ class XmlImporterTest {
 
         ArrayList<String> lastNames = new ArrayList<String>(Arrays.asList("Doe", "Smith"));
         ArrayList<String> firstNames = new ArrayList<String>(Arrays.asList("John", "Adam"));
-        ArrayList<String> addresses = new ArrayList<String>(Arrays.asList("123 Main St", "1010 Speedway Blvd"));
+        ArrayList<String> addresses = new ArrayList<String>(Arrays.asList("123 Main St, Tucson, AZ, 85750", "1010 Speedway Blvd, Tucson, AZ, 85750"));
         ArrayList<String> phones = new ArrayList<String>(Arrays.asList("(520) 123-4567", "(520) 111-2222"));
         ArrayList<String> emails = new ArrayList<String>(Arrays.asList("jdoe@gmail.com", "adam.smith@yahoo.com"));
 
@@ -135,9 +135,9 @@ class XmlImporterTest {
         {
             assertEquals(lastNames.get(i), contact.getLastName(), getVerificationMessage(String.format("lastNames[%d]", i)));
             assertEquals(firstNames.get(i), contact.getFirstName(), getVerificationMessage(String.format("firstNames[%d]", i)));
-            assertEquals(addresses.get(i), contact.getAddress(), getVerificationMessage(String.format("addresses[%d]", i)));
-            assertEquals(phones.get(i), contact.getPhone(), getVerificationMessage(String.format("phones[%d]", i)));
-            assertEquals(emails.get(i), contact.getEmail(), getVerificationMessage(String.format("emails[%d]", i)));
+            assertEquals(addresses.get(i), contact.getAddress().toString(), getVerificationMessage(String.format("addresses[%d]", i)));
+            assertEquals(phones.get(i), contact.getPhone().toString(), getVerificationMessage(String.format("phones[%d]", i)));
+            assertEquals(emails.get(i), contact.getEmail().toString(), getVerificationMessage(String.format("emails[%d]", i)));
 
             i++;
         }

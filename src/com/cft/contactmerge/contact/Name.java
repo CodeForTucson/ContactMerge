@@ -119,15 +119,15 @@ public class Name implements IContactProperty<Name>
     /*******************************************************************************************************************
      ************************************************** Match Methods **************************************************
      *******************************************************************************************************************/
-    public AnswerType isMatch(Name otherName) {
+    public AnswerType isMatch(IContactProperty<Name> otherName) {
         Hashtable<String, AnswerType> namePartsMatchResults = new Hashtable<>();
 
         // First and Last Name
         if (!(getFirstName() == null || getFirstName().isEmpty()) && !(getLastName() == null || getLastName().isEmpty()) &&
-                !(otherName.getFirstName() == null || otherName.getFirstName().isEmpty()) && !(otherName.getLastName() == null || otherName.getLastName().isEmpty())
-                ){
+                !(otherName.getValue().getFirstName() == null || otherName.getValue().getFirstName().isEmpty()) &&
+                !(otherName.getValue().getLastName() == null || otherName.getValue().getLastName().isEmpty())){
             namePartsMatchResults.put(getFirstAndLastNameMatchHashKey(),
-                    isFirstAndLastNameMatch(getFirstName(), otherName.getFirstName(), getLastName(), otherName.getLastName()));
+                    isFirstAndLastNameMatch(getFirstName(), otherName.getValue().getFirstName(), getLastName(), otherName.getValue().getLastName()));
             if (namePartsMatchResults.get(getFirstAndLastNameMatchHashKey()).equals(AnswerType.no)){ // skip other matching if this result is no
                 return AnswerType.no;
             }
@@ -135,9 +135,9 @@ public class Name implements IContactProperty<Name>
 
         // First Name Only
         if (!namePartsMatchResults.containsKey(getFirstAndLastNameMatchHashKey()) && !(getFirstName() == null || getFirstName().isEmpty()) &&
-                !(otherName.getFirstName() == null || otherName.getFirstName().isEmpty())
+                !(otherName.getValue().getFirstName() == null || otherName.getValue().getFirstName().isEmpty())
                 ){
-            namePartsMatchResults.put(getFirstNameMatchHashKey(), isFirstNameMatch(getFirstName(), otherName.getFirstName()));
+            namePartsMatchResults.put(getFirstNameMatchHashKey(), isFirstNameMatch(getFirstName(), otherName.getValue().getFirstName()));
             if (namePartsMatchResults.get(getFirstNameMatchHashKey()).equals(AnswerType.no)){ // skip other matching if this result is no
                 return AnswerType.no;
             }
@@ -145,25 +145,27 @@ public class Name implements IContactProperty<Name>
 
         // Last Name Only
         if (!namePartsMatchResults.containsKey(getFirstAndLastNameMatchHashKey()) && !(getLastName() == null || getLastName().isEmpty()) &&
-                !(otherName.getLastName() == null || otherName.getLastName().isEmpty())
+                !(otherName.getValue().getLastName() == null || otherName.getValue().getLastName().isEmpty())
                 ){
-            namePartsMatchResults.put(getLastNameMatchHashKey(), isLastNameMatch(getLastName(), otherName.getLastName()));
+            namePartsMatchResults.put(getLastNameMatchHashKey(), isLastNameMatch(getLastName(), otherName.getValue().getLastName()));
             if (namePartsMatchResults.get(getLastNameMatchHashKey()).equals(AnswerType.no)){ // skip other matching if this result is no
                 return AnswerType.no;
             }
         }
 
         // Middle Name
-        if (!(getMiddleName() == null || getMiddleName().isEmpty()) && !(otherName.getMiddleName() == null || otherName.getMiddleName().isEmpty())){
-            namePartsMatchResults.put(getMiddleNameMatchHashKey(), isMiddleNameMatch(getMiddleName(), otherName.getMiddleName()));
+        if (!(getMiddleName() == null || getMiddleName().isEmpty()) &&
+                !(otherName.getValue().getMiddleName() == null || otherName.getValue().getMiddleName().isEmpty())){
+            namePartsMatchResults.put(getMiddleNameMatchHashKey(), isMiddleNameMatch(getMiddleName(), otherName.getValue().getMiddleName()));
             if (namePartsMatchResults.get(getMiddleNameMatchHashKey()).equals(AnswerType.no)){
                 return AnswerType.no;
             }
         }
 
         // Suffix
-        if (!(getSuffix() == null || getSuffix().isEmpty()) && !(otherName.getSuffix() == null || otherName.getSuffix().isEmpty())){
-            namePartsMatchResults.put(getSuffixMatchHashKey(), isSuffixMatch(getSuffix(), otherName.getSuffix()));
+        if (!(getSuffix() == null || getSuffix().isEmpty()) &&
+                !(otherName.getValue().getSuffix() == null || otherName.getValue().getSuffix().isEmpty())){
+            namePartsMatchResults.put(getSuffixMatchHashKey(), isSuffixMatch(getSuffix(), otherName.getValue().getSuffix()));
         }
 
         // Return Results

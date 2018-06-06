@@ -9,12 +9,6 @@ public interface IContact {
     public void setName(Name name);
     public Name getName();
 
-    public void setFirstName(String firstName);
-    public String getFirstName();
-
-    public void setLastName(String lastName);
-    public String getLastName();
-
     public void setAddress(Address address);
     public Address getAddress();
 

@@ -125,8 +125,8 @@ public class XmlImporter implements IImporter, Iterable<Contact> {
                 Email email = new Email();
 
                 Map<String, String> data = getContactValues(dataNodes.item(nodeIndex++));
-                name.setFirstName(data.get(columnMap.get("indiv_lastname")));
-                name.setLastName(data.get(columnMap.get("indiv_firstname")));
+                name.setFirstName(data.get(columnMap.get("indiv_firstname")));
+                name.setLastName(data.get(columnMap.get("indiv_lastname")));
                 address.setStreet(data.get(columnMap.get("donor_address1")));
                 address.setCity(data.get(columnMap.get("donor_city")));
                 address.setState(data.get(columnMap.get("donor_state")));

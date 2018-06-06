@@ -132,10 +132,10 @@ public class Phone implements IContactProperty<Phone> {
      ************************************************** Match Methods **************************************************
      *******************************************************************************************************************/
     @Override
-    public AnswerType isMatch(Phone otherPhone){
+    public AnswerType isMatch(IContactProperty<Phone> otherPhone){
         // Precondition: phoneNumber variable(of both objects) must have a String(number) of not null or empty
         if ((getPhoneNumber() == null || getPhoneNumber().isEmpty()) ||
-                (otherPhone.getPhoneNumber() == null || otherPhone.getPhoneNumber().isEmpty())
+                (otherPhone.getValue().getPhoneNumber() == null || otherPhone.getValue().getPhoneNumber().isEmpty())
                 ){
             return AnswerType.no;
         }
@@ -148,14 +148,14 @@ public class Phone implements IContactProperty<Phone> {
 
 
         if (!(getCountryCallingCode() == null || getCountryCallingCode().isEmpty()) ||
-                !(otherPhone.getCountryCallingCode() == null || otherPhone.getCountryCallingCode().isEmpty())){
-            matchResults.put(countryCallingCodeMatch, isCountryCallingCodeMatch(otherPhone.getCountryCallingCode()));
+                !(otherPhone.getValue().getCountryCallingCode() == null || otherPhone.getValue().getCountryCallingCode().isEmpty())){
+            matchResults.put(countryCallingCodeMatch, isCountryCallingCodeMatch(otherPhone.getValue().getCountryCallingCode()));
         }
         if (!(getAreaCode() == null || getAreaCode().isEmpty()) ||
-                !(otherPhone.getAreaCode() == null || otherPhone.getAreaCode().isEmpty())){
-            matchResults.put(areaCodeMatch, isAreaCodeMatch(otherPhone.getAreaCode()));
+                !(otherPhone.getValue().getAreaCode() == null || otherPhone.getValue().getAreaCode().isEmpty())){
+            matchResults.put(areaCodeMatch, isAreaCodeMatch(otherPhone.getValue().getAreaCode()));
         }
-        matchResults.put(phoneNumberMatch, isPhoneNumberMatch(otherPhone.getPhoneNumber()));
+        matchResults.put(phoneNumberMatch, isPhoneNumberMatch(otherPhone.getValue().getPhoneNumber()));
 
         return getGroupMatchResults(matchResults, countryCallingCodeMatch, areaCodeMatch, phoneNumberMatch);
     }

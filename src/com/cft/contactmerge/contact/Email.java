@@ -37,14 +37,14 @@ public class Email implements IContactProperty<Email> {
     public Email getValue() {return this;}
 
     @Override
-    public AnswerType isMatch(Email otherEmail){
+    public AnswerType isMatch(IContactProperty<Email> otherEmail){
         if ((getEmailAddress() == null || getEmailAddress().isEmpty()) ||
-                (otherEmail.getEmailAddress() == null || otherEmail.getEmailAddress().isEmpty())
+                (otherEmail.getValue().getEmailAddress() == null || otherEmail.getValue().getEmailAddress().isEmpty())
                 ){
             return AnswerType.no;
         }
 
-        return isEmailAddressMatch(otherEmail.getEmailAddress());
+        return isEmailAddressMatch(otherEmail.getValue().getEmailAddress());
     }
 
     public AnswerType isEmailAddressMatch(String otherEmailAddress){

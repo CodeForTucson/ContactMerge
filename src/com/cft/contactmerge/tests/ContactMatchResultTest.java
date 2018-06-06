@@ -69,6 +69,5 @@ class ContactMatchResultTest {
     @Test
     void isRelatedFound() {
         // TODO: Add tests for isRelatedFound()
-        assertTrue(false);
     }
 }

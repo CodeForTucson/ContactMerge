@@ -124,12 +124,12 @@ public class Address implements IContactProperty<Address> {
     /*******************************************************************************************************************
      ************************************************** Match Methods **************************************************
      *******************************************************************************************************************/
-    public AnswerType isMatch(Address otherAddress) {
-        if (isNoMatchingAvailable(otherAddress)) {
+    public AnswerType isMatch(IContactProperty<Address> otherAddress) {
+        if (isNoMatchingAvailable(otherAddress.getValue())) {
             return AnswerType.no;
         }
 
-        Hashtable<String, AnswerType> addressPartsMatchResults = getAddressPartsMatchResults(otherAddress);
+        Hashtable<String, AnswerType> addressPartsMatchResults = getAddressPartsMatchResults(otherAddress.getValue());
         if (addressPartsMatchResults.containsValue(AnswerType.no)) {
             return AnswerType.no;
         } else if (addressPartsMatchResults.containsValue(AnswerType.maybe)) {

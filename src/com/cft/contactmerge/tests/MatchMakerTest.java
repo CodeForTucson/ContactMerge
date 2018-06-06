@@ -71,7 +71,7 @@ class MatchMakerTest {
             boolean found = false;
 
             for(IContact contact: contactList) {
-                if (contact.getFirstName() == firstName) {
+                if (contact.getName().getFirstName() == firstName) {
                     found = true;
                     break;
                 }
