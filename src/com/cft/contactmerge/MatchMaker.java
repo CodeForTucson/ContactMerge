@@ -32,7 +32,7 @@ public class MatchMaker {
             List<IContact> possibleMatches = new ArrayList<IContact>();
 
             for(IContact existingContact: existingContacts) {
-                if (contactToMerge.CompareTo(existingContact).getMatchType() != ContactMatchType.NoMatch) {
+                if (contactToMerge.compareTo(existingContact).getMatchType() != ContactMatchType.NoMatch) {
                     possibleMatches.add(existingContact);
                 }
 

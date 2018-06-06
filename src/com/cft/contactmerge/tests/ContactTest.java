@@ -1,15 +1,34 @@
 package com.cft.contactmerge.tests;
 
+import com.cft.contactmerge.AnswerType;
+import com.cft.contactmerge.IContact;
+import com.cft.contactmerge.ContactMatchResult;
 import com.cft.contactmerge.ContactMatchType;
 import com.cft.contactmerge.contact.Address;
 import com.cft.contactmerge.contact.Email;
 import com.cft.contactmerge.contact.Name;
 import com.cft.contactmerge.contact.Phone;
+import com.cft.contactmerge.contact.Zip;
+import com.cft.contactmerge.contact.State;
+import com.cft.contactmerge.contact.StreetAddress;
+import com.cft.contactmerge.contact.FirstName;
+import com.cft.contactmerge.contact.LastName;
+import com.cft.contactmerge.contact.GeneralProperty;
 import org.junit.jupiter.api.Test;
 import com.cft.contactmerge.Contact;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class ContactTest {
+    @Test
+    void Constructor() {
+        Contact newContact = new Contact();
+
+        assertNotNull(newContact);
+    }
 
     @Test
     void setName() {
@@ -54,30 +73,433 @@ class ContactTest {
         assertEquals("jfk@yahoo.com", newContact.getEmail().getEmailAddress());
     }
 
-    // TODO: Need to add rest of tests for isMatch()
+    /* -------------------------------------------------------------------------
+     * There are a large number of CompareTo tests which are broken into steps
+     * reflecting the rules used to determine if a ContactToMerge matches an
+     * ExistingContact.
+     * -------------------------------------------------------------------------
+     */
+
+    // Helper methods for tests
+    private Contact createBaseContact()
+    {
+        Contact contact = new Contact();
+        contact.setName(new Name(new LastName("Doe"), new FirstName("John")));
+        contact.setAddress(new Address(new StreetAddress("123 Main St"),
+                null,
+                new GeneralProperty("Tucson"),
+                new State("AZ"),
+                new Zip("85750")));
+        contact.setPhone(new Phone("(520) 123-4567"));
+        contact.setEmail(new Email("jdoe@gmail.com"));
+
+        return contact;
+    }
+
+    // Creates a stub so that compareTo() can execute. The Contact object will never actually compare
+    // its parts with this object.
+    private IContact createContactStub(boolean addressSet, boolean phoneSet, boolean emailSet)
+    {
+        Name nameMock = mock(Name.class);
+
+        Address addressMock = null;
+
+        if (addressSet) {
+            addressMock = mock(Address.class);
+//        when(streetAddressMock.getValue()).thenReturn("This is where you would find the StreetAddress value");
+        }
+
+        Phone phoneMock = null;
+
+        if (phoneSet) {
+            phoneMock = mock(Phone.class);
+        }
+
+        Email emailMock = null;
+
+        if (emailSet) {
+            emailMock = mock(Email.class);
+        }
+
+        IContact contactToCompareWith = mock(Contact.class);
+        when(contactToCompareWith.getName()).thenReturn(nameMock);
+        when(contactToCompareWith.getAddress()).thenReturn(addressMock);
+        when(contactToCompareWith.getPhone()).thenReturn(phoneMock);
+        when(contactToCompareWith.getEmail()).thenReturn(emailMock);
+
+        return contactToCompareWith;
+    }
+
+    // Executes a specific test, verifies the result, and verifies that the internal name parts
+    // are called as expected.
+    private void runIsMatchTest(AnswerType answerTypeForNameIsMatch,
+                                AnswerType answerTypeForAddressIsMatch,
+                                AnswerType answerTypeForPhoneIsMatch,
+                                AnswerType answerTypeForEmailIsMatch,
+                                ContactMatchType expectedMatchResult,
+                                boolean targetAddressSet,
+                                boolean targetPhoneSet,
+                                boolean targetEmailSet)
+    {
+        // Set up Address with mock internals
+        Name nameMock = mock(Name.class);
+        when(nameMock.isMatch(any())).thenReturn(answerTypeForNameIsMatch);
+
+        Address addressMock = null;
+        boolean sourceAddressSet = answerTypeForAddressIsMatch != null;
+
+        if (sourceAddressSet) {
+            addressMock = mock(Address.class);
+            when(addressMock.isMatch(any())).thenReturn(answerTypeForAddressIsMatch);
+        }
+
+        Phone phoneMock = null;
+        boolean sourcePhoneSet = answerTypeForPhoneIsMatch != null;
+
+        if (sourcePhoneSet) {
+            phoneMock = mock(Phone.class);
+            when(phoneMock.isMatch(any())).thenReturn(answerTypeForPhoneIsMatch);
+        }
+
+        Email emailMock = null;
+        boolean sourceEmailSet = answerTypeForEmailIsMatch != null;
+
+        if (sourceEmailSet) {
+            emailMock = mock(Email.class);
+            when(emailMock.isMatch(any())).thenReturn(answerTypeForEmailIsMatch);
+        }
+
+        Contact contactWithMockInternals = new Contact();
+        // TODO: Switch to use constructor for initialization once that is set up
+        contactWithMockInternals.setName(nameMock);
+        contactWithMockInternals.setAddress(addressMock);
+        contactWithMockInternals.setPhone(phoneMock);
+        contactWithMockInternals.setEmail(emailMock);
+
+        IContact contactToComparewith = createContactStub(targetAddressSet, targetPhoneSet, targetEmailSet);
+
+        // Run test
+        ContactMatchResult result = contactWithMockInternals.compareTo(contactToComparewith);
+        assertEquals(expectedMatchResult, result.getMatchType());
+
+        // Verify expected internals were called
+        verify(nameMock).isMatch(any());
+
+        if (sourceAddressSet && targetAddressSet) {
+            verify(addressMock).isMatch(any());
+        }
+
+        if (sourcePhoneSet && targetPhoneSet) {
+            verify(phoneMock).isMatch(any());
+        }
+
+        if (sourceEmailSet && targetEmailSet) {
+            verify(emailMock).isMatch(any());
+        }
+    }
+
+    // This version does not set the target property if the corresponding source property is unset.
+    private void runIsMatchTest(AnswerType answerTypeForNameIsMatch,
+                                AnswerType answerTypeForAddressIsMatch,
+                                AnswerType answerTypeForPhoneIsMatch,
+                                AnswerType answerTypeForEmailIsMatch,
+                                ContactMatchType expectedMatchResult) {
+        runIsMatchTest(answerTypeForNameIsMatch,
+                answerTypeForAddressIsMatch,
+                answerTypeForPhoneIsMatch,
+                answerTypeForEmailIsMatch,
+                expectedMatchResult,
+                answerTypeForAddressIsMatch != null,
+                answerTypeForPhoneIsMatch != null,
+                answerTypeForEmailIsMatch != null);
+    }
+
+    // Step 1 - Return ContactMatchType.NoMatch if nothing is specified in the
+    // ContactToMerge or the ExistingContact
+    // TODO: The following tests won't be valid when Name is required
+    @Test
+    void compareTo_NoMatch_NothingSpecifiedInContactToMerge()
+    {
+        Contact c1 = new Contact();
+        Contact c2 = createBaseContact();
+
+        assertEquals(ContactMatchType.NoMatch, c1.compareTo(c2).getMatchType());
+    }
 
     @Test
-    void isMatch_NoMatchOnAny() {
+    void compareTo_NoMatch_NothingSpecifiedInExistingContact()
+    {
+        Contact c1 = createBaseContact();
+        Contact c2 = new Contact();
+
+        assertEquals(ContactMatchType.NoMatch, c1.compareTo(c2).getMatchType());
+    }
+
+    // Step 2 - Return ContactMatchType.Identical if all the parts that are specified in
+    // either Contact match
+    @Test
+    void compareTo_Identical_AllParts()
+    {
+        runIsMatchTest(AnswerType.yes, AnswerType.yes, AnswerType.yes, AnswerType.yes, ContactMatchType.Identical);
+    }
+
+    @Test
+    void compareTo_Identical_AddressMissing()
+    {
+        runIsMatchTest(AnswerType.yes, null, AnswerType.yes, AnswerType.yes, ContactMatchType.Identical);
+    }
+
+    @Test
+    void compareTo_Identical_PhoneMissing()
+    {
+        runIsMatchTest(AnswerType.yes, AnswerType.yes, null, AnswerType.yes, ContactMatchType.Identical);
+    }
+
+    @Test
+    void compareTo_Identical_EmailMissing()
+    {
+        runIsMatchTest(AnswerType.yes, AnswerType.yes, AnswerType.yes, null, ContactMatchType.Identical);
+    }
+
+    // Step 3 - Return ContactMatchType.NoMatch if all of the parts that are specified
+    // in ContactToMerge do not match the ExistingContact
+    @Test
+    void compareTo_NoMatch_AllParts() {
+        runIsMatchTest(AnswerType.no, AnswerType.no, AnswerType.no, AnswerType.no, ContactMatchType.NoMatch);
+    }
+
+    @Test
+    void compareTo_NoMatch_AddressMissing()
+    {
+        runIsMatchTest(AnswerType.no, null, AnswerType.no, AnswerType.no, ContactMatchType.NoMatch);
+    }
+
+    @Test
+    void compareTo_NoMatch_PhoneMissing()
+    {
+        runIsMatchTest(AnswerType.no, AnswerType.no, null, AnswerType.no, ContactMatchType.NoMatch);
+    }
+
+    @Test
+    void compareTo_NoMatch_EmailMissing()
+    {
+        runIsMatchTest(AnswerType.no, AnswerType.no, AnswerType.no, null, ContactMatchType.NoMatch);
+    }
+
+    // Step 4 - Return ContactMatchType.Match if the Name and at least one of the other
+    // parts (Address, Phones, or Email) match and if all the parts in the ContactToMerge
+    // that don't match are empty or null
+
+    @Test
+    void compareTo_Match_NameAndAddress()
+    {
+        runIsMatchTest(AnswerType.yes, AnswerType.yes, null,
+                null, ContactMatchType.Match,
+                true, true, true);
+    }
+
+    @Test
+    void compareTo_Match_NameAndEmail()
+    {
+        runIsMatchTest(AnswerType.yes, null, null,
+                AnswerType.yes, ContactMatchType.Match, true, true, true);
+    }
+
+    @Test
+    void compareTo_Match_NameAndPhone()
+    {
+        runIsMatchTest(AnswerType.yes, null, AnswerType.yes,
+                null, ContactMatchType.Match,
+                true, true, true);
+    }
+
+    @Test
+    void compareTo_PotentialMatch_OnlyNameSpecified()
+    {
+        runIsMatchTest(AnswerType.yes, null, null,
+                null, ContactMatchType.PotentialMatch,
+                true, true, true);
+    }
+
+    // Step 5 - Return ContactMatchType.MatchButModifying if the Name and at least one
+    // of the other parts (Address, Phones, or Email) match but there is at least one
+    // part that doesn't match
+
+    @Test
+    void compareTo_MatchButModifying_NameAndAddress()
+    {
+        runIsMatchTest(AnswerType.yes, AnswerType.yes, AnswerType.no, AnswerType.no, ContactMatchType.MatchButModifying);
+    }
+
+    @Test
+    void compareTo_MatchButModifying_NameAndEmail()
+    {
+        runIsMatchTest(AnswerType.yes, AnswerType.no, AnswerType.no, AnswerType.yes, ContactMatchType.MatchButModifying);
+    }
+
+    @Test
+    void compareTo_MatchButModifying_NameAndPhone()
+    {
+        runIsMatchTest(AnswerType.yes, AnswerType.no, AnswerType.yes, AnswerType.no, ContactMatchType.MatchButModifying);
+    }
+
+    // Step 6 - Return ContactMatchType.PotentialMatch if the Names might match
+    // or the Name does match but nothing else matches
+    @Test
+    void compareTo_PotentialMatch_OnlyNameMatches()
+    {
+        runIsMatchTest(AnswerType.yes, AnswerType.no, AnswerType.no, AnswerType.no, ContactMatchType.PotentialMatch);
+    }
+
+    @Test
+    void compareTo_PotentialMatch_NameMightMatch()
+    {
+        runIsMatchTest(AnswerType.maybe, AnswerType.no, AnswerType.no, AnswerType.no, ContactMatchType.PotentialMatch);
+    }
+
+    // Step 7 - Return ContactMatchType.Related if at least 1 of Address, Phone, or
+    // Email match
+    @Test
+    void compareTo_Related_AddressMatch()
+    {
+        runIsMatchTest(AnswerType.no, AnswerType.yes, AnswerType.no, AnswerType.no, ContactMatchType.Related);
+    }
+
+    @Test
+    void compareTo_Related_PhoneMatch()
+    {
+        runIsMatchTest(AnswerType.no, AnswerType.no, AnswerType.yes, AnswerType.no, ContactMatchType.Related);
+    }
+
+    @Test
+    void compareTo_Related_EmailMatch()
+    {
+        runIsMatchTest(AnswerType.no, AnswerType.no, AnswerType.yes, AnswerType.no, ContactMatchType.Related);
+    }
+
+    // Step 8 - Return ContactMatchType.PotentiallyRelated if at least one of
+    // Address, Phone, or Email is "might match"
+    @Test
+    void compareTo_PotentiallyRelated_AddressMightMatch()
+    {
+        runIsMatchTest(AnswerType.no, AnswerType.maybe, AnswerType.no, AnswerType.no,
+                ContactMatchType.PotentiallyRelated);
+    }
+
+    @Test
+    void compareTo_PotentiallyRelated_PhoneMightMatch()
+    {
+        runIsMatchTest(AnswerType.no, AnswerType.no, AnswerType.maybe, AnswerType.no,
+                ContactMatchType.PotentiallyRelated);
+    }
+
+    @Test
+    void compareTo_PotentiallyRelated_EmailMightMatch()
+    {
+        runIsMatchTest(AnswerType.no, AnswerType.no, AnswerType.no, AnswerType.maybe,
+                ContactMatchType.PotentiallyRelated);
+    }
+
+    /* -------------------------------------------------------------------------
+     * Special cases
+     * -------------------------------------------------------------------------
+     */
+
+    @Test
+    void compareTo_PotentiallyRelated_SameLastName() {
+        Contact c1 = createBaseContact();
+        Contact c2 = new Contact();
+        c2.setName(new Name(new LastName("Doe"), new FirstName("Adam")));
+        c2.setAddress(new Address(new StreetAddress("92 Broadway"),
+                null,
+                new GeneralProperty("Tucson"),
+                new State("AZ"),
+                new Zip("85750")));
+        c2.setPhone(new Phone("(520) 987-6543"));
+        c2.setEmail(new Email("asmith@homail.com"));
+
+        assertEquals(ContactMatchType.PotentiallyRelated, c1.compareTo(c2).getMatchType());
+    }
+
+    @Test
+    void compareTo_MatchButModifying_RealContacts() {
+        Contact c1 = createBaseContact();
+
+        // Same name and phone number
+        Contact c2 = new Contact();
+        c2.setName(c1.getName());
+        c2.setAddress(new Address(new StreetAddress("92 Broadway"),
+                null,
+                new GeneralProperty("Tucson"),
+                new State("AZ"),
+                new Zip("85750")));
+        c2.setPhone(c1.getPhone());
+        c2.setEmail(new Email("asmith@homail.com"));
+
+        assertEquals(ContactMatchType.MatchButModifying, c1.compareTo(c2).getMatchType());
+    }
+
+    @Test
+    void compareTo_Related_RealContacts() {
+        Contact c1 = createBaseContact();
+        Contact c2 = new Contact();
+        c2.setName(new Name(new LastName("Smith"), new FirstName("Adam")));
+        c2.setAddress(new Address(new StreetAddress("92 Broadway"),
+                null,
+                new GeneralProperty("Tucson"),
+                new State("AZ"),
+                new Zip("85750")));
+        c2.setPhone(c1.getPhone());
+        c2.setEmail(new Email("asmith@homail.com"));
+
+        assertEquals(ContactMatchType.Related, c1.compareTo(c2).getMatchType());
+    }
+
+    @Test
+    void compareTo_Potentially_RealContacts() {
+        Contact c1 = createBaseContact();
+
+        // Address is same but without the street type
+        Contact c2 = new Contact();
+        c2.setName(new Name(new LastName("Smth"), new FirstName("Adam")));
+        c2.setAddress(new Address(new StreetAddress("123 Main"),
+                null,
+                new GeneralProperty("Tucson"),
+                new State("AZ"),
+                new Zip("85750")));
+        c2.setPhone(new Phone("(520) 987-6543"));
+        c2.setEmail(new Email("asmith@homail.com"));
+
+        assertEquals(ContactMatchType.PotentiallyRelated, c1.compareTo(c2).getMatchType());
+    }
+
+    // Test to try real contacts and help determine why we are not getting expected
+    // result
+    @Test
+    void compareTo_TestRealContacts() {
         Contact c1 = new Contact();
-        Name name1 = new Name("John", "Ray", "Doe", "Dr", "III");
-        Address address1 = new Address("123 Main St", "4", "Tucson", "AZ", "USA", "85750");
-        Phone phone1 = new Phone("5201234567");
-        Email email1 = new Email("jdoe@gmail.com");
-        c1.setName(name1);
-        c1.setAddress(address1);
-        c1.setPhone(phone1);
-        c1.setEmail(email1);
+        c1.setName(new Name(new LastName("Scotinsky"), new FirstName("Sonya")));
+        c1.setAddress(new Address(new StreetAddress("2810 E 4th St"),
+                null,
+                new GeneralProperty("Tucson"),
+                new State("AZ"),
+                new Zip("85716")));
+        c1.setPhone(new Phone("(520) 909-7177"));
+        c1.setEmail(new Email("sonya@forsarchitecture.com"));
 
         Contact c2 = new Contact();
-        Name name2 = new Name("Adam", "", "Smith", "", "");
-        Address address2 = new Address("1400 Broadway", "8", "London", "", "England", "N14");
-        Phone phone2 = new Phone("5207654321");
-        Email email2 = new Email("asmith@comcast.net");
-        c2.setName(name2);
-        c2.setAddress(address2);
-        c2.setPhone(phone2);
-        c2.setEmail(email2);
+        c2.setName(new Name(new LastName("Fuentevilla"), new FirstName("Siena")));
+        c2.setAddress(new Address(new StreetAddress("2810 E 4th St"),
+                null,
+                new GeneralProperty("Tucson"),
+                new State("AZ"),
+                new Zip("85716-4422")));
+        c2.setPhone(new Phone("(520) 870-7454"));
+        c2.setEmail(new Email("18sfuentevilla@salpointe.org"));
 
-        assertEquals(ContactMatchType.NoMatch, c1.CompareTo(c2).getMatchType());
+        // TODO: Need to discuss... Mbilodeaus code had these as Related because
+        // they share the same address where James code had it as Potentially
+        // related. Which one do we want to go with?
+        assertEquals(ContactMatchType.PotentiallyRelated, c1.compareTo(c2).getMatchType());
     }
 }

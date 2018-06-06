@@ -22,6 +22,9 @@ public class Name implements IContactProperty<Name>
     /*******************************************************************************************************************
      *************************************************** Constructors **************************************************
      *******************************************************************************************************************/
+
+    // TODO: Determine if we need to support passing in name parts as strings and as IContactProperties. If not, we
+    // can clean up this code.
     public Name(){}
 
     public Name(String firstName, String middleName, String lastName){
@@ -31,6 +34,21 @@ public class Name implements IContactProperty<Name>
     public Name(String firstName, String middleName, String lastName, String prefix, String suffix){
         setFullName(firstName, middleName, lastName, prefix, suffix);
     }
+
+    public Name(LastName lastName, FirstName firstName)
+    {
+        if (lastName == null) {
+            throw new IllegalArgumentException("LastName is required");
+        }
+
+        if (firstName == null) {
+            throw new IllegalArgumentException("FirstName is required");
+        }
+
+        this.firstName = firstName.getValue();
+        this.lastName = lastName.getValue();
+    }
+
 
     /*******************************************************************************************************************
      ************************************************* Get/Set Methods *************************************************

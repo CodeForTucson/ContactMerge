@@ -85,10 +85,10 @@ class MatchMakerTest {
     void getProposedMatches_NoMatches() {
         // Set up list of contacts that won't match anything
         IContact contactToMerge1 = mock(IContact.class);
-        when(contactToMerge1.CompareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.NoMatch));
+        when(contactToMerge1.compareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.NoMatch));
 
         IContact contactToMerge2 = mock(IContact.class);
-        when(contactToMerge2.CompareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.NoMatch));
+        when(contactToMerge2.compareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.NoMatch));
 
         List<IContact> contactsToMerge = Arrays.asList(contactToMerge1, contactToMerge2);
 
@@ -106,7 +106,7 @@ class MatchMakerTest {
     void getProposedMatches() {
         // Set up first contact to match "A" as Match and "C" and PotentiallyRelated
         IContact contactToMerge1 = mock(IContact.class);
-        when(contactToMerge1.CompareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.Match))
+        when(contactToMerge1.compareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.Match))
                 .thenReturn(new ContactMatchResult(ContactMatchType.NoMatch))
                 .thenReturn(new ContactMatchResult(ContactMatchType.PotentiallyRelated))
                 .thenReturn(new ContactMatchResult(ContactMatchType.NoMatch));
@@ -114,7 +114,7 @@ class MatchMakerTest {
         // Set up second contact to match "B" as Related, "E" and PotentialMatch, and
         // "F" as Identical
         IContact contactToMerge2 = mock(IContact.class);
-        when(contactToMerge2.CompareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.NoMatch))
+        when(contactToMerge2.compareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.NoMatch))
                 .thenReturn(new ContactMatchResult(ContactMatchType.Related))
                 .thenReturn(new ContactMatchResult(ContactMatchType.NoMatch))
                 .thenReturn(new ContactMatchResult(ContactMatchType.NoMatch))

@@ -22,11 +22,40 @@ public class Address implements IContactProperty<Address> {
     /*******************************************************************************************************************
      *************************************************** Constructors **************************************************
      *******************************************************************************************************************/
+
+    // TODO: Determine if we need to support passing in address parts as strings and as IContactProperties. If not, we
+    // can clean up this code.
+
     public Address() {
     }
 
     public Address(String street, String apartment, String city, String state, String country, String zip) {
         setFullAddress(street, apartment, city, state, country, zip);
+    }
+
+    public Address(StreetAddress streetAddress,
+               Apartment apartment,
+               GeneralProperty city,
+               State state,
+               Zip zip) {
+
+        if (streetAddress == null) {
+            throw new IllegalArgumentException("streetAddress is required");
+        }
+
+        if (city == null) {
+            throw new IllegalArgumentException("city is required");
+        }
+
+        if (state == null) {
+            throw new IllegalArgumentException("state is required");
+        }
+
+        this.street = streetAddress.getValue();
+        this.apartment = apartment == null ? null : apartment.getValue();
+        this.city = city.getValue();
+        this.state = state.getValue();
+        this.zip = zip == null ? null : zip.getValue();
     }
 
     /*******************************************************************************************************************

@@ -1,9 +1,11 @@
 package com.cft.contactmerge.contact.tests;
 
-import com.cft.contactmerge.contact.Address;
+import com.cft.contactmerge.contact.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AddressTests {
     // Note: matching methods tests are implemented in CompareContactPartsTest.class
@@ -52,6 +54,89 @@ public class AddressTests {
         assertNull(address.getCountry(), testFailedMessage("null", address.getCountry()));
         assertNull(address.getZip(), testFailedMessage("null", address.getZip()));
     }
+
+    private StreetAddress createMockStreetAddress() {
+        StreetAddress streetAddressMock = mock(StreetAddress.class);
+        when(streetAddressMock.getValue()).thenReturn("123 Main St");
+
+        return streetAddressMock;
+    }
+
+    private Apartment createMockApartment() {
+        Apartment apartmentMock = mock(Apartment.class);
+        when(apartmentMock.getValue()).thenReturn("10");
+
+        return apartmentMock;
+    }
+
+    private GeneralProperty createMockCity() {
+        GeneralProperty cityMock = mock(GeneralProperty.class);
+        when(cityMock.getValue()).thenReturn("Tucson");
+
+        return cityMock;
+    }
+
+    private State createMockState() {
+        State stateMock = mock(State.class);
+        when(stateMock.getValue()).thenReturn("AZ");
+
+        return stateMock;
+    }
+
+    private Zip createMockZip() {
+        Zip zipMock = mock(Zip.class);
+        when(zipMock.getValue()).thenReturn("85750");
+
+        return zipMock;
+    }
+
+    private Address createTestAddress() {
+
+        return new Address(createMockStreetAddress(), createMockApartment(), createMockCity(), createMockState(),
+                createMockZip());
+    }
+
+    @Test
+    void Constructor()
+    {
+        Address address = createTestAddress();
+        assertNotNull(address);
+    }
+
+    @Test
+    void Constructor_ApartmentAndZipOptional()
+    {
+        Address address = new Address(createMockStreetAddress(), null, createMockCity(),
+                createMockState(), null);
+
+        assertNotNull(address);
+    }
+
+    @Test
+    void Constructor_NullStreetAddress()
+    {
+        assertThrows(IllegalArgumentException.class, () ->
+                new Address(null, null, createMockCity(), createMockState(), null));
+    }
+
+    @Test
+    void Constructor_NullCity()
+    {
+        assertThrows(IllegalArgumentException.class, () ->
+                new Address(createMockStreetAddress(),
+                        null,
+                        null,
+                        createMockState(),
+                        null));
+    }
+
+    @Test
+    void Constructor_NullState()
+    {
+        assertThrows(IllegalArgumentException.class, () ->
+                new Address(createMockStreetAddress(), null, createMockCity(), null, null));
+    }
+
 
     /*******************************************************************************************************************
      ************************************************** Get/Set Tests **************************************************
