@@ -5,6 +5,8 @@
  * appear to be appropriate (via removeMath).
  */
 package com.cft.contactmerge;
+
+import com.cft.contactmerge.contact.ContactMatchingHelpers;
 import java.util.*;
 
 public class MatchMaker {
@@ -37,7 +39,7 @@ public class MatchMaker {
                 }
 
             }
-
+            possibleMatches = ContactMatchingHelpers.sortPossibleMatches(contactToMerge, possibleMatches);
             ProposedMatch proposedMatch = new ProposedMatch(contactToMerge, possibleMatches);
 
             this.proposedMatches.add(proposedMatch);

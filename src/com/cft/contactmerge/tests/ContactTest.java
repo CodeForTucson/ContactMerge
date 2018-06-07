@@ -502,4 +502,101 @@ class ContactTest {
         // related. Which one do we want to go with?
         assertEquals(ContactMatchType.PotentiallyRelated, c1.compareTo(c2).getMatchType());
     }
+
+    @Test
+    void setPropertyValue_NullProperty() {
+        Contact c = createBaseContact();
+
+        assertThrows(IllegalArgumentException.class, () -> c.setPropertyValue(null, "Value1"));
+    }
+
+    @Test
+    void setPropertyValue_EmptyProperty() {
+        Contact c = createBaseContact();
+
+        assertThrows(IllegalArgumentException.class, () -> c.setPropertyValue("", "Value1"));
+    }
+
+    @Test
+    void setPropertyValue_NullValue() {
+        Contact c = createBaseContact();
+
+        assertThrows(IllegalArgumentException.class, () -> c.setPropertyValue("PropertyA", null));
+    }
+
+    @Test
+    void setPropertyValue_EmptyValue() {
+        Contact c = createBaseContact();
+
+        c.setPropertyValue("PropertyA", "");
+
+        assertEquals("", c.getPropertyValue("PropertyA"));
+    }
+
+    @Test
+    void setPropertyValue() {
+        Contact c = createBaseContact();
+
+        c.setPropertyValue("PropertyA", "Value1");
+
+        assertEquals("Value1", c.getPropertyValue("PropertyA"));
+    }
+
+    @Test
+    void setPropertyValue_Reset() {
+        Contact c = createBaseContact();
+
+        c.setPropertyValue("PropertyA", "Value1");
+
+        // We do not allow you to change the value of properties
+        assertThrows(UnsupportedOperationException.class, () -> c.setPropertyValue("PropertyA", "Value2"));
+    }
+
+    @Test
+    void getPropertyValue_NullProperty() {
+        Contact c = createBaseContact();
+
+        c.setPropertyValue("PropertyA", "Value1");
+
+        assertThrows(IllegalArgumentException.class, () -> c.getPropertyValue(null));
+    }
+
+    @Test
+    void getPropertyValue_EmptyProperty() {
+        Contact c = createBaseContact();
+
+        c.setPropertyValue("PropertyA", "Value1");
+
+        assertThrows(IllegalArgumentException.class, () -> c.getPropertyValue(""));
+    }
+
+    @Test
+    void containsProperty_NullProperty() {
+        Contact c = createBaseContact();
+        assertThrows(IllegalArgumentException.class, () -> c.containsProperty(null));
+    }
+
+    @Test
+    void containsProperty_EmptyProperty() {
+        Contact c = createBaseContact();
+        assertThrows(IllegalArgumentException.class, () -> c.containsProperty(""));
+    }
+
+    @Test
+    void containsProperty_true() {
+        Contact c = createBaseContact();
+
+        c.setPropertyValue("PropertyA", "Value1");
+
+        assertTrue(c.containsProperty("PropertyA"));
+    }
+
+    @Test
+    void containsProperty_false() {
+        Contact c = createBaseContact();
+
+        c.setPropertyValue("PropertyA", "Value1");
+
+        assertFalse(c.containsProperty("Value1"));
+    }
 }

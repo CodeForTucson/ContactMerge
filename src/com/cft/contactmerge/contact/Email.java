@@ -3,7 +3,7 @@ package com.cft.contactmerge.contact;
 import com.cft.contactmerge.AnswerType;
 
 public class Email implements IContactProperty<Email> {
-    private String emailAddress;
+    private String emailAddress = "";
 
     /*******************************************************************************************************************
      *************************************************** Constructors **************************************************

@@ -4,9 +4,11 @@ import com.cft.contactmerge.contact.*;
 
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Contact implements IContact {
     private Name name = new Name();
+    private HashMap<String, String> properties = new HashMap<String, String>();
 
     // TODO: Should support multiple addresses, phones, and emails for each contact
     private Address address = new Address();
@@ -134,5 +136,36 @@ public class Contact implements IContact {
         tally.addComparison(this.email, compareContact.getEmail());
 
         return calculateMatchResult(nameMatch, tally, lastNameMatch);
+    }
+
+    public void setPropertyValue(String property, String value) {
+        if (property == null || property == "") {
+            throw new IllegalArgumentException("Property required");
+        }
+
+        if (value == null) {
+            throw new IllegalArgumentException("Value required");
+        }
+
+        if (properties.containsKey(property)) {
+            throw new UnsupportedOperationException("Does not support updating an existing property");
+        }
+        properties.put(property, value);
+    }
+
+    public String getPropertyValue(String property) {
+        if (property == null || property == "") {
+            throw new IllegalArgumentException("Property required");
+        }
+
+        return properties.get(property);
+    }
+
+    public boolean containsProperty(String property) {
+        if (property == null || property == "") {
+            throw new IllegalArgumentException("Property required");
+        }
+
+        return properties.containsKey(property);
     }
 }

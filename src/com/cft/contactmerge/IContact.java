@@ -18,5 +18,9 @@ public interface IContact {
     public void setEmail(Email email);
     public Email getEmail();
 
+    public void setPropertyValue(String property, String value);
+    public String getPropertyValue(String property);
+    public boolean containsProperty(String property);
+
     public ContactMatchResult compareTo(IContact compareContact);
 }

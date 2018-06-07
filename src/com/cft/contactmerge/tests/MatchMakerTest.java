@@ -2,6 +2,7 @@ package com.cft.contactmerge.tests;
 
 import java.util.*;
 import com.cft.contactmerge.*;
+import com.cft.contactmerge.contact.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,30 +39,51 @@ class MatchMakerTest {
         List<IContact> existingContacts = new ArrayList<IContact>();
 
         Contact contact1 = new Contact();
-        contact1.setFirstName("A");
+        contact1.setName(new Name(new LastName("Z"), new FirstName("A")));
         existingContacts.add(contact1);
 
         Contact contact2 = new Contact();
-        contact2.setFirstName("B");
+        contact2.setName(new Name(new LastName("Z"), new FirstName("B")));
         existingContacts.add(contact2);
 
         Contact contact3 = new Contact();
-        contact3.setFirstName("C");
+        contact3.setName(new Name(new LastName("Z"), new FirstName("C")));
         existingContacts.add(contact3);
 
         Contact contact4 = new Contact();
-        contact4.setFirstName("D");
+        contact4.setName(new Name(new LastName("Z"), new FirstName("D")));
         existingContacts.add(contact4);
 
         Contact contact5 = new Contact();
-        contact5.setFirstName("E");
+        contact5.setName(new Name(new LastName("Z"), new FirstName("E")));
         existingContacts.add(contact5);
 
         Contact contact6 = new Contact();
-        contact6.setFirstName("F");
+        contact6.setName(new Name(new LastName("Z"), new FirstName("F")));
         existingContacts.add(contact6);
 
         return existingContacts;
+    }
+
+    private IContact createMockContactToMerge(List<IContact> existingContacts, List<ContactMatchType> desiredResult) {
+        if (desiredResult == null) {
+            desiredResult = new ArrayList<ContactMatchType>();
+        }
+
+        IContact contact = mock(IContact.class);
+
+        Iterator<ContactMatchType> desiredResultIterator = desiredResult.iterator();
+        ContactMatchType matchType = ContactMatchType.NoMatch;
+
+        for (IContact existingContact: existingContacts) {
+            if (desiredResultIterator.hasNext()) {
+                matchType = desiredResultIterator.next();
+            }
+
+            when(contact.compareTo(existingContact)).thenReturn(new ContactMatchResult(matchType));
+        }
+
+        return contact;
     }
 
     private void verifyExpectedContacts(int contactIndex, Collection<String> firstNames, Collection<IContact> contactList) {
@@ -71,7 +93,7 @@ class MatchMakerTest {
             boolean found = false;
 
             for(IContact contact: contactList) {
-                if (contact.getName().getFirstName() == firstName) {
+                if (contact.getName().getValue().getFirstName() == firstName) {
                     found = true;
                     break;
                 }
@@ -83,17 +105,16 @@ class MatchMakerTest {
 
     @Test
     void getProposedMatches_NoMatches() {
-        // Set up list of contacts that won't match anything
-        IContact contactToMerge1 = mock(IContact.class);
-        when(contactToMerge1.compareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.NoMatch));
+        List<IContact> existingContacts = getExistingContacts();
 
-        IContact contactToMerge2 = mock(IContact.class);
-        when(contactToMerge2.compareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.NoMatch));
+        // Set up list of contacts that won't match anything
+        IContact contactToMerge1 = createMockContactToMerge(existingContacts, null);
+        IContact contactToMerge2 = createMockContactToMerge(existingContacts, null);
 
         List<IContact> contactsToMerge = Arrays.asList(contactToMerge1, contactToMerge2);
 
         // Instantiate MatchMaker with list of contacts that won't match anything
-        MatchMaker matchMaker = new MatchMaker(getExistingContacts(), contactsToMerge);
+        MatchMaker matchMaker = new MatchMaker(existingContacts, contactsToMerge);
 
         // Verify that there are not proposed matching
         List<ProposedMatch> proposedMatches = matchMaker.getProposedMatches();
@@ -104,29 +125,31 @@ class MatchMakerTest {
 
     @Test
     void getProposedMatches() {
+        List<IContact> existingContacts = getExistingContacts();
+
+
         // Set up first contact to match "A" as Match and "C" and PotentiallyRelated
-        IContact contactToMerge1 = mock(IContact.class);
-        when(contactToMerge1.compareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.Match))
-                .thenReturn(new ContactMatchResult(ContactMatchType.NoMatch))
-                .thenReturn(new ContactMatchResult(ContactMatchType.PotentiallyRelated))
-                .thenReturn(new ContactMatchResult(ContactMatchType.NoMatch));
+        List<ContactMatchType> desiredResults = Arrays.asList(ContactMatchType.Match,
+                ContactMatchType.NoMatch,
+                ContactMatchType.PotentiallyRelated,
+                ContactMatchType.NoMatch);
+
+        IContact contactToMerge1 = createMockContactToMerge(existingContacts, desiredResults);
 
         // Set up second contact to match "B" as Related, "E" and PotentialMatch, and
         // "F" as Identical
-        IContact contactToMerge2 = mock(IContact.class);
-        when(contactToMerge2.compareTo(any())).thenReturn(new ContactMatchResult(ContactMatchType.NoMatch))
-                .thenReturn(new ContactMatchResult(ContactMatchType.Related))
-                .thenReturn(new ContactMatchResult(ContactMatchType.NoMatch))
-                .thenReturn(new ContactMatchResult(ContactMatchType.NoMatch))
-                .thenReturn(new ContactMatchResult(ContactMatchType.PotentialMatch))
-                .thenReturn(new ContactMatchResult(ContactMatchType.Identical));
+        desiredResults = Arrays.asList(ContactMatchType.NoMatch,
+                ContactMatchType.Related,
+                ContactMatchType.NoMatch,
+                ContactMatchType.NoMatch,
+                ContactMatchType.PotentialMatch,
+                ContactMatchType.Identical);
 
-        List<IContact> contactsToMerge = Arrays.asList(contactToMerge1, contactToMerge2);
-
-        List<IContact> existingContacts = getExistingContacts();
+        IContact contactToMerge2 = createMockContactToMerge(existingContacts, desiredResults);
 
         // Instantiate MatchMaker with list of contacts that won't match anything
-        MatchMaker matchMaker = new MatchMaker(getExistingContacts(), contactsToMerge);
+        List<IContact> contactsToMerge = Arrays.asList(contactToMerge1, contactToMerge2);
+        MatchMaker matchMaker = new MatchMaker(existingContacts, contactsToMerge);
 
         // Verify proposed matching
         List<ProposedMatch> proposedMatches = matchMaker.getProposedMatches();

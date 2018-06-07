@@ -1,16 +1,11 @@
 package com.cft.contactmerge.io;
 
+import com.cft.contactmerge.contact.*;
 import com.cft.contactmerge.Contact;
-
 import java.io.FileNotFoundException;
 import java.util.*;
 import java.io.*;
 import javax.xml.parsers.*;
-
-import com.cft.contactmerge.contact.Address;
-import com.cft.contactmerge.contact.Email;
-import com.cft.contactmerge.contact.Name;
-import com.cft.contactmerge.contact.Phone;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -111,34 +106,85 @@ public class XmlImporter implements IImporter, Iterable<Contact> {
         Iterator<Contact> it = new Iterator<Contact>() {
             private int nodeIndex = 0;
 
+            private Contact nextContact = null;
+
+            private Contact getNodeAsContact() {
+                Contact contact = new Contact();
+
+                Map<String, String> data = getContactValues(dataNodes.item(nodeIndex));
+
+                String lastName = data.get(columnMap.get("indiv_lastname"));
+                String firstName = data.get(columnMap.get("indiv_firstname"));
+
+                // Name is required. Return null if missing.
+                if (lastName == null || firstName == null || lastName.isEmpty() || firstName.isEmpty()) {
+                    return null;
+                }
+                contact.setName(new Name(new LastName(lastName), new FirstName(firstName)));
+
+                String streetAddress = data.get(columnMap.get("donor_address1"));
+                String city = data.get(columnMap.get("donor_city"));
+                String state = data.get(columnMap.get("donor_state"));
+                String zip = data.get(columnMap.get("donor_zip"));
+
+                if (streetAddress != null && !streetAddress.isEmpty() &&
+                        city != null && !city.isEmpty() &&
+                        state != null && !state.isEmpty() &&
+                        zip != null && !zip.isEmpty()) {
+                    contact.setAddress(new Address(new StreetAddress(streetAddress),
+                            null,
+                            new GeneralProperty(city),
+                            new State(state),
+                            new Zip(zip)));
+                }
+
+                String phone = data.get(columnMap.get("donor_phone"));
+
+                if (phone != null && !phone.isEmpty()) {
+                    contact.setPhone(new Phone(phone));
+                }
+
+                String email = data.get(columnMap.get("donor_email"));
+
+                if (email != null && !email.isEmpty()) {
+                    contact.setEmail(new Email(email));
+                }
+
+                // TODO: Once column map is added we will want to add all properties
+                String propertyValue = data.get(columnMap.get("donor_donorid"));
+
+                if (propertyValue != null) {
+                    contact.setPropertyValue("ContactId", propertyValue);
+                }
+
+                return contact;
+            }
+
+            // Skip invalid contacts (for example, contacts missing the first or last name).
+            private void loadNextContact()
+            {
+                while (nextContact == null && nodeIndex < dataNodes.getLength()) {
+                    nextContact = getNodeAsContact();
+                    nodeIndex++;
+                }
+            }
+
             @Override
             public boolean hasNext() {
-                return nodeIndex < dataNodes.getLength();
+
+                loadNextContact();
+
+                return (nextContact != null);
             }
 
             @Override
             public Contact next() {
-                Contact contact = new Contact();
-                Name name = new Name();
-                Address address = new Address();
-                Phone phone = new Phone();
-                Email email = new Email();
+                loadNextContact();
 
-                Map<String, String> data = getContactValues(dataNodes.item(nodeIndex++));
-                name.setFirstName(data.get(columnMap.get("indiv_firstname")));
-                name.setLastName(data.get(columnMap.get("indiv_lastname")));
-                address.setStreet(data.get(columnMap.get("donor_address1")));
-                address.setCity(data.get(columnMap.get("donor_city")));
-                address.setState(data.get(columnMap.get("donor_state")));
-                address.setZip(data.get(columnMap.get("donor_zip")));
-                phone.setFullNumber(data.get(columnMap.get("donor_phone")));
-                email.setEmailAddress(data.get(columnMap.get("donor_email")));
-                contact.setName(name);
-                contact.setAddress(address);
-                contact.setPhone(phone);
-                contact.setEmail(email);
+                Contact contactToReturn = this.nextContact;
+                this.nextContact = null;
 
-                return contact;
+                return contactToReturn;
             }
         };
 

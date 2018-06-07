@@ -65,12 +65,12 @@ public class Phone implements IContactProperty<Phone> {
         return fullNumber.toString();
     }
 
-    public void setFullNumber(String fullNumber){
+    public void setFullNumber(String originalFullNumber){
         setVariablesNull();
-        if (fullNumber == null ||fullNumber.isEmpty()){
+        if (originalFullNumber == null || originalFullNumber.isEmpty()){
             throw new IllegalArgumentException("given number missing");
         }
-        fullNumber = PhoneNumberMatchLogic.normalizeNumber(fullNumber);
+        String fullNumber = PhoneNumberMatchLogic.normalizeNumber(originalFullNumber);
 
         if (fullNumber.length() < PhoneNumberMatchLogic.getUsaNumberSize_NoAreaCode()){
             throw new IllegalArgumentException("given phone number invalid");
