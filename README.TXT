@@ -1,4 +1,5 @@
-Testing
+ContactMerg
+===========
 
 This is basically what the app is.
 
