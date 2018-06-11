@@ -185,26 +185,35 @@ public class NameTests {
     void Name_isMiddleNameInFullName_True_PunctuationIgnoreSpaces(){
         Name name = new Name();
 
-        assertTrue(name.isMiddleNameInFullName("Mr.Page,Christopher,James,1st"));
-        assertTrue(name.isMiddleNameInFullName("Mr. Page, Christopher, James, I"));
-        assertTrue(name.isMiddleNameInFullName("Page, Christopher, James"));
+        assertTrue(name.isMiddleNameInFullName("Page,Christopher,James"), testFailedMessage("true", "Page,Christopher,James"));
+        assertTrue(name.isMiddleNameInFullName("Page, Christopher, James"), testFailedMessage("true", "Page, Christopher, James"));
     }
 
     @Test
     void Name_isMiddleNameInFullName_True_MissingCommas(){
         Name name = new Name();
 
-        assertTrue(name.isMiddleNameInFullName("Mr.Page Christopher James 1st"));
-        assertTrue(name.isMiddleNameInFullName("Mr.Page Christopher James"));
-        assertTrue(name.isMiddleNameInFullName("Page Christopher James"));
+        assertTrue(name.isMiddleNameInFullName("James Christopher Page"));
     }
 
     @Test
-    void Name_isMiddleNameInFullName_False_PunctuationIgnoreSpaces(){
+    void Name_isMiddleNameInFullName_True_NamesDifferentOrder(){
         Name name = new Name();
 
-        assertFalse(name.isMiddleNameInFullName("Mr.Page,James,1st"));
-        assertFalse(name.isMiddleNameInFullName("Mr. Page, James, I"));
-        assertFalse(name.isMiddleNameInFullName("Page, James"));
+        assertTrue(name.isMiddleNameInFullName("James Christopher Page"), testFailedMessage("true", "James Christopher Page"));
+        assertTrue(name.isMiddleNameInFullName("James Page, Christopher"), testFailedMessage("true", "James Page, Christopher"));
+        assertTrue(name.isMiddleNameInFullName("Page, James Christopher"), testFailedMessage("true", "Page, James Christopher"));
+        assertTrue(name.isMiddleNameInFullName("Page, Christopher, James"), testFailedMessage("true", "Page, Christopher, James"));
     }
+
+    @Test
+    void Name_isMiddleNameInFullName_False_NoMiddleName(){
+        Name name = new Name();
+
+        assertFalse(name.isMiddleNameInFullName("Page,James"), testFailedMessage("false", "Page,James"));
+        assertFalse(name.isMiddleNameInFullName("Page, James"), testFailedMessage("false", "Page, James"));
+        assertFalse(name.isMiddleNameInFullName("James Page"), testFailedMessage("false", "James Page"));
+        assertFalse(name.isMiddleNameInFullName("James   Page"), testFailedMessage("false", "James   Page"));
+    }
+    // ToDo: Add tests for isMiddleNameInFullName(), where the full name string has more than 3 name parts
 }

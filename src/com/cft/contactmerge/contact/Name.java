@@ -67,12 +67,15 @@ public class Name implements IContactProperty<Name>
     }
 
     public void setFullName(String name){
-        // Precondition: Last name must be before middle and first name
-        //               Middle name (if it exists) must be before first name
-
+        /* Format Examples
+         * lastName, firstName
+         * firstName lastName
+         * lastName, middleName, firstName
+         * lastName, firstName middleName
+         * firstName lastName, middleName
+         * firstName middleName lastName
+         */
         // ToDo: Write parser method to handle first, last, prefix, suffix.
-        // if name has middle name
-        // else just parse first, last, prefix (if exist) and suffix(if exist)
     }
 
     public void setFullName(String firstName, String lastName){
