@@ -23,6 +23,9 @@ public abstract class StreetMatchLogic {
         put("cir", "circle");
         put("circle", "circle");
         put("blvd", "boulevard");
+        put("pw", "parkway");
+        put("pwky", "parkway");
+        put("parkway", "parkway");
         put("boulevard", "boulevard");
         put("rd", "road");
         put("road", "road");

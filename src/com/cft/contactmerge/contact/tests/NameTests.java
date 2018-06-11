@@ -180,4 +180,31 @@ public class NameTests {
         assertEquals("Mr.", personOne.getPrefix(), testFailedMessage("Mr.", personOne.getPrefix()));
         assertEquals("Jr.", personOne.getSuffix(), testFailedMessage("Jr.", personOne.getSuffix()));
     }
+
+    @Test
+    void Name_isMiddleNameInFullName_True_PunctuationIgnoreSpaces(){
+        Name name = new Name();
+
+        assertTrue(name.isMiddleNameInFullName("Mr.Page,Christopher,James,1st"));
+        assertTrue(name.isMiddleNameInFullName("Mr. Page, Christopher, James, I"));
+        assertTrue(name.isMiddleNameInFullName("Page, Christopher, James"));
+    }
+
+    @Test
+    void Name_isMiddleNameInFullName_True_MissingCommas(){
+        Name name = new Name();
+
+        assertTrue(name.isMiddleNameInFullName("Mr.Page Christopher James 1st"));
+        assertTrue(name.isMiddleNameInFullName("Mr.Page Christopher James"));
+        assertTrue(name.isMiddleNameInFullName("Page Christopher James"));
+    }
+
+    @Test
+    void Name_isMiddleNameInFullName_False_PunctuationIgnoreSpaces(){
+        Name name = new Name();
+
+        assertFalse(name.isMiddleNameInFullName("Mr.Page,James,1st"));
+        assertFalse(name.isMiddleNameInFullName("Mr. Page, James, I"));
+        assertFalse(name.isMiddleNameInFullName("Page, James"));
+    }
 }

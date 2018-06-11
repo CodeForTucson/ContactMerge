@@ -27,6 +27,14 @@ public class Name implements IContactProperty<Name>
     // can clean up this code.
     public Name(){}
 
+    public Name(String name){
+        setFullName(name);
+    }
+
+    public Name(String firstName, String lastName){
+        setFullName(firstName, lastName);
+    }
+
     public Name(String firstName, String middleName, String lastName){
         setFullName(firstName, middleName, lastName);
     }
@@ -56,6 +64,20 @@ public class Name implements IContactProperty<Name>
     public Name getValue()
     {
         return this;
+    }
+
+    public void setFullName(String name){
+        // Precondition: Last name must be before middle and first name
+        //               Middle name (if it exists) must be before first name
+
+        // ToDo: Write parser method to handle first, last, prefix, suffix.
+        // if name has middle name
+        // else just parse first, last, prefix (if exist) and suffix(if exist)
+    }
+
+    public void setFullName(String firstName, String lastName){
+        setFirstName(firstName);
+        setParseSuffixAndPrefixInLastName(lastName);
     }
 
     public void setFullName(String firstName, String middleName, String lastName){
@@ -298,5 +320,28 @@ public class Name implements IContactProperty<Name>
             }
         }
         setLastName(correctedLastName.toString());
+    }
+
+    public boolean isMiddleNameInFullName(String fullName) {
+        ArrayList<String> nameParts = new ArrayList<>(Arrays.asList(fullName.trim().toLowerCase()
+                .replaceAll("\\p{Punct}", "$0 ")
+                .replaceAll("[^ a-zA-Z0-9!,'’-]", " ").split("\\s+")));
+
+        // Remove Suffix and Prefix (If they exist)
+        for (int n = 0; n < nameParts.size(); n++){
+            if (NameMatchLogic.getNameSuffixes().containsKey(nameParts.get(n))){ // Suffixes
+                nameParts.remove(n);
+                n--;
+            }
+            if (NameMatchLogic.getNamePrefixes().containsKey(nameParts.get(n))){ // Prefixes
+                nameParts.remove(n);
+                n--;
+            }
+        }
+        if (nameParts.size() > 2){ // contains more than first and last name
+            return true;
+        }
+
+        return false;
     }
 }
