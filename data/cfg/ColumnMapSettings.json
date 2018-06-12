@@ -1,0 +1,119 @@
+{
+  "meta" : {
+    "version" : "",
+    "description" : "",
+    "timeDate" : "",
+    "author" : ""
+  },
+
+  "ExportFile" : {
+    "firstName" : {
+      "columnLocation" : 0,
+      "matchLogicObject" : "Name",
+      "matchLogicObjectsValue" : "firstName",
+      "format" : "default"
+    },
+
+    "middleName" : {
+      "columnLocation" : 1,
+      "matchLogicObject" : "Name",
+      "matchLogicObjectsValue" : "middleName",
+      "format" : "default"
+    },
+
+    "lastName" : {
+      "columnLocation" : 2,
+      "matchLogicObject" : "Name",
+      "matchLogicObjectsValue" : "lastName",
+      "format" : "default"
+    },
+
+    "street" : {
+      "columnLocation" : 3,
+      "matchLogicObject" : "Address",
+      "matchLogicObjectsValue" : "street",
+      "format" : "default"
+    },
+
+    "city" : {
+      "columnLocation" : 4,
+      "matchLogicObject" : "",
+      "matchLogicObjectsValue" : "",
+      "format" : ""
+    },
+
+    "state" : {
+      "columnLocation" : 5,
+      "matchLogicObject" : "",
+      "matchLogicObjectsValue" : "",
+      "format" : ""
+    },
+
+    "country" : {
+      "columnLocation" : 6,
+      "matchLogicObject" : "",
+      "matchLogicObjectsValue" : "",
+      "format" : ""
+    },
+
+    "zip" : {
+      "columnLocation" : 7,
+      "matchLogicObject" : "",
+      "matchLogicObjectsValue" : "",
+      "format" : ""
+    },
+
+    "homePhone" : {
+      "columnLocation" : 8,
+      "matchLogicObject" : "Phone",
+      "matchLogicObjectsValue" : "phoneNumber",
+      "format" : "default"
+    },
+
+    "cellNumber" : {
+      "columnLocation" : 9,
+      "matchLogicObject" : "Phone",
+      "matchLogicObjectsValue" : "phoneNumber",
+      "format" : "default"
+    },
+
+    "primaryEmailAddress" : {
+    "columnLocation" : 10,
+    "matchLogicObject" : "Email",
+    "matchLogicObjectsValue" : "emailAddress",
+    "format" : "default"
+    }
+  },
+
+  "ContactToMergeFormat" : {
+    "ImportFile ID": 0,
+    "firstName" : 0,
+    "middleName" : 1,
+    "lastName" : 2,
+    "primaryStreetAddress" : 3,
+    "secondaryStreetAddress" : 3,
+    "thirdStreetAddress" : 3,
+    "phoneNumber" : {
+      "exportValueToColumnLocation" : {
+        "location" : 8,
+        "allOtherFileMatchingValuesBlank" : true,
+        "otherFileValuesDontMatch" : true,
+        "otherFileValuesMatch" : false
+      },
+      "matchAgainstValueToColumnLocation1" : 8,
+      "matchAgainstValueToColumnLocation2" : 9
+    },
+    "emailAddress" : 10
+  },
+
+  "ExistingContactFormat" : {
+    "ImportFile ID": 1,
+    "firstName" : 0,
+    "middleName" : 1,
+    "lastName" : 2,
+    "primaryStreetAddress" : 3,
+    "homePhone" : 8,
+    "cellPhone" : 9,
+    "emailAddress" : 10
+  }
+}
